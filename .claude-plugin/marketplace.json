@@ -1,0 +1,16 @@
+{
+  "name": "spec-kit-marketplace",
+  "owner": {
+    "name": "NamHT Labs"
+  },
+  "metadata": {
+    "description": "Local marketplace hosting the Spec Kit plugin."
+  },
+  "plugins": [
+    {
+      "name": "spec-kit",
+      "source": "./",
+      "description": "Spec-driven dev workflow for Claude Code (Auto Spec Kit port): /build pipeline, KB scan/rescan, review, ask, plan, map, document."
+    }
+  ]
+}

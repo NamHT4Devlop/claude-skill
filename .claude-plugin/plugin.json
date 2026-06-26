@@ -1,0 +1,16 @@
+{
+  "name": "spec-kit",
+  "version": "1.0.0",
+  "description": "Spec-driven dev workflow for Claude Code: plan → code → review → test → evidence, plus Knowledge Base scan, codebase Q&A, user stories, dependency map, and business↔code docs. A native port of the Auto Spec Kit VS Code extension (formerly GitHub Copilot).",
+  "author": {
+    "name": "NamHT Labs"
+  },
+  "keywords": [
+    "spec",
+    "workflow",
+    "knowledge-base",
+    "code-review",
+    "tdd",
+    "user-stories"
+  ]
+}
