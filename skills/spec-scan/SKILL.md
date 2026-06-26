@@ -46,10 +46,9 @@ Angles to split across sub-agents (then merge, deduplicate, keep every cited ite
 - **Model/Schema analyzer** — entities, state machines, DB constraints, relationships, migration history (business evolution).
 
 ## Auxiliary outputs (also required)
-1. **`review-skills.md`** — start from the universal checklist
-   (`../spec-review/references/review-skills-universal.md` or the plugin's
-   `resources/review-skills-universal.md`) and append a **Section 14 — Project-Specific
-   Rules**: project naming conventions, mandatory patterns, banned anti-patterns, and the
+1. **`review-skills.md`** — start from the bundled universal checklist
+   (`references/review-skills-universal.md` in this skill) and append a **Section 14 —
+   Project-Specific Rules**: project naming conventions, mandatory patterns, banned anti-patterns, and the
    business rules every new feature must respect — **each with a real code citation**.
    This file is injected into every code review, so make it accurate.
 2. **`modules/<module>.md` + `modules/_index.md`** — for larger projects, deep per-module

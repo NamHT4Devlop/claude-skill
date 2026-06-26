@@ -124,9 +124,11 @@ cp -R <PLUGIN_DIR>/commands/* ~/.claude/commands/
 cp -R <PLUGIN_DIR>/agents/*   ~/.claude/agents/
 ```
 
-Each skill is self-contained — `spec-build`/`spec-review` bundle the review checklist and
-`spec-scan`/`spec-rescan` bundle the KB-section spec under their own `references/`, so they
-work without the plugin's shared `resources/`.
+**You do NOT need to copy the plugin's `resources/` folder for Option B.** Each skill is
+self-contained — it bundles whatever it needs under its own `references/` subfolder, which
+comes along automatically with `cp -R skills/*`:
+`spec-build`/`spec-review`/`spec-scan`/`spec-rescan` carry the review checklist and/or the
+KB-section spec. `resources/` at the repo root is only a canonical copy for the plugin form.
 
 > ⚠️ **Difference from Option A:** as plain skills the slash commands are **not** namespaced —
 > they're `/build`, `/review`, `/scan`, etc. If those names clash with other commands you have,
