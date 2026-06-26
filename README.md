@@ -39,46 +39,137 @@ read-only specialists the build/review steps fan out to in parallel.
 
 ---
 
+## Prerequisites
+
+- **Claude Code** installed and working (`claude --version`). Plugins/marketplaces need a
+  recent version — if `/plugin` is unknown, update Claude Code first (`claude update` or
+  reinstall from the official docs).
+- **git** installed (`git --version`) — needed to clone this repo and used by `rescan`/`review`.
+- **Access to this repository.** It is currently **private**, so cloning requires that your
+  GitHub account has access (or ask the owner to add you / make it public). The plugin itself
+  needs **no API key** — it runs on your existing Claude Code.
+- Paths below use `~/.claude` (macOS/Linux). On **Windows** use `%USERPROFILE%\.claude`
+  (PowerShell: `$HOME\.claude`).
+
+---
+
+## Get the code
+
+Pick a stable location to keep the plugin (so you can update it with `git pull` later):
+
+```bash
+# via SSH (recommended if your GitHub uses SSH keys)
+git clone git@github.com:NamHT4Devlop/claude-skill.git ~/claude-skill
+
+# or via HTTPS
+git clone https://github.com/NamHT4Devlop/claude-skill.git ~/claude-skill
+```
+
+Everywhere below, `<PLUGIN_DIR>` means the folder you cloned into (e.g. `~/claude-skill`).
+If you keep the files somewhere else, substitute that absolute path.
+
+---
+
 ## Install — Option A: as a plugin (recommended)
 
-Use this when you want it available across **all** your repos on this machine.
-
-From a Claude Code session (in any project):
+Best when you want every command available across **all** your repos on a machine, with the
+nice `/spec-kit:*` namespacing. Run these **inside a Claude Code session** (the `/plugin`
+commands are typed into Claude Code, not your shell):
 
 ```
-/plugin marketplace add /Users/MAC/AI-TOOL/claude-skill
+/plugin marketplace add ~/claude-skill
 /plugin install spec-kit@spec-kit-marketplace
 ```
 
-Then restart/reload when prompted. Commands appear as `/spec-kit:build`, `/spec-kit:scan`,
-`/spec-kit:review`, `/spec-kit:ask`, `/spec-kit:plan`, `/spec-kit:map`, `/spec-kit:document`,
-`/spec-kit:rescan`, `/spec-kit:help`. The bundled skills and agents are loaded automatically.
+- `marketplace add <PLUGIN_DIR>` registers the local marketplace defined in
+  `.claude-plugin/marketplace.json`. You can also point it straight at the GitHub repo:
+  `/plugin marketplace add NamHT4Devlop/claude-skill` (Claude Code clones it for you; requires
+  repo access).
+- `install spec-kit@spec-kit-marketplace` installs the plugin named `spec-kit` from that
+  marketplace.
+- Reload when prompted (or run `/plugin` to manage installed plugins).
 
-> The marketplace `source` is `./`, so adding this folder registers the plugin that lives in
-> the same folder. You can keep this directory under version control and `add` it on any machine.
+After install you'll have these commands (type `/` to see them):
+`/spec-kit:scan`, `/spec-kit:rescan`, `/spec-kit:build`, `/spec-kit:review`, `/spec-kit:ask`,
+`/spec-kit:plan`, `/spec-kit:map`, `/spec-kit:document`, `/spec-kit:help`. The 8 skills and 7
+sub-agents load automatically — skills also activate from plain English (you don't have to
+type the slash command).
 
-## Install — Option B: plain skills (per-repo or per-user)
+> **Team install:** commit/host this repo, then each teammate runs the two `/plugin` commands
+> above pointing at their clone (or at `NamHT4Devlop/claude-skill`). To pin the plugin for a
+> whole project automatically, add it to the project's `.claude/settings.json` under
+> `enabledPlugins` / configure a marketplace there (see Claude Code plugin docs).
 
-Use this if you prefer raw skills without the plugin/marketplace machinery, or want to commit
-the skills into a specific project.
+## Install — Option B: plain skills (no plugin machinery)
 
-- **Per project** — copy the skills (and optionally commands/agents) into the repo's `.claude/`:
-  ```
-  cp -R /Users/MAC/AI-TOOL/claude-skill/skills/*   <your-repo>/.claude/skills/
-  cp -R /Users/MAC/AI-TOOL/claude-skill/commands/* <your-repo>/.claude/commands/
-  cp -R /Users/MAC/AI-TOOL/claude-skill/agents/*   <your-repo>/.claude/agents/
-  ```
-- **For all your repos (user-level)** — copy into `~/.claude/` instead:
-  ```
-  cp -R /Users/MAC/AI-TOOL/claude-skill/skills/*   ~/.claude/skills/
-  cp -R /Users/MAC/AI-TOOL/claude-skill/commands/* ~/.claude/commands/
-  cp -R /Users/MAC/AI-TOOL/claude-skill/agents/*   ~/.claude/agents/
-  ```
+Best when you want to **commit the skills into a specific repo** (so collaborators get them on
+clone), or you prefer not to use marketplaces.
+
+**B1 — Per project** (only that repo gets the commands/skills):
+
+```bash
+# run from the target repo's root
+mkdir -p .claude/skills .claude/commands .claude/agents
+cp -R <PLUGIN_DIR>/skills/*   .claude/skills/
+cp -R <PLUGIN_DIR>/commands/* .claude/commands/
+cp -R <PLUGIN_DIR>/agents/*   .claude/agents/
+```
+
+**B2 — Per user** (all your repos on this machine):
+
+```bash
+mkdir -p ~/.claude/skills ~/.claude/commands ~/.claude/agents
+cp -R <PLUGIN_DIR>/skills/*   ~/.claude/skills/
+cp -R <PLUGIN_DIR>/commands/* ~/.claude/commands/
+cp -R <PLUGIN_DIR>/agents/*   ~/.claude/agents/
+```
 
 Each skill is self-contained — `spec-build`/`spec-review` bundle the review checklist and
 `spec-scan`/`spec-rescan` bundle the KB-section spec under their own `references/`, so they
-work even without the plugin's shared `resources/`. (As plain skills, commands aren't
-namespaced — they're `/build`, `/review`, etc. Rename if they clash with other commands.)
+work without the plugin's shared `resources/`.
+
+> ⚠️ **Difference from Option A:** as plain skills the slash commands are **not** namespaced —
+> they're `/build`, `/review`, `/scan`, etc. If those names clash with other commands you have,
+> rename the files in `.claude/commands/` (e.g. `build.md` → `spec-build.md`).
+
+---
+
+## Verify the install
+
+1. In a Claude Code session, type `/` and confirm the `spec-kit:` commands (Option A) or
+   `/build`, `/scan`… (Option B) appear.
+2. Run `/spec-kit:help` (or `/help` for plain skills) — it prints all commands **and** checks
+   whether the current repo has a `knowledge-base/`.
+3. Plugin only: run `/plugin` → you should see **spec-kit** listed as installed/enabled.
+
+## Update to the latest version
+
+- **Option A (plugin):**
+  ```bash
+  cd <PLUGIN_DIR> && git pull
+  ```
+  then in Claude Code: `/plugin marketplace update spec-kit-marketplace` (or remove & re-add
+  the marketplace, then reinstall). Reload when prompted.
+- **Option B (plain skills):** `git pull` in `<PLUGIN_DIR>`, then re-run the `cp -R` commands
+  to overwrite the copies.
+
+## Uninstall
+
+- **Option A:** `/plugin uninstall spec-kit` (and optionally
+  `/plugin marketplace remove spec-kit-marketplace`).
+- **Option B:** delete the copied folders, e.g.
+  `rm -rf ~/.claude/skills/spec-* ~/.claude/commands/{build,scan,rescan,review,ask,plan,map,document,help}.md ~/.claude/agents/{codebase-analyzer,impact-detector,business-flow-tracer,security-reviewer,architecture-reviewer,performance-reviewer,business-consistency-reviewer}.md`.
+
+## Troubleshooting
+
+| Symptom | Fix |
+|---------|-----|
+| `/plugin` is not recognized | Update Claude Code; plugins require a recent version. |
+| `marketplace add` fails on a path | Pass an **absolute** path to `<PLUGIN_DIR>` and ensure `.claude-plugin/marketplace.json` exists there. |
+| `git clone` asks for a password / permission denied | The repo is private — use an account with access, set up SSH keys, or have the owner share/publish it. |
+| Commands don't show up | Reload the Claude Code window/session after install; for plain skills, confirm files landed in `.claude/commands` & `.claude/skills`. |
+| A command says "no knowledge-base found" | Run `/spec-kit:scan` once in that repo (or reuse an existing `knowledge-base/` folder). |
+| Command name clash (Option B) | Rename the files in `.claude/commands/`. |
 
 ---
 
