@@ -238,6 +238,7 @@ If you keep many repos under one parent folder (a "workspace"), follow this sepa
 | `/namht-plan <epic>` | PO/BA: Epic → features → impact → user stories (Given/When/Then) → sprint plan. |
 | `/namht-map [scope]` | Interactive HTML code graph (Cytoscape): files/classes + imports/DI/inheritance/calls; zoom, click, filter, search. Opens in browser. |
 | `/namht-document <topic>` | Business↔code field-level technical document for a feature/entity/module. |
+| `/namht-codegraph [setup]` | Install/manage **CodeGraph** — agent-queryable code graph over MCP (100% local). Distinct from `map` (human visual). |
 | `/namht-help` | Show all commands + KB status for the current repo. |
 
 **Recommended flow:** `scan` once → `ask` / `map` / `document` to understand → `plan` to break

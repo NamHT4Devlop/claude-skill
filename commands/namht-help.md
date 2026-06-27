@@ -16,8 +16,9 @@ Commands (all namespaced under `/namht-`):
 | `/namht-review [file]` | Two-phase review: quality checklist + business consistency vs the KB. |
 | `/namht-ask <question>` | Q&A grounded in the KB — plain language + Mermaid diagram + technical detail. |
 | `/namht-plan <epic>` | PO/BA: Epic → features → impact → user stories (Given/When/Then) → sprint plan. |
-| `/namht-map [scope]` | Dependency graph (imports/DI/calls/inheritance) → Mermaid, enriched with business meaning. |
+| `/namht-map [scope]` | Interactive HTML code graph (Cytoscape) for humans — zoom/click/filter, opens in browser. |
 | `/namht-document <topic>` | Business↔code field-level technical document for a feature/entity/module. |
+| `/namht-codegraph [setup]` | Install/manage CodeGraph — the agent-queryable code graph (MCP), 100% local. |
 
 Recommended flow: **scan** once → **ask/map/document** to understand → **plan** to break down
 work → **build** to implement → **rescan** to keep the KB fresh. The KB lives in
