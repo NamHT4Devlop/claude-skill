@@ -175,6 +175,30 @@ KB-section spec. `resources/` at the repo root is only a canonical copy for the 
 
 ---
 
+## Recommended setup for a multi-project workspace
+
+If you keep many repos under one parent folder (a "workspace"), follow this separation:
+
+- **Tool = global, from git.** Install once as a plugin (Option A). Update everywhere with one
+  `git pull` + marketplace update. Don't copy skills into each repo.
+- **Knowledge Base = per project, versioned with the code.** Each repo keeps its own
+  `knowledge-base/`; commit it so the team shares it. Refresh with `/spec-kit:rescan`.
+- **Operate one project per session.** `cd <project> && claude` so commands read *that*
+  project's `knowledge-base/`. The parent workspace is just an organizing folder — don't run
+  from the workspace root and expect commands to guess which sub-project you mean. (A true
+  **monorepo** — one git repo, many packages — is the opposite: run at the repo root; `scan`
+  produces per-module docs under `knowledge-base/modules/`.)
+- **Per-project hygiene** — gitignore the generated `spec-kit-sessions/`, and drop a short
+  `CLAUDE.md` so every session in that repo knows the KB exists. Automate it:
+
+  ```bash
+  # from your clone of this repo
+  scripts/onboard-project.sh /path/to/your/project   # idempotent; commits nothing
+  ```
+
+  It adds `spec-kit-sessions/` to `.gitignore`, creates a starter `CLAUDE.md` (only if absent),
+  and reports whether the project has a KB yet (→ run `/spec-kit:scan` if not).
+
 ## Commands
 
 | Command | What it does |
