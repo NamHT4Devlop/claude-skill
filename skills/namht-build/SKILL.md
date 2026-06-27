@@ -18,6 +18,12 @@ You (Claude Code) are the engine; use your own tools instead of an external mode
 sub-agents, `Edit/Write` to apply code, and `Bash` to run tests.
 
 ## Ground rules (apply to every step)
+0. **Prefer CodeGraph when indexed.** If the repo has a `.codegraph/` index, use the
+   `codegraph_explore` MCP tool (one call → relevant symbols' verbatim source + call paths +
+   blast radius / "no covering tests" warnings) before Grep/Glob/Read loops — faster, and it
+   catches reverse dependencies the bundled regex graph can miss. Use it for the Step 1 impact
+   analysis (and `codegraph impact/callers` for blast radius). Pass `projectPath` if the session
+   has no default index. Fall back to Read/Grep + the bundled graph when there's no `.codegraph/`.
 1. **Ground everything in the Knowledge Base.** Load `knowledge-base/` from the repo
    (especially `04-business-domain`, `05-domain-model`, `10-core-flows`,
    `13-business-rules`, `12-conventions`, `16-architecture-patterns`, `review-skills.md`).

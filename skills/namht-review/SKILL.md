@@ -15,6 +15,10 @@ A native port of Auto Spec Kit's `/review`. Produce an **actionable** review: ev
 must show the exact bad code and the complete fixed code — never "add X here".
 
 ## Inputs
+- **Prefer CodeGraph when indexed.** If the repo has a `.codegraph/` index, fetch the target +
+  its blast radius with the `codegraph_explore` MCP tool (verbatim source + callers/callees +
+  "no covering tests" flags) instead of a Grep/Read loop — that's exactly what surfaces impacted
+  consumers and test gaps for Phase 2. Pass `projectPath` if needed; fall back to Read/Grep otherwise.
 - **Target**: the file(s) the user named, the active file, or the current diff
   (`git diff`). If none specified, ask or default to the working-tree diff.
 - **Checklist**: load `knowledge-base/review-skills.md` from the repo if present (it has

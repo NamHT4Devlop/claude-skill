@@ -4,7 +4,7 @@ description: >-
   Business analyst that traces how a requirement interacts with existing business
   flows — affected flows, the new flow definition, applicable business rules,
   state-machine impact, and business edge cases. Use during planning.
-tools: Read, Grep, Glob
+tools: Read, Grep, Glob, mcp__codegraph__codegraph_explore, mcp__codegraph__codegraph_node
 model: inherit
 ---
 
@@ -22,3 +22,10 @@ Given a requirement, report:
    concurrent operations? rollback scenarios?
 
 Cite the exact rules/files/functions. Return a concise Markdown report.
+
+## CodeGraph-first (when available)
+If the repo has a `.codegraph/` index, call **`codegraph_explore`** FIRST — one call returns the
+relevant symbols' verbatim source, the call paths between them, and a blast-radius / "no covering
+tests" summary, in far fewer tokens than a Grep/Read loop. Pass `projectPath` if there is no
+default index. Use it before Grep/Glob/Read; fall back to Read/Grep only when there is no
+`.codegraph/` index. Treat any source it returns as already read — do not re-open those files.

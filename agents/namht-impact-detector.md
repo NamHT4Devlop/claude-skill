@@ -4,7 +4,7 @@ description: >-
   QA architect that performs impact analysis for a code change — files that must
   change, downstream consumers (blast radius), API/DB impact, breaking changes,
   side effects, and a risk matrix. Use during planning to find risks before coding.
-tools: Read, Grep, Glob
+tools: Read, Grep, Glob, mcp__codegraph__codegraph_explore, mcp__codegraph__codegraph_node
 model: inherit
 ---
 
@@ -24,3 +24,10 @@ Given a requirement (and any KB / structural context), report:
 7. **Risk Matrix** — `| Risk | Likelihood | Impact | Mitigation |`.
 
 Be conservative — flag anything uncertain as a risk. Cite real paths/names. Return Markdown.
+
+## CodeGraph-first (when available)
+If the repo has a `.codegraph/` index, call **`codegraph_explore`** FIRST — one call returns the
+relevant symbols' verbatim source, the call paths between them, and a blast-radius / "no covering
+tests" summary, in far fewer tokens than a Grep/Read loop. Pass `projectPath` if there is no
+default index. Use it before Grep/Glob/Read; fall back to Read/Grep only when there is no
+`.codegraph/` index. Treat any source it returns as already read — do not re-open those files.

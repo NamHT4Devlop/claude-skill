@@ -246,6 +246,23 @@ down work → `build` to implement → `rescan` to keep the KB fresh.
 
 ---
 
+## CodeGraph integration
+
+If a repo has a `.codegraph/` index (set up via `/namht-codegraph`), the kit prefers the
+**`codegraph_explore`** MCP tool over Grep/Read loops — one call returns the relevant symbols'
+verbatim source, the call paths between them, and a blast-radius / "no covering tests" summary.
+This is wired into:
+
+- the 7 sub-agents (planning + review) — granted the `codegraph_explore` / `codegraph_node` MCP
+  tools and told to call them first;
+- `namht-build` (Step 1 impact analysis → real blast radius), `namht-review` (target + impacted
+  consumers + test gaps), `namht-ask` and `namht-document` (ground technical detail in real
+  source), and `namht-scan` (structure/skeleton, while still reading source for business intent).
+
+It's strictly opt-in and degrades cleanly: **no `.codegraph/` → the kit falls back to
+Read/Grep/Glob** (and `namht-map`'s own bundled analyzer). CodeGraph supplies code *structure*;
+the `knowledge-base/` still supplies business *intent* — they're complementary, not redundant.
+
 ## How this maps to the original extension
 
 | Auto Spec Kit (VS Code + Copilot) | Spec Kit for Claude Code |

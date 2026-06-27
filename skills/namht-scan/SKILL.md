@@ -20,6 +20,10 @@ This KB is the grounding for every other Spec Kit command.
 > or an explicit fresh rebuild.
 
 ## Inputs & setup
+- **Use CodeGraph for structure if indexed.** If the repo has a `.codegraph/` index, use
+  `codegraph_explore` / `codegraph files` to map structure, symbols and call paths quickly
+  (saves a lot of Read/Grep) — but you STILL read real source for *business intent*: CodeGraph
+  gives the skeleton, the KB documents the why. Pass `projectPath` if needed.
 - Confirm the target repo (default: cwd). Detect the stack first (language, framework,
   DB, build tool) by reading `package.json` / `pom.xml` / `build.gradle` / `go.mod` /
   `Gemfile` / `requirements.txt` / `*.csproj`, etc. Tailor analysis hints to the stack
