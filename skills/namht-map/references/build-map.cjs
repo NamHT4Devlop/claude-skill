@@ -1,0 +1,57 @@
+#!/usr/bin/env node
+/**
+ * build-map.cjs — generate an interactive HTML code graph for a project.
+ *
+ * Uses the bundled multi-language static analyzer (graph-builder.js, pure fs/path)
+ * to extract nodes (files/classes/routes) and edges (imports / extends / implements
+ * / injects / calls), then injects the data into the Cytoscape viewer template and
+ * writes a single self-contained HTML file you open in a browser.
+ *
+ * Usage:
+ *   node build-map.cjs <project-root> [output.html] [mode]
+ *     mode = all | files | classes | routes | domain   (default: all)
+ *
+ * Examples:
+ *   node build-map.cjs .                       # → ./spec-kit-sessions/maps/<name>-<date>.html
+ *   node build-map.cjs ../human-essentials out.html files
+ */
+const fs = require('fs');
+const path = require('path');
+
+const root = path.resolve(process.argv[2] || '.');
+let out = process.argv[3] || '';
+let mode = process.argv[4] || 'all';
+
+if (!fs.existsSync(root)) { console.error('✖ project root not found:', root); process.exit(1); }
+
+const { buildGraphData } = require('./graph-builder.js');
+
+console.error('▶ analyzing', root, '(mode:', mode + ')…');
+let data = buildGraphData(root, mode);
+
+// Auto-simplify very large graphs so the browser stays smooth.
+if (data.nodes.length > 1800 && mode === 'all') {
+  console.error(`  ${data.nodes.length} nodes is large → re-running in 'files' mode for readability`);
+  mode = 'files';
+  data = buildGraphData(root, mode);
+}
+
+const tpl = fs.readFileSync(path.join(__dirname, 'viewer-template.html'), 'utf8');
+const projectName = data.metadata.projectName || path.basename(root);
+const html = tpl
+  .replace(/__PROJECT__/g, escapeHtml(projectName))
+  .replace('__GRAPH_DATA__', JSON.stringify(data).replace(/<\//g, '<\\/'));
+
+// Default output: <root>/spec-kit-sessions/maps/<name>-<YYYY-MM-DD>.html  (gitignored)
+if (!out) {
+  const dir = path.join(root, 'spec-kit-sessions', 'maps');
+  fs.mkdirSync(dir, { recursive: true });
+  const slug = projectName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'project';
+  out = path.join(dir, `${slug}-${new Date().toISOString().slice(0, 10)}.html`);
+}
+fs.writeFileSync(out, html, 'utf8');
+
+console.error(`✔ ${data.nodes.length} nodes · ${data.edges.length} edges · langs: ${(data.metadata.languages || []).join(', ') || 'n/a'}`);
+console.log(out); // stdout = the path, so callers can open it
+
+function escapeHtml(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }

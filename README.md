@@ -27,7 +27,7 @@ claude-skill/
 │   ├── namht-review/         #   two-phase review    (+ bundled review checklist)
 │   ├── namht-ask/            #   KB-grounded Q&A
 │   ├── namht-plan/           #   PO/BA user stories
-│   ├── namht-map/            #   dependency graph → Mermaid
+│   ├── namht-map/            #   interactive HTML code graph (Cytoscape)
 │   └── namht-document/       #   business↔code doc
 ├── agents/                  # 7 specialist sub-agents (planning + review)
 └── resources/               # review-skills-universal.md, kb-steps.md
@@ -236,7 +236,7 @@ If you keep many repos under one parent folder (a "workspace"), follow this sepa
 | `/namht-review [file]` | Two-phase review: quality checklist + business consistency vs the KB. Empty arg = current diff. |
 | `/namht-ask <question>` | Q&A grounded in the KB — plain language + Mermaid diagram + technical detail. |
 | `/namht-plan <epic>` | PO/BA: Epic → features → impact → user stories (Given/When/Then) → sprint plan. |
-| `/namht-map [scope]` | Dependency graph (imports/DI/calls/inheritance) → Mermaid, enriched with business meaning. |
+| `/namht-map [scope]` | Interactive HTML code graph (Cytoscape): files/classes + imports/DI/inheritance/calls; zoom, click, filter, search. Opens in browser. |
 | `/namht-document <topic>` | Business↔code field-level technical document for a feature/entity/module. |
 | `/namht-help` | Show all commands + KB status for the current repo. |
 
@@ -255,7 +255,7 @@ down work → `build` to implement → `rescan` to keep the KB fresh.
 | `testCommand` run by the extension | `Bash` runs the project's test command |
 | Session outputs in `spec-kit-sessions/` | Same — artifacts saved per run |
 | `knowledge-base/` (16 docs + review-skills + modules) | **Identical format — reused as-is** |
-| Webview HTML (ask/plan/document/map) | Markdown + Mermaid (renders anywhere; HTML on request) |
+| Webview HTML (ask/plan/document) | Markdown + Mermaid; **`map` = interactive Cytoscape HTML** (bundled analyzer) |
 
 ### Not ported (and why)
 - The VS Code UI bits (Quick Picks, webviews, keybindings, output channel) — Claude Code is

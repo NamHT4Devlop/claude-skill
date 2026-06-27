@@ -1,11 +1,12 @@
 ---
-description: Map the codebase as a dependency graph (imports/DI/calls/inheritance) enriched with business meaning → Mermaid
+description: Generate an interactive HTML code graph (Cytoscape) — files/classes/edges, zoom/click/filter; opens in browser
 argument-hint: "[optional: sub-path / module to focus]"
 ---
 
-Use the **namht-map** skill to build a dependency graph of the codebase from real edges
-(imports, dependency injection, method calls, inheritance), enrich nodes with business
-meaning from the `knowledge-base/`, and render a Mermaid `flowchart`. Call out the biggest
-hubs (blast radius), coupling hot-spots, and dependency cycles.
+Use the **namht-map** skill to generate an **interactive HTML dependency graph** of the
+codebase: run the bundled analyzer (`references/build-map.cjs` via Node) to extract files/
+classes/routes and real edges (imports, DI, extends/implements, calls), write a self-contained
+Cytoscape viewer to `spec-kit-sessions/maps/`, and open it in the browser. Then give a short
+written summary (node/edge counts, top hubs = blast radius, layers). NOT a Mermaid dump.
 
-Scope (optional sub-path/module): $ARGUMENTS
+Scope (optional sub-path/module to map instead of the whole repo): $ARGUMENTS

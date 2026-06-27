@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>__PROJECT__ — Code Graph</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.30.2/cytoscape.min.js"></script>
+<style>
+  :root{ --bg:#0f1115; --panel:#171a21cc; --border:#2a2f3a; --text:#e6e9ef; --muted:#9aa3b2; --accent:#7c9cff; }
+  *{box-sizing:border-box} html,body{margin:0;height:100%}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;overflow:hidden}
+  #cy{position:absolute;inset:0}
+  .panel{position:absolute;background:var(--panel);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-size:13px;z-index:10}
+  #top{top:12px;left:12px;right:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  #top h1{font-size:15px;margin:0 8px 0 0;font-weight:700}
+  #top .meta{color:var(--muted);font-size:12px}
+  #search{background:#0b0d12;border:1px solid var(--border);color:var(--text);border-radius:8px;padding:6px 10px;font-size:13px;width:180px}
+  #top button{background:#222734;border:1px solid var(--border);color:var(--text);border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer}
+  #top button:hover{background:#2c3342}
+  #legend{bottom:12px;left:12px;max-width:230px}
+  #legend .row{display:flex;align-items:center;gap:8px;margin:3px 0;cursor:pointer;user-select:none;opacity:1}
+  #legend .row.off{opacity:.35}
+  #legend .dot{width:12px;height:12px;border-radius:50%;flex:0 0 12px}
+  #legend .ti{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:6px}
+  #details{top:64px;right:12px;width:300px;max-height:calc(100% - 120px);overflow:auto;display:none}
+  #details h2{font-size:14px;margin:0 0 2px}
+  #details .sub{color:var(--muted);font-size:11px;word-break:break-all;margin-bottom:8px}
+  #details .k{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;margin-top:10px}
+  #details code{background:#0b0d12;padding:1px 5px;border-radius:5px;font-size:12px}
+  #details ul{margin:4px 0;padding-left:16px} #details li{margin:2px 0;font-size:12px}
+  #details .close{position:absolute;top:8px;right:10px;cursor:pointer;color:var(--muted);font-size:18px;line-height:1}
+  .hint{position:absolute;bottom:12px;right:12px;color:var(--muted);font-size:11px;text-align:right}
+  .chip{display:inline-block;background:#222734;border:1px solid var(--border);border-radius:999px;padding:2px 8px;font-size:11px;margin:2px 2px 0 0}
+</style>
+</head>
+<body>
+<div id="cy"></div>
+
+<div id="top" class="panel">
+  <h1>🕸 __PROJECT__</h1>
+  <input id="search" placeholder="Search node…" autocomplete="off">
+  <button id="fit">Fit</button>
+  <button id="hubs">Highlight hubs</button>
+  <button id="relayout">Re-layout</button>
+  <span class="meta" id="meta"></span>
+</div>
+
+<div id="legend" class="panel">
+  <div class="ti">Layers — click to toggle</div>
+  <div id="legend-rows"></div>
+</div>
+
+<div id="details" class="panel">
+  <span class="close" id="dclose">×</span>
+  <h2 id="dtitle"></h2>
+  <div class="sub" id="dsub"></div>
+  <div id="dbody"></div>
+</div>
+
+<div class="hint">drag to pan · scroll to zoom · click node = neighbors · dbl-click = focus</div>
+
+<script id="graph-data" type="application/json">__GRAPH_DATA__</script>
+<script>
+const DATA = JSON.parse(document.getElementById('graph-data').textContent);
+const LAYER = {};
+(DATA.layers||[]).forEach(l => LAYER[l.id] = l);
+const COLOR = id => (LAYER[id] && LAYER[id].color) || '#7f8c8d';
+
+document.getElementById('meta').textContent =
+  `${DATA.metadata.nodeCount} nodes · ${DATA.metadata.edgeCount} edges · ${(DATA.metadata.languages||[]).join(', ')}`;
+
+// degree for sizing/hubs
+const deg = {};
+DATA.edges.forEach(e => { deg[e.source]=(deg[e.source]||0)+1; deg[e.target]=(deg[e.target]||0)+1; });
+
+const elements = [];
+DATA.nodes.forEach(n => elements.push({ data: {
+  id:n.id, label:n.label, layer:n.layer, ntype:n.type, file:n.file||'',
+  d:deg[n.id]||0, sz:n.size||3,
+  desc:n.description||'', methods:n.methods||[], fields:n.fields||[], details:n.details||''
+}}));
+DATA.edges.forEach((e,i) => elements.push({ data: {
+  id:'e'+i, source:e.source, target:e.target, etype:e.type, label:e.label||'' }}));
+
+const cy = cytoscape({
+  container: document.getElementById('cy'),
+  elements,
+  wheelSensitivity: 0.2,
+  style: [
+    { selector:'node', style:{
+      'background-color': el => COLOR(el.data('layer')),
+      'label':'data(label)', 'color':'#e6e9ef', 'font-size':'9px',
+      'text-valign':'bottom','text-margin-y':3,'text-wrap':'ellipsis','text-max-width':'90px',
+      'width': el => 16 + (el.data('sz')||3)*4 + Math.min(( el.data('d')||0), 12)*1.5,
+      'height': el => 16 + (el.data('sz')||3)*4 + Math.min(( el.data('d')||0), 12)*1.5,
+      'border-width':1,'border-color':'#0b0d12'
+    }},
+    { selector:'node[ntype="route"]', style:{ 'shape':'round-rectangle' }},
+    { selector:'node[ntype="interface"]', style:{ 'shape':'diamond' }},
+    { selector:'edge', style:{
+      'width':1, 'line-color':'#3a4150', 'target-arrow-color':'#3a4150',
+      'target-arrow-shape':'triangle','arrow-scale':0.7,'curve-style':'bezier','opacity':0.5
+    }},
+    { selector:'edge[etype="extends"]', style:{ 'line-color':'#e74c3c','target-arrow-color':'#e74c3c','width':1.6 }},
+    { selector:'edge[etype="implements"]', style:{ 'line-style':'dashed' }},
+    { selector:'edge[etype="injects"]', style:{ 'line-color':'#34c78a','target-arrow-color':'#34c78a' }},
+    { selector:'.faded', style:{ 'opacity':0.07 }},
+    { selector:'.hi', style:{ 'opacity':1,'border-width':3,'border-color':'#fff' }},
+    { selector:'.hiedge', style:{ 'opacity':0.95,'width':2 }},
+  ],
+  layout: { name:'cose', animate:false, nodeRepulsion:9000, idealEdgeLength:90, gravity:0.3, numIter:1200 }
+});
+
+// ---- legend ----
+const lr = document.getElementById('legend-rows');
+(DATA.layers||[]).forEach(l => {
+  const present = cy.nodes(`[layer="${l.id}"]`).length;
+  if(!present) return;
+  const row = document.createElement('div');
+  row.className='row'; row.dataset.layer=l.id;
+  row.innerHTML = `<span class="dot" style="background:${l.color}"></span><span>${l.label} <span style="color:var(--muted)">(${present})</span></span>`;
+  row.onclick = () => {
+    row.classList.toggle('off');
+    const on = !row.classList.contains('off');
+    cy.nodes(`[layer="${l.id}"]`).style('display', on?'element':'none');
+  };
+  lr.appendChild(row);
+});
+
+// ---- interactions ----
+function clearHi(){ cy.elements().removeClass('faded hi hiedge'); }
+function focusNode(n){
+  clearHi();
+  const hood = n.closedNeighborhood();
+  cy.elements().addClass('faded');
+  hood.removeClass('faded'); hood.nodes().addClass('hi'); hood.edges().addClass('hiedge');
+  showDetails(n);
+}
+cy.on('tap','node', e => focusNode(e.target));
+cy.on('dbltap','node', e => { cy.animate({ center:{eles:e.target}, zoom:1.5 }, { duration:300 }); });
+cy.on('tap', e => { if(e.target===cy){ clearHi(); document.getElementById('details').style.display='none'; } });
+
+function showDetails(n){
+  const d=n.data();
+  document.getElementById('details').style.display='block';
+  document.getElementById('dtitle').textContent = d.label;
+  document.getElementById('dsub').textContent = (d.file||d.ntype);
+  let h = `<span class="chip">${d.ntype}</span><span class="chip">${(LAYER[d.layer]||{}).label||d.layer}</span><span class="chip">deg ${d.d}</span>`;
+  if(d.desc) h += `<div class="k">Description</div><div>${esc(d.desc)}</div>`;
+  if(d.details) h += `<div class="k">Meta</div><code>${esc(d.details)}</code>`;
+  const outs = n.outgoers('node'), ins = n.incomers('node');
+  if(ins.length) h += `<div class="k">Used by (${ins.length})</div><ul>`+ins.slice(0,15).map(x=>`<li>${esc(x.data('label'))}</li>`).join('')+`</ul>`;
+  if(outs.length) h += `<div class="k">Depends on (${outs.length})</div><ul>`+outs.slice(0,15).map(x=>`<li>${esc(x.data('label'))}</li>`).join('')+`</ul>`;
+  if(d.methods&&d.methods.length) h += `<div class="k">Methods</div><div>`+d.methods.slice(0,20).map(m=>`<span class="chip">${esc(m)}</span>`).join('')+`</div>`;
+  if(d.fields&&d.fields.length) h += `<div class="k">Fields</div><div>`+d.fields.slice(0,20).map(m=>`<span class="chip">${esc(m)}</span>`).join('')+`</div>`;
+  document.getElementById('dbody').innerHTML = h;
+}
+function esc(s){ return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+// ---- search ----
+document.getElementById('search').addEventListener('input', e => {
+  const q = e.target.value.trim().toLowerCase();
+  if(!q){ clearHi(); return; }
+  clearHi(); cy.elements().addClass('faded');
+  const hits = cy.nodes().filter(n => n.data('label').toLowerCase().includes(q) || (n.data('file')||'').toLowerCase().includes(q));
+  hits.removeClass('faded').addClass('hi');
+});
+
+// ---- buttons ----
+document.getElementById('fit').onclick = () => { clearHi(); cy.fit(undefined,40); };
+document.getElementById('relayout').onclick = () => cy.layout({ name:'cose', animate:true, nodeRepulsion:9000, idealEdgeLength:90, numIter:1000 }).run();
+document.getElementById('hubs').onclick = () => {
+  clearHi();
+  const sorted = cy.nodes().sort((a,b)=>(b.data('d')||0)-(a.data('d')||0));
+  const top = sorted.slice(0, Math.max(1, Math.ceil(sorted.length*0.1)));
+  cy.elements().addClass('faded');
+  top.removeClass('faded').addClass('hi');
+  top.forEach(n=>n.connectedEdges().removeClass('faded').addClass('hiedge'));
+};
+document.getElementById('dclose').onclick = () => { document.getElementById('details').style.display='none'; clearHi(); };
+cy.ready(()=>cy.fit(undefined,40));
+</script>
+</body>
+</html>

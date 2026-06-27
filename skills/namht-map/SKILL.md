@@ -1,40 +1,56 @@
 ---
 name: namht-map
 description: >-
-  Map a codebase as a dependency graph — modules/files as nodes and real edges
-  (imports, dependency injection, method calls, inheritance) — then enrich it
-  with business meaning from the Knowledge Base and render it as a Mermaid
-  diagram, highlighting core modules, coupling hot-spots, and cycles. Use when
-  the user asks to "/map", "map the codebase", "show the dependency graph", or
-  "visualize architecture".
+  Generate an INTERACTIVE HTML dependency graph of a codebase (Cytoscape.js) —
+  nodes are files/classes/routes, edges are real imports, dependency injection,
+  inheritance (extends/implements) and method calls, colored by architecture
+  layer, with zoom/pan, click-to-highlight-neighbors, search, layer filters and
+  hub highlighting. Opens in the browser. Use when the user asks to "/map", "map
+  the codebase", "show the dependency graph", "code graph", or "visualize architecture".
 ---
 
-# Spec Map — dependency graph of the codebase
+# namht-map — interactive code graph (HTML)
 
-A native port of Auto Spec Kit's `/map` (the original renders an interactive webview; here
-we produce a Mermaid diagram + a written analysis, which renders anywhere).
+Produces a **single self-contained interactive HTML file** (Cytoscape.js) — NOT a Markdown/
+Mermaid dump. It runs a bundled, dependency-free multi-language static analyzer
+(`references/graph-builder.js`, pure Node `fs`/`path`) supporting TS/JS, Python, Java/Kotlin,
+Go, Ruby, C#, PHP and Rust, then injects the graph into `references/viewer-template.html`.
 
-## Procedure
-1. **Scope.** Map the whole repo or a sub-tree the user names. Discover modules/files with
-   Glob.
-2. **Build real edges** with static analysis (Grep for import/require/`using`/`@Autowired`/
-   constructor injection, `extends`/`implements`, and cross-module function calls). Prefer
-   structural truth over guesses. Collapse to module-level nodes when the file count is large
-   so the graph stays readable.
-3. **Enrich with business meaning** from `knowledge-base/` (especially `06-modules.md`,
-   `01-project-structure.md`, `16-architecture-patterns.md`): label each node with the
-   business domain it represents, mark CORE business modules vs infrastructure/util.
-4. **Analyze**: identify the most-depended-on modules (high in-degree = high blast radius),
-   coupling hot-spots, layering violations (e.g. controller → DB directly), and **dependency
-   cycles** (call these out explicitly — they're refactor targets).
+## How to run it
+1. **Pick the root.** Default = the current project (cwd). If the user named a sub-path/module,
+   use that folder as the root (the analyzer scans the folder you point it at). Optional `mode`:
+   `all` (default — files+classes+routes+KB), `files` (lighter, import graph only), `classes`,
+   `routes`, `domain` (KB only).
+2. **Run the bundled generator with Node** (Node ≥18; v20+ ideal). Resolve this skill's
+   `references/` path — for the personal install it is `~/.claude/skills/namht-map/references/`:
+   ```bash
+   node "$HOME/.claude/skills/namht-map/references/build-map.cjs" "<PROJECT_ROOT>" "" all
+   ```
+   - Arg 1 = project root (absolute path preferred). Arg 2 = `""` lets it default the output to
+     `<root>/spec-kit-sessions/maps/<name>-<date>.html` (gitignored). Arg 3 = mode.
+   - The script prints the **output HTML path on stdout** (stats on stderr). Capture it.
+   - If `node` isn't found, tell the user Node.js is required for the interactive graph.
+3. **Open the file** for the user:
+   - macOS: `open "<path>"` · Linux: `xdg-open "<path>"` · Windows: `start "" "<path>"`.
+4. **Give a short written summary** alongside the file: from the stderr stats (or by reading the
+   generated graph) report node/edge counts, the **top hubs** (highest-degree nodes = biggest
+   blast radius), the architecture layers present, and any obvious coupling concern. Tell the
+   user that clicking a node in the viewer shows its "Used by / Depends on".
 
-## Output
-- A **`flowchart`** Mermaid diagram (valid ```mermaid block) with short plain labels; group
-  by layer/domain with subgraphs; visually distinguish core vs supporting nodes; mark cycles.
-- A short written summary: node/edge counts, top hubs by in-degree, cycles found, and the
-  layer/dependency rules from the KB that are honored vs violated.
-- Optionally save to `spec-kit-sessions/maps/<scope>-<date>.md`.
+## What the viewer gives the user
+- Zoom/pan; **click a node** → highlights neighbors + a details panel (file, type, layer,
+  degree, used-by, depends-on, methods, fields); **double-click** → focus/zoom.
+- **Search** box, **layer filter** (click legend rows to toggle), **Highlight hubs** button,
+  **Fit** and **Re-layout**. Edges are directional; `extends` (red), `implements` (dashed),
+  `injects` (green) are visually distinct.
 
-If `knowledge-base/` is absent, still produce the structural graph but note that business
-enrichment is limited (suggest `/namht-scan`). Keep the diagram legible — if there are too
-many nodes, map at module granularity and offer to drill into a chosen module.
+## Notes
+- Knowledge Base enrichment is automatic: in `all`/`domain` mode the analyzer also pulls
+  `knowledge-base/*.md` as domain nodes, so the KB shows beside the code when present.
+- Large repos: if a graph exceeds ~1800 nodes the generator auto-switches to `files` mode for
+  readability; you can also pass `files` explicitly, or point it at a sub-module to drill in.
+- The HTML loads Cytoscape from a CDN (needs internet to render). Your graph data is embedded
+  inline — no code leaves the machine.
+- Output lives under `spec-kit-sessions/maps/` which is gitignored, so nothing lands in a commit.
+- If the user instead wants a graph the AGENT can query (à la CodeGraph) rather than a human
+  visual, that's a different tool — say so rather than forcing this viewer to do it.
