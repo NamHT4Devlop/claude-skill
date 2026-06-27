@@ -28,23 +28,35 @@ never invent files, APIs, fields, or behavior.
    interpretation + assumptions, answer the most likely intent, then ask 2–3 clarifying
    questions.
 
-## Answer structure (always, in this order)
+## Answer structure (always, in this order) — dual audience
+Write so a **non-technical reader (founder / PM / ops) AND an engineer both get full value from
+the same answer.** Layer it plain → precise: never assume tech background in the top sections,
+never lose precision at the bottom, and define every unavoidable term.
 ```
-## In plain language
-For a non-technical reader (BA / product / business): what it is, why it matters, how it
-behaves — everyday business terms, no jargon, analogy if helpful.
+## TL;DR (one line — for everyone)
+One jargon-free sentence that answers the question. Add a short analogy if it helps.
+
+## In plain language (business / non-tech)
+What it is, why it matters, how it behaves — everyday business terms. NO unexplained jargon:
+the first time a technical word is unavoidable, define it inline in parentheses. A non-technical
+reader must fully understand this section on its own.
 
 ## Diagram
 A Mermaid diagram that fits the question — flowchart for a flow, erDiagram for data/fields,
 sequenceDiagram for an interaction. Use a valid ```mermaid block, short plain labels. If a
 diagram truly doesn't apply, write "(no diagram needed)".
 
-## Technical detail
-The precise answer, citing concrete names from the KB: files, modules, endpoints, entities,
-fields, functions.
+## Technical detail (engineers)
+The precise answer, citing concrete names from the KB / CodeGraph: files, modules, endpoints,
+entities, fields, functions. Full accuracy here — don't dumb it down.
+
+## In plain words (glossary)
+Any technical term used above → a one-line everyday definition. Omit the section if there were none.
 ```
 
 ## Rules
+- **Same facts, two depths.** The plain sections and the technical section must not contradict —
+  one is a simpler view of the other, not a different answer.
 - Ground every claim in the KB. If it doesn't contain the answer, say so explicitly.
 - When mapping business ↔ code, name the exact field / file / function.
 - If `knowledge-base/` is missing entirely, tell the user to run `/namht-scan` first;

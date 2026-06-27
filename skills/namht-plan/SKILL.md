@@ -5,8 +5,9 @@ description: >-
   into Features → per-feature Impact Analysis (old flow ↔ new flow) → a
   stakeholder Confirmation Checklist → User Stories with Given/When/Then
   acceptance criteria and story points → a Sprint Plan, grounded in the
-  Knowledge Base. Use when the user asks to "/plan", "plan user stories", "break
-  down this epic", or wants PO/BA artifacts.
+  Knowledge Base, with a plain-language executive summary so non-technical stakeholders
+  and the dev team both follow it. Use when the user asks to "/plan", "plan user stories",
+  "break down this epic", or wants PO/BA artifacts.
 ---
 
 # Spec Plan — Epic → user stories (PO/BA)
@@ -14,6 +15,11 @@ description: >-
 A native port of Auto Spec Kit's `/plan`. You are a senior BA + Product Owner. Understand
 INTENT before solution. Ground everything in the repo's `knowledge-base/`; discover HIDDEN
 requirements (implicit rules, side effects) from it.
+
+**Dual audience:** the plan is read by BOTH non-technical stakeholders (founder / sponsor / ops)
+and the dev team. Every feature and the epic get a **plain-language "what & why"** a non-tech
+reader fully understands (no jargon, or define it), AND the technical depth devs need (technical
+notes, API endpoints, dependencies). Lead each section plain → precise.
 
 ## Input
 Ask for (or accept) the **Epic Title** and **Epic Description** (problem, goals, constraints).
@@ -25,7 +31,8 @@ That's all you need — derive the features yourself.
    time-based, invariants), affected flows, integrations, and affected modules. Cite KB sources.
 2. **Auto Feature Discovery** — split the Epic into **3–8 features**, ordered by dependency;
    include cross-cutting features (auth, audit, migration) when needed. For each: id, title,
-   description, scope (in/out), affected entities, affected flows, complexity (Low/Med/High).
+   a one-line **plain "what & why" (non-tech, no jargon)**, description, scope (in/out),
+   affected entities, affected flows, complexity (Low/Med/High).
 3. **Impact Analysis per feature** — for each feature: EXISTING flow (before) → NEW flow
    (after, step by step) → DELTA / breaking changes (data model, API, state machines,
    permissions, integrations) → migration / backward compatibility → dependencies.
@@ -45,7 +52,10 @@ That's all you need — derive the features yourself.
    - `user-stories-<epic>-<date>.md` (and/or JSON) — the full backlog with a sprint board.
    - `impact-analysis-<epic>-<date>.md`
    - `confirmation-<epic>-<date>.md`
-   Summarize: total stories, total points, estimated sprints, and the count of 🔴 must-confirm items.
+   The backlog doc MUST open with an **Executive summary (for non-tech stakeholders)**: 3–6
+   bullet points in plain language — what we're building, the business value, rough size
+   (sprints), and the top risks / things to confirm — before any technical story detail.
+   Then summarize: total stories, total points, estimated sprints, and the count of 🔴 must-confirm items.
 
 Acceptance criteria must be specific and measurable (not vague). Every story should be
 independent, valuable, testable, and fit one sprint.
