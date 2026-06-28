@@ -17,6 +17,7 @@ Commands (all namespaced under `/namht-`):
 | `/namht-review [file]` | Two-phase review: quality checklist + business consistency vs the KB. |
 | `/namht-ask <question>` | Q&A grounded in the KB — plain language + Mermaid diagram + technical detail. |
 | `/namht-plan <epic>` | PO/BA: Epic → features → impact → user stories (Given/When/Then) → sprint plan. |
+| `/namht-qa <user story>` | QA: user story → test cases covering the NEW flow + regression for OLD flows (Gherkin + manual table + traceability). |
 | `/namht-map [scope]` | Interactive HTML code graph (Cytoscape) for humans — zoom/click/filter, opens in browser. |
 | `/namht-system-map` | Multi-service workspace: cross-service dependency graph + end-to-end business flows (run at workspace root). |
 | `/namht-document <topic>` | Business↔code field-level technical document for a feature/entity/module. |
