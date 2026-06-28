@@ -13,6 +13,7 @@ Commands (all namespaced under `/namht-`):
 | `/namht-scan` | Generate the Knowledge Base from the codebase (16 docs + review-skills + per-module). Run this first on a new repo. |
 | `/namht-rescan` | Update the KB incrementally after code changes (git-diff aware). |
 | `/namht-build <requirement>` | Full 13-step pipeline: clarify → plan → code → review → test → evidence → update KB. |
+| `/namht-fix-bug <error/stack trace>` | Production bug → root cause → failing regression test → minimal surgical fix → verify → hotfix report. |
 | `/namht-review [file]` | Two-phase review: quality checklist + business consistency vs the KB. |
 | `/namht-ask <question>` | Q&A grounded in the KB — plain language + Mermaid diagram + technical detail. |
 | `/namht-plan <epic>` | PO/BA: Epic → features → impact → user stories (Given/When/Then) → sprint plan. |
