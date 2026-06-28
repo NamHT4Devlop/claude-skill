@@ -14,7 +14,7 @@ Commands (all namespaced under `/namht-`):
 | `/namht-rescan` | Update the KB incrementally after code changes (git-diff aware). |
 | `/namht-build <requirement>` | Full 13-step pipeline: clarify → plan → code → review → test → evidence → update KB. |
 | `/namht-fix-bug <error/stack trace>` | Production bug → root cause → failing regression test → minimal surgical fix → verify → hotfix report. |
-| `/namht-review [file]` | Two-phase review: quality checklist + business consistency vs the KB. |
+| `/namht-review [file\|PR#\|empty]` | Two-phase review: quality checklist + business consistency vs the KB. Empty = branch vs default (or working-tree diff); accepts a PR #/URL. |
 | `/namht-pr [review <PR#>]` | Prepare a PR description from the branch, or review a GitHub PR (two-phase + blast radius). |
 | `/namht-security-audit` | Whole-repo security audit (injection, authz/IDOR, secrets, exposure, AI) grounded in CodeGraph + KB. |
 | `/namht-ask <question>` | Q&A grounded in the KB — plain language + Mermaid diagram + technical detail. |

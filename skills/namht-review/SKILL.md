@@ -19,8 +19,21 @@ must show the exact bad code and the complete fixed code — never "add X here".
   its blast radius with the `codegraph_explore` MCP tool (verbatim source + callers/callees +
   "no covering tests" flags) instead of a Grep/Read loop — that's exactly what surfaces impacted
   consumers and test gaps for Phase 2. Pass `projectPath` if needed; fall back to Read/Grep otherwise.
-- **Target**: the file(s) the user named, the active file, or the current diff
-  (`git diff`). If none specified, ask or default to the working-tree diff.
+- **Target** — resolve in this order (detect the default branch with
+  `git symbolic-ref --short refs/remotes/origin/HEAD` → strip `origin/`; fall back to `main`, then `master`):
+  1. **A PR** — the arg is `#123`, a bare number `123`, a GitHub PR URL, or "pr 123"/"review PR 123":
+     fetch it read-only with `gh pr view <n> --json title,body,files` + `gh pr diff <n>` (or the URL)
+     and review the change against the PR's **base branch**. If `gh` isn't available/authed, ask the
+     user to paste the diff. (This is the same engine as `/namht-pr review <n>`; for posting the
+     review back as PR comments, use `/namht-pr`.)
+  2. **File(s)/path(s)** the user named (or the active file): review exactly those.
+  3. **Nothing given** — pick the most useful diff automatically:
+     - working tree has **uncommitted** changes (`git status --porcelain` non-empty) → review the
+       working-tree diff (`git diff` + staged `git diff --cached`);
+     - else on a **feature branch** (current ≠ default) → review the branch vs default:
+       `git diff <default>...HEAD` (everything the branch introduced since it diverged) + `git log <default>..HEAD`;
+     - else (clean tree, on the default branch) → ask what to review, or default to the last commit (`git show HEAD`).
+  All of the above are **read-only** git/`gh` (allowed by the git-guard).
 - **Checklist**: load `knowledge-base/review-skills.md` from the repo if present (it has
   the universal checklist + project-specific **Section 14** — highest priority). If absent,
   use the bundled `references/review-skills-universal.md`. Mention which source you used and

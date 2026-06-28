@@ -235,7 +235,7 @@ If you keep many repos under one parent folder (a "workspace"), follow this sepa
 | `/namht-rescan` | Update the KB incrementally after code changes (git-diff aware). |
 | `/namht-build <requirement>` | 13-step pipeline: clarify → plan (impact + business flow) → code → multi-lens review → tests → run tests → evidence → update KB. |
 | `/namht-fix-bug <error/stack trace>` | Production hotfix: triage → locate (CodeGraph) → root-cause → failing regression test → minimal surgical fix → verify (tests+build, rollback) → hotfix report + KB update. Does not deploy. |
-| `/namht-review [file]` | Two-phase review: quality checklist + business consistency vs the KB. Empty arg = current diff. |
+| `/namht-review [file\|PR#]` | Two-phase review: quality checklist + business consistency vs the KB. Empty arg = current branch vs the default branch (or working-tree diff if uncommitted); accepts a PR #/URL (`gh pr diff`). |
 | `/namht-ask <question>` | Q&A grounded in the KB — plain language + Mermaid diagram + technical detail. |
 | `/namht-plan <epic>` | PO/BA: Epic → features → impact → user stories (Given/When/Then) → sprint plan. |
 | `/namht-qa <user story>` | QA: user story → test cases covering the **NEW flow + regression for OLD business flows** (Gherkin + manual table + AC↔case traceability). Designs tests; doesn't code them. |
