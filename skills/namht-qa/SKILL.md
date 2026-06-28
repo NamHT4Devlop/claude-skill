@@ -30,18 +30,30 @@ CodeGraph (real endpoints/handlers). This is **test design** — it does NOT wri
 ## Procedure
 1. **Understand the story.** Restate role/action/benefit + each AC. List the entities, endpoints,
    states, roles and rules involved.
-2. **Map the impact (old vs new).** From KB + CodeGraph identify:
-   - the **NEW flow** the story introduces/changes (step by step), and
-   - the **EXISTING flows & business rules** that touch the same entities/endpoints/state — these
-     are your regression targets ("must-not-break").
+2. **Map the blast radius — THIS drives regression coverage.** Identify the symbols/endpoints the
+   story will change, then use BOTH tools (they answer different halves):
+   - **CodeGraph = WHERE the impact is (authoritative).** `codegraph_explore` on those symbols and
+     read its **"Blast radius"** section, or run `codegraph impact <symbol>` / `codegraph callers
+     <symbol>` / `codegraph affected <changed-files>`. Every caller/consumer it lists is a
+     **regression target** — including the **non-obvious** ones QA would never guess from the story
+     alone (a shared helper/service used by other features). It also flags symbols with **no
+     covering tests** = highest-risk regression cases.
+   - **KB = WHAT business flow each impacted point belongs to.** Map those impacted
+     symbols/endpoints to documented flows & rules (`10-core-flows`, `13-business-rules`,
+     `modules/`) → the user-facing behavior each regression target protects.
+   - **Result:** the **NEW flow** (from the story) + a concrete **regression set** =
+     CodeGraph blast radius × KB flows/rules. No `.codegraph/` → fall back to KB + grep and say the
+     impact analysis is weaker (likely misses non-obvious consumers).
 3. **Design NEW-flow cases** — for the new behavior, cover every angle:
    happy path · alternate/secondary paths · error & exception · **boundary/edge** (min/max,
    empty, null, very large) · **negative/invalid input** · **permission/role** (allowed vs
    forbidden) · **state-machine transitions** (valid + invalid) · data variations ·
    concurrency/duplicate/idempotency where relevant.
-4. **Design REGRESSION cases (old flow)** — for each existing flow/rule from step 2, write cases
-   asserting the OLD behavior still holds after the change. Label them `[REGRESSION]` and cite the
-   KB rule/flow they protect (e.g. BR-V2, core-flow #3).
+4. **Design REGRESSION cases (old flow)** — one per regression target in step 2's blast radius
+   (each impacted caller/consumer/flow, **including the non-obvious ones CodeGraph surfaced**).
+   Write cases asserting the OLD behavior still holds after the change. Label `[REGRESSION]`, cite
+   the KB rule/flow they protect (e.g. BR-V2, core-flow #3), and bump priority for targets CodeGraph
+   flagged as having **no covering tests**.
 5. **Non-functional (only if relevant)** — security (authz/IDOR, injection), input validation,
    rate/limits/performance, audit/logging.
 6. **Traceability** — every AC maps to ≥1 case; every touched old flow has ≥1 regression case.
