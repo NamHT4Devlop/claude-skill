@@ -62,5 +62,16 @@ Any technical term used above → a one-line everyday definition. Omit the secti
 - If `knowledge-base/` is missing entirely, tell the user to run `/namht-scan` first;
   you can still answer from direct code reading but flag the lower confidence.
 
-Keep answers conversational in chat. Optionally offer to save a richer write-up via
-`/namht-document` for a specific feature/entity.
+## Output — answer in chat, THEN save an HTML file
+1. **Answer in chat first** using the full dual-audience structure above (this is the primary output).
+2. **Save the same content** to `spec-kit-sessions/answers/<slug>-<date>.md` (slug from the question).
+3. **Render a self-contained HTML** (styled, with the Mermaid diagram drawn) using the bundled renderer:
+   ```bash
+   node "$HOME/.claude/skills/namht-ask/references/render-html.cjs" \
+     "<repo>/spec-kit-sessions/answers/<slug>-<date>.md" \
+     "<repo>/spec-kit-sessions/answers/<slug>-<date>.html" "<question>"
+   ```
+   (It prints the HTML path. Requires Node — if absent, keep the chat + `.md` and say HTML was skipped.)
+4. **Open it**: macOS `open "<path>"` · Linux `xdg-open` · Windows `start "" "<path>"`. Give the user the path.
+
+Output lands under `spec-kit-sessions/` (gitignored) — no footprint in the repo.

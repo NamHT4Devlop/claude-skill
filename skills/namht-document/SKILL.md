@@ -68,8 +68,17 @@ Every technical term used above → a one-line everyday definition (entity, DTO,
 migration, etc.). This is what lets a non-technical reader follow the technical tables.
 ```
 
-## Save
-Write to `spec-kit-sessions/documents/<topic-slug>-<date>.md`. (The original also emitted a
-styled HTML with rendered Mermaid; offer to generate an HTML version if the user wants one.)
+## Output — show in chat, save Markdown, THEN render HTML
+1. **Present the document in chat** (the full dual-audience structure above).
+2. **Save Markdown** to `spec-kit-sessions/documents/<topic-slug>-<date>.md`.
+3. **Render a self-contained HTML** (styled, Mermaid drawn) with the bundled renderer, then open it:
+   ```bash
+   node "$HOME/.claude/skills/namht-document/references/render-html.cjs" \
+     "<repo>/spec-kit-sessions/documents/<slug>-<date>.md" \
+     "<repo>/spec-kit-sessions/documents/<slug>-<date>.html" "<topic>"
+   # then: open / xdg-open / start  the printed path
+   ```
+   Requires Node — if absent, keep chat + `.md` and note HTML was skipped. Give the user the path.
+
 If `knowledge-base/` is missing, document from source directly but recommend `/namht-scan`
-for richer, business-grounded output.
+for richer, business-grounded output. Outputs live under `spec-kit-sessions/` (gitignored).

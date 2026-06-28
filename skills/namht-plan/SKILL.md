@@ -56,6 +56,15 @@ That's all you need — derive the features yourself.
    bullet points in plain language — what we're building, the business value, rough size
    (sprints), and the top risks / things to confirm — before any technical story detail.
    Then summarize: total stories, total points, estimated sprints, and the count of 🔴 must-confirm items.
+8. **Show in chat + render HTML.** Present the executive summary + backlog highlights in chat,
+   then render the backlog Markdown to a self-contained HTML (styled, Mermaid drawn) and open it:
+   ```bash
+   node "$HOME/.claude/skills/namht-plan/references/render-html.cjs" \
+     "<repo>/spec-kit-sessions/user-stories-<epic>-<date>.md" \
+     "<repo>/spec-kit-sessions/user-stories-<epic>-<date>.html" "<epic title>"
+   # then: open / xdg-open / start  the printed path
+   ```
+   Requires Node — if absent, keep chat + `.md` and note HTML was skipped. Give the user the path.
 
 Acceptance criteria must be specific and measurable (not vague). Every story should be
 independent, valuable, testable, and fit one sprint.
