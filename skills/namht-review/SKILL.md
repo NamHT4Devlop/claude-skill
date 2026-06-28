@@ -21,11 +21,20 @@ must show the exact bad code and the complete fixed code — never "add X here".
   consumers and test gaps for Phase 2. Pass `projectPath` if needed; fall back to Read/Grep otherwise.
 - **Target** — resolve in this order (detect the default branch with
   `git symbolic-ref --short refs/remotes/origin/HEAD` → strip `origin/`; fall back to `main`, then `master`):
-  1. **A PR** — the arg is `#123`, a bare number `123`, a GitHub PR URL, or "pr 123"/"review PR 123":
-     fetch it read-only with `gh pr view <n> --json title,body,files` + `gh pr diff <n>` (or the URL)
-     and review the change against the PR's **base branch**. If `gh` isn't available/authed, ask the
-     user to paste the diff. (This is the same engine as `/namht-pr review <n>`; for posting the
-     review back as PR comments, use `/namht-pr`.)
+  1. **A PR** — the arg is `#123`, a bare number `123`, a GitHub PR URL, or "pr 123"/"review PR 123".
+     **Preflight `gh` first (don't skip):**
+     - `command -v gh` — if missing, tell the user to install GitHub CLI (or paste the diff instead).
+     - **Determine the host**: from the PR URL's domain if a URL was given; else from the repo remote
+       (`git remote get-url origin`, parse the host); else `$GH_HOST`. A host that is **not
+       `github.com` ⇒ GitHub Enterprise Server** — common on a **company machine**.
+     - **Check login for that host:** `gh auth status --hostname <host>`. If not logged in, STOP and
+       ask the user to authenticate before retrying: `gh auth login --hostname <host>`
+       (for Enterprise use the company host, e.g. `github.mycompany.com`; org SSO often needs
+       `--web`). Offer the "paste the diff" fallback meanwhile. (Don't run `gh auth login` yourself —
+       it's interactive and account-level; let the user do it.)
+     Once auth is OK, fetch read-only with `gh pr view <n> --json title,body,files` + `gh pr diff <n>`
+     (or the URL) and review the change against the PR's **base branch**. (Same engine as
+     `/namht-pr review <n>`; to post the review back as PR comments, use `/namht-pr`.)
   2. **File(s)/path(s)** the user named (or the active file): review exactly those.
   3. **Nothing given** — pick the most useful diff automatically:
      - working tree has **uncommitted** changes (`git status --porcelain` non-empty) → review the

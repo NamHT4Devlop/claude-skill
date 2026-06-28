@@ -36,16 +36,20 @@ consistency.
    **only if the user asks** (that's an outward action — confirm first; never auto-create).
 
 ## Mode B — REVIEW a PR (when given a PR number/URL)
-1. **Fetch the diff** read-only: `gh pr view <n> --json title,body,files` + `gh pr diff <n>`
-   (or `gh pr diff <url>`). If `gh` isn't available/authed, ask the user to paste the diff.
-2. **Two-phase review** (reuse the `/namht-review` methodology + the review agents):
+1. **Preflight `gh` auth** (same as `/namht-review`): `command -v gh`, then resolve the **host** (PR
+   URL's domain, else the repo remote's host, else `$GH_HOST`) and run `gh auth status --hostname
+   <host>`. A host **other than `github.com` ⇒ GitHub Enterprise Server** (company machine); if not
+   logged in, ask the user to run `gh auth login --hostname <host>` (don't run it yourself).
+2. **Fetch the diff** read-only: `gh pr view <n> --json title,body,files` + `gh pr diff <n>`
+   (or `gh pr diff <url>`). If `gh` is unavailable, ask the user to paste the diff.
+3. **Two-phase review** (reuse the `/namht-review` methodology + the review agents):
    - Phase 1 — quality vs `knowledge-base/review-skills.md` (fallback bundled
      `references/review-skills-universal.md`): security, architecture/pattern conformance,
      performance, error handling, tests, etc.
    - Phase 2 — business consistency vs the KB (rules intact, no logic removed, valid state
      transitions, API contract preserved, all ACs met). Use CodeGraph blast radius to find
      impacted consumers the PR didn't touch (regression risk).
-3. **Output** the review in the `/namht-review` format (Section coverage · Business consistency ·
+4. **Output** the review in the `/namht-review` format (Section coverage · Business consistency ·
    Issues with bad/fixed code · Strengths · Verdict APPROVED/NEEDS_REVISION · Score). Save to
    `spec-kit-sessions/pr/review-<n>-<date>.md`. Post as inline PR comments **only if the user
    asks** (`gh pr comment` / review API) — confirm first.
