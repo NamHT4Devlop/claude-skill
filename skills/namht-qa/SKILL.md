@@ -7,7 +7,7 @@ description: >-
   flows the change touches — grounded in the Knowledge Base + CodeGraph — with a
   traceability matrix (AC ↔ case ↔ flow), Gherkin + a manual test-case table.
   Use when QA receives a story and needs test cases, or the user says "/qa",
-  "viết test case", "test plan", "QA cho story này", "cover old and new flow".
+  "write test cases", "test plan", "QA for this story", "cover old and new flow".
 ---
 
 # namht-qa — user story → test cases covering OLD + NEW business flows
@@ -66,8 +66,8 @@ Structure:
 ```
 # QA Test Plan — <story title>
 
-## In plain words (cho non-tech: cover gì, vì sao đủ)
-2–4 câu: tính năng test gì, đã bảo vệ flow cũ nào, tổng số case + mức rủi ro.
+## In plain words (for non-tech: what's covered, why it's enough)
+2–4 sentences: what the feature tests, which old flows are protected, total case count + risk level.
 
 ## Story & scope
 role/action/benefit · acceptance criteria · modules/endpoints touched · old flows at risk.

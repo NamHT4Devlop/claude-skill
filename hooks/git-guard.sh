@@ -21,8 +21,8 @@ cmd=$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)
 printf '%s' "$cmd" | grep -qE '(^|[^[:alnum:]_])git([[:space:]]|$)' || exit 0
 
 deny() {
-  local msg="🚫 namht git-guard chặn lệnh này: $1
-Cho phép: git ĐỌC/ĐỒNG BỘ (fetch·pull·status·log·diff·show·blame·add·commit·stash·merge·checkout <branch>) và PUSH tới repo cá nhân được whitelist. Cấm: push repo khác + thao tác phá huỷ. Cần làm khác → tự chạy trong terminal."
+  local msg="🚫 namht git-guard blocked this command: $1
+Allowed: read/sync git (fetch·pull·status·log·diff·show·blame·add·commit·stash·merge·checkout <branch>) and PUSH to a whitelisted personal repo. Forbidden: pushing to other repos + destructive operations. Need something else → run it yourself in a terminal."
   printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":%s}}\n' \
     "$(printf '%s' "$msg" | jq -Rs .)"
   exit 0
@@ -53,25 +53,25 @@ if g 'push([[:space:]]|$)'; then
   if printf '%s' "$url" | grep -qE "$ALLOW_OWNER_RE"; then
     exit 0   # whitelisted personal remote → allow
   fi
-  deny "git push tới remote KHÔNG thuộc whitelist cá nhân (${url:-không xác định được remote}) — chỉ cho push NamHT4Devlop/*"
+  deny "git push to a remote NOT in the personal whitelist (${url:-could not resolve remote}) — only NamHT4Devlop/* may be pushed"
 fi
 
 # ── other REMOTE-affecting → forbidden ────────────────────────────────────────
-g 'remote[[:space:]]+(add|remove|rm|rename|set-url|set-head|set-branches|prune)\b' && deny "git remote thay đổi cấu hình remote"
+g 'remote[[:space:]]+(add|remove|rm|rename|set-url|set-head|set-branches|prune)\b' && deny "git remote changes the remote config"
 g 'send-email\b'                                && deny "git send-email"
 g 'svn[[:space:]]+dcommit\b'                    && deny "git svn dcommit"
 g 'p4[[:space:]]+submit\b'                      && deny "git p4 submit"
-g 'config[[:space:]]+[^"'"'"']*remote\.'        && deny "sửa git config remote.*"
+g 'config[[:space:]]+[^"'"'"']*remote\.'        && deny "modifies git config remote.*"
 
 # ── destructive LOCAL → forbidden ─────────────────────────────────────────────
-g 'reset[[:space:]]+[^"'"'"']*--hard\b'         && deny "git reset --hard (mất thay đổi)"
-g 'clean[[:space:]]+-[A-Za-z]*f'                && deny "git clean -f (xoá file chưa track)"
-g 'checkout[[:space:]]+(\.|--|-f|--force)([[:space:]]|$)'                     && deny "git checkout làm mất thay đổi"
-g 'checkout[[:space:]]+[^"'"'"']*[[:space:]](\.|--|-f|--force)([[:space:]]|$)' && deny "git checkout làm mất thay đổi"
-g 'restore([[:space:]]|$)'                       && deny "git restore (mất thay đổi)"
-printf '%s' "$cmd" | grep -qE "(^|[^[:alnum:]_])git\b[^\"'|;&]*[[:space:]]branch[[:space:]]+[^\"'|;&]*(-D|--delete[[:space:]]+--force)\b" && deny "git branch -D (xoá nhánh, mất commit)"
-g 'commit[[:space:]]+[^"'"'"']*--amend\b'        && deny "git commit --amend (viết lại lịch sử)"
-g 'rebase([[:space:]]|$)'                        && deny "git rebase (viết lại lịch sử)"
+g 'reset[[:space:]]+[^"'"'"']*--hard\b'         && deny "git reset --hard (loses changes)"
+g 'clean[[:space:]]+-[A-Za-z]*f'                && deny "git clean -f (deletes untracked files)"
+g 'checkout[[:space:]]+(\.|--|-f|--force)([[:space:]]|$)'                     && deny "git checkout that discards changes"
+g 'checkout[[:space:]]+[^"'"'"']*[[:space:]](\.|--|-f|--force)([[:space:]]|$)' && deny "git checkout that discards changes"
+g 'restore([[:space:]]|$)'                       && deny "git restore (loses changes)"
+printf '%s' "$cmd" | grep -qE "(^|[^[:alnum:]_])git\b[^\"'|;&]*[[:space:]]branch[[:space:]]+[^\"'|;&]*(-D|--delete[[:space:]]+--force)\b" && deny "git branch -D (deletes a branch, loses commits)"
+g 'commit[[:space:]]+[^"'"'"']*--amend\b'        && deny "git commit --amend (rewrites history)"
+g 'rebase([[:space:]]|$)'                        && deny "git rebase (rewrites history)"
 g 'filter-(branch|repo)\b'                       && deny "git filter-branch/filter-repo"
 g 'reflog[[:space:]]+expire\b'                   && deny "git reflog expire"
 g 'gc[[:space:]]+[^"'"'"']*--prune'              && deny "git gc --prune"

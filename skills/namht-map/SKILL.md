@@ -54,5 +54,5 @@ Go, Ruby, C#, PHP and Rust, then injects the graph into `references/viewer-templ
   air-gapped safe). Without `vendor/`, it falls back to a Cytoscape CDN link (needs internet).
   Either way your graph data is embedded inline — no code leaves the machine.
 - Output lives under `spec-kit-sessions/maps/` which is gitignored, so nothing lands in a commit.
-- If the user instead wants a graph the AGENT can query (à la CodeGraph) rather than a human
+- If the user instead wants a graph the AGENT can query (like CodeGraph) rather than a human
   visual, that's a different tool — say so rather than forcing this viewer to do it.
