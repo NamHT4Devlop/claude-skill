@@ -1,16 +1,16 @@
 {
-  "name": "spec-kit-marketplace",
+  "name": "namht-marketplace",
   "owner": {
     "name": "NamHT Labs"
   },
   "metadata": {
-    "description": "Local marketplace hosting the Spec Kit plugin."
+    "description": "Local marketplace hosting the namht (Spec Kit) plugin."
   },
   "plugins": [
     {
-      "name": "spec-kit",
+      "name": "namht",
       "source": "./",
-      "description": "Spec-driven dev workflow for Claude Code (Auto Spec Kit port): /build pipeline, KB scan/rescan, review, ask, plan, map, document."
+      "description": "Spec-driven dev workflow for Claude Code: /build, /fix-bug, /scan, /rescan, /review, /ask, /plan, /map, /system-map, /document, /codegraph. Ships a read/sync-in-only git guard hook."
     }
   ]
 }

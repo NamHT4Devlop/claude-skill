@@ -19,8 +19,8 @@ claude-skill/
 ├── .claude-plugin/
 │   ├── plugin.json          # plugin manifest
 │   └── marketplace.json     # local marketplace (for one-command install)
-├── commands/                # 9 slash commands → /namht-build, :scan, :review, …
-├── skills/                  # 8 skills (the methodology — also usable standalone)
+├── commands/                # 12 slash commands → /namht:build (plugin) or /namht-build (personal), …
+├── skills/                  # 11 skills (the methodology — also usable standalone)
 │   ├── namht-build/          #   13-step pipeline   (+ bundled review checklist)
 │   ├── namht-scan/           #   KB generation       (+ bundled kb-steps spec)
 │   ├── namht-rescan/         #   incremental KB update
@@ -72,28 +72,29 @@ If you keep the files somewhere else, substitute that absolute path.
 
 ## Install — Option A: as a plugin (recommended)
 
-Best when you want every command available across **all** your repos on a machine, with the
-nice `/namht-*` namespacing. Run these **inside a Claude Code session** (the `/plugin`
+Best when you want every command available across **all** your repos on a machine, with clean
+`/namht:*` namespacing. Run these **inside a Claude Code session** (the `/plugin`
 commands are typed into Claude Code, not your shell):
 
 ```
 /plugin marketplace add ~/claude-skill
-/plugin install spec-kit@spec-kit-marketplace
+/plugin install namht@namht-marketplace
 ```
 
 - `marketplace add <PLUGIN_DIR>` registers the local marketplace defined in
   `.claude-plugin/marketplace.json`. You can also point it straight at the GitHub repo:
   `/plugin marketplace add NamHT4Devlop/claude-skill` (Claude Code clones it for you; requires
   repo access).
-- `install spec-kit@spec-kit-marketplace` installs the plugin named `spec-kit` from that
+- `install namht@namht-marketplace` installs the plugin named `namht` from that
   marketplace.
 - Reload when prompted (or run `/plugin` to manage installed plugins).
 
-After install you'll have these commands (type `/` to see them):
-`/namht-scan`, `/namht-rescan`, `/namht-build`, `/namht-review`, `/namht-ask`,
-`/namht-plan`, `/namht-map`, `/namht-document`, `/namht-help`. The 8 skills and 7
-sub-agents load automatically — skills also activate from plain English (you don't have to
-type the slash command).
+After install, commands are namespaced by the plugin (type `/` to see them):
+`/namht:scan`, `/namht:rescan`, `/namht:build`, `/namht:fix-bug`, `/namht:review`, `/namht:ask`,
+`/namht:plan`, `/namht:map`, `/namht:system-map`, `/namht:document`, `/namht:codegraph`, `/namht:help`.
+The 11 skills and 7 sub-agents load automatically (skills also activate from plain English), and the
+**git-guard hook ships with the plugin** (`hooks/hooks.json`) so it's active right after install.
+(The personal symlink install — Option C — exposes the same commands as `/namht-build`, etc.)
 
 > **Team install:** commit/host this repo, then each teammate runs the two `/plugin` commands
 > above pointing at their clone (or at `NamHT4Devlop/claude-skill`). To pin the plugin for a
@@ -141,7 +142,7 @@ committed to — any team/project repo. It installs into your home dir via symli
 all generated artifacts to a machine-wide gitignore.
 
 ```bash
-# 1) symlink skills/agents/commands into ~/.claude (commands get a spec- prefix)
+# 1) symlink skills/agents/commands into ~/.claude (commands get a namht- prefix)
 <PLUGIN_DIR>/scripts/personal-install.sh
 
 # 2) make every Spec Kit artifact invisible to git, machine-wide (no per-repo edits)
@@ -165,11 +166,11 @@ git config --global core.excludesfile ~/.gitignore_global
 
 ## Verify the install
 
-1. In a Claude Code session, type `/` and confirm the `spec-kit:` commands (Option A) or
+1. In a Claude Code session, type `/` and confirm the `namht:` commands (Option A) or
    `/build`, `/scan`… (Option B) appear.
 2. Run `/namht-help` (or `/help` for plain skills) — it prints all commands **and** checks
    whether the current repo has a `knowledge-base/`.
-3. Plugin only: run `/plugin` → you should see **spec-kit** listed as installed/enabled.
+3. Plugin only: run `/plugin` → you should see **namht** listed as installed/enabled.
 
 ## Update to the latest version
 
@@ -177,15 +178,15 @@ git config --global core.excludesfile ~/.gitignore_global
   ```bash
   cd <PLUGIN_DIR> && git pull
   ```
-  then in Claude Code: `/plugin marketplace update spec-kit-marketplace` (or remove & re-add
+  then in Claude Code: `/plugin marketplace update namht-marketplace` (or remove & re-add
   the marketplace, then reinstall). Reload when prompted.
 - **Option B (plain skills):** `git pull` in `<PLUGIN_DIR>`, then re-run the `cp -R` commands
   to overwrite the copies.
 
 ## Uninstall
 
-- **Option A:** `/plugin uninstall spec-kit` (and optionally
-  `/plugin marketplace remove spec-kit-marketplace`).
+- **Option A:** `/plugin uninstall namht` (and optionally
+  `/plugin marketplace remove namht-marketplace`).
 - **Option B:** delete the copied folders, e.g.
   run `<PLUGIN_DIR>/scripts/personal-install.sh uninstall` (removes only the symlinks that point back to this repo).
 

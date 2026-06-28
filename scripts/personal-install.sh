@@ -3,8 +3,10 @@
 #
 # Symlinks this repo's skills/agents/commands into ~/.claude so they're available in every
 # project but live only in your home dir — never inside (or committed to) a project repo.
-# Everything is already named `namht-*`, so commands are /namht-build, /namht-ask, … (they
-# don't shadow built-ins like /help). Symlinks mean `git pull` here instantly updates you.
+# Skills/agents are named `namht-*`. Command files are unprefixed in the repo (so the plugin
+# form is clean: /namht:build); this installer symlinks them WITH a `namht-` prefix, so the
+# personal form is /namht-build, /namht-ask, … (won't shadow built-ins like /help).
+# Symlinks mean `git pull` here instantly updates you.
 #
 # Usage:
 #   scripts/personal-install.sh            # install / refresh (idempotent)
@@ -50,7 +52,7 @@ unlink_ours   # clean any stale links first (e.g. after a rename), then relink f
 n_s=0; n_a=0; n_c=0
 for d in "$SRC"/skills/*/;     do [ -d "$d" ] && ln -sfn "${d%/}" "$DEST/skills/$(basename "$d")"   && n_s=$((n_s+1)); done
 for f in "$SRC"/agents/*.md;   do [ -f "$f" ] && ln -sfn "$f"     "$DEST/agents/$(basename "$f")"   && n_a=$((n_a+1)); done
-for f in "$SRC"/commands/*.md; do [ -f "$f" ] && ln -sfn "$f"     "$DEST/commands/$(basename "$f")" && n_c=$((n_c+1)); done
+for f in "$SRC"/commands/*.md; do [ -f "$f" ] && ln -sfn "$f"     "$DEST/commands/namht-$(basename "$f")" && n_c=$((n_c+1)); done
 
 echo "   ✅ linked $n_s skills, $n_a agents, $n_c commands"
 
