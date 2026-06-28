@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spec Kit (namht-*) — Manual setup (no clone, no download)</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d2129; --border:#2a2f3a;
+    --text:#e6e9ef; --muted:#9aa3b2; --accent:#7c9cff; --accent2:#5ad1a8;
+    --warn:#ffcf6b; --danger:#ff7b72; --code:#0b0d12; --chip:#222734;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f6f7fb; --panel:#ffffff; --panel2:#f0f2f7; --border:#e2e6ee;
+      --text:#1b2230; --muted:#5a6475; --accent:#3b5bdb; --accent2:#0a9d6e;
+      --warn:#a86a00; --danger:#c0392b; --code:#0b0d12; --chip:#eef1f7; }
+  }
+  *{box-sizing:border-box} html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Apple Color Emoji",sans-serif;
+    line-height:1.65;font-size:16px}
+  .wrap{max-width:880px;margin:0 auto;padding:32px 20px 96px}
+  header.hero{padding:28px 0 8px;border-bottom:1px solid var(--border);margin-bottom:28px}
+  .eyebrow{color:var(--accent);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:12px}
+  h1{font-size:30px;margin:.25em 0 .15em;line-height:1.2}
+  h2{font-size:22px;margin:2.2em 0 .6em;padding-top:.4em;display:flex;align-items:center;gap:.5em}
+  h3{font-size:17px;margin:1.4em 0 .4em}
+  .sub{color:var(--muted);font-size:16px;max-width:64ch}
+  p{margin:.6em 0}
+  a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.9em;
+    background:var(--chip);padding:.12em .4em;border-radius:6px}
+  .muted{color:var(--muted)} b{color:var(--text)}
+  .pill{display:inline-block;background:var(--chip);border:1px solid var(--border);
+    border-radius:999px;padding:3px 12px;font-size:13px;color:var(--muted);margin:2px 4px 2px 0}
+  nav.toc{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px 18px;margin:18px 0 8px}
+  nav.toc strong{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+  nav.toc ol{margin:.5em 0 0;padding-left:1.2em} nav.toc li{margin:.2em 0}
+  .box{border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin:16px 0;background:var(--panel)}
+  .box .ti{font-weight:700;margin-bottom:.2em;display:flex;align-items:center;gap:.5em}
+  .box.info{border-left:4px solid var(--accent)} .box.ok{border-left:4px solid var(--accent2)}
+  .box.warn{border-left:4px solid var(--warn)} .box.danger{border-left:4px solid var(--danger)}
+  .step{display:flex;gap:16px;margin:18px 0;align-items:flex-start}
+  .step .num{flex:0 0 38px;height:38px;width:38px;border-radius:50%;
+    background:linear-gradient(135deg,var(--accent),#9b7cff);color:#fff;font-weight:800;
+    display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 2px 10px rgba(124,156,255,.35)}
+  .step .body{flex:1;min-width:0} .step .body h3{margin-top:.15em}
+  .cb{position:relative;margin:.7em 0}
+  .cb pre{background:var(--code);color:#e8edf6;border:1px solid #20242e;border-radius:12px;
+    padding:14px 44px 14px 16px;overflow:auto;margin:0;font-size:13px;line-height:1.6}
+  .cb pre code{background:none;padding:0;color:inherit}
+  .cb .copy{position:absolute;top:8px;right:8px;background:#2a3140;color:#cbd5e7;border:1px solid #3a4356;
+    border-radius:8px;font-size:12px;padding:4px 9px;cursor:pointer;transition:.15s}
+  .cb .copy:hover{background:#384156}
+  .cb .copy.done{background:var(--accent2);color:#04120c;border-color:transparent}
+  .cmt{color:#7e8aa0}
+  table{border-collapse:collapse;width:100%;margin:1em 0;font-size:14.5px;background:var(--panel);
+    border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+  th{background:var(--panel2);font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+  tr:last-child td{border-bottom:none} td code{white-space:nowrap}
+  hr{border:none;border-top:1px solid var(--border);margin:2.4em 0}
+  footer{color:var(--muted);font-size:13px;margin-top:40px;text-align:center}
+  .kbd{font-family:ui-monospace,monospace;background:var(--chip);border:1px solid var(--border);
+    border-bottom-width:2px;border-radius:6px;padding:1px 7px;font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">Claude Code · Manual setup · Locked-down machine</div>
+    <h1>📋 Manual setup — no clone, no download</h1>
+    <p class="sub">For a machine where you may <b>not</b> <code>git clone</code> or download anything, and may
+    not transfer files (USB/share). The plan: paste one script to <b>scaffold empty files</b>, then
+    <b>copy each file's content from GitHub (Raw)</b> into your editor, then run the <b>build/install</b> steps.</p>
+    <div style="margin-top:10px">
+      <span class="pill">🙅 No clone</span><span class="pill">🙅 No download</span>
+      <span class="pill">✍️ Paste content by hand</span><span class="pill">🔑 No API key</span>
+    </div>
+  </header>
+
+  <div class="box info">
+    <div class="ti">💡 The shortcut that saves ~30 copies</div>
+    <p style="margin:.2em 0">Files under <code>skills/*/references/</code> (<code>html-builder.js</code>,
+    <code>render-html.cjs</code>, <code>review-skills-universal.md</code>, <code>kb-steps.md</code>) are just
+    <b>copies</b> generated from <code>resources/</code> by <code>scripts/sync-bundles.sh</code>. So you copy the
+    <b>4 source files in <code>resources/</code> once</b>, then run <code>sync-bundles.sh</code> to fan them out to
+    every skill. You only hand-paste <b>~61 files</b> instead of ~90.</p>
+  </div>
+
+  <nav class="toc">
+    <strong>Steps</strong>
+    <ol>
+      <li><a href="#scaffold">1. Scaffold the folders &amp; empty files (one paste)</a></li>
+      <li><a href="#copy">2. Copy each file's content from GitHub</a></li>
+      <li><a href="#build">3. Build / Install after copying</a></li>
+      <li><a href="#notes">4. Important notes</a></li>
+    </ol>
+  </nav>
+
+  <!-- 1 -->
+  <h2 id="scaffold">🧱 1. Scaffold the folders &amp; empty files</h2>
+  <p>Paste this once into the target machine's terminal. It creates the exact tree and empty files
+  (you fill them in step 2). The reference copies are intentionally left out — <code>sync-bundles.sh</code>
+  generates them in step 3.</p>
+  <div class="cb"><button class="copy">Copy</button><pre><code>ROOT=~/nam-claude-skill
+mkdir -p "$ROOT"/{commands,agents,hooks,scripts,resources}
+
+<span class="cmt"># 21 skills → one SKILL.md each</span>
+for s in namht-ask namht-build namht-codegraph namht-design-review namht-discover \
+         namht-document namht-fix-bug namht-map namht-pdf namht-plan namht-plan-review \
+         namht-pr namht-qa namht-qa-integration namht-rescan namht-retro namht-review \
+         namht-scan namht-security-audit namht-skillify namht-system-map; do
+  mkdir -p "$ROOT/skills/$s"; touch "$ROOT/skills/$s/SKILL.md"
+done
+
+<span class="cmt"># unique references (NOT auto-synced) — map &amp; pdf only</span>
+mkdir -p "$ROOT/skills/namht-map/references" "$ROOT/skills/namht-pdf/references"
+touch "$ROOT/skills/namht-map/references/"{build-map.cjs,graph-builder.js,viewer-template.html}
+touch "$ROOT/skills/namht-pdf/references/html-to-pdf.sh"
+
+<span class="cmt"># 4 canonical files (sync-bundles fans these out to the other skills)</span>
+touch "$ROOT/resources/"{html-builder.js,render-html.cjs,review-skills-universal.md,kb-steps.md}
+
+<span class="cmt"># 22 commands</span>
+for c in ask build codegraph design-review discover document fix-bug help map pdf \
+         plan-review plan pr qa-integration qa rescan retro review scan security-audit \
+         skillify system-map; do touch "$ROOT/commands/$c.md"; done
+
+<span class="cmt"># 7 agents</span>
+for a in namht-architecture-reviewer namht-business-consistency-reviewer \
+         namht-business-flow-tracer namht-codebase-analyzer namht-impact-detector \
+         namht-performance-reviewer namht-security-reviewer; do touch "$ROOT/agents/$a.md"; done
+
+<span class="cmt"># hooks + scripts</span>
+touch "$ROOT/hooks/git-guard.sh" "$ROOT/scripts/personal-install.sh" "$ROOT/scripts/sync-bundles.sh"
+
+echo "✅ Scaffold done. Files to fill with content:"; find "$ROOT" -type f | sort</code></pre></div>
+
+  <!-- 2 -->
+  <h2 id="copy">📥 2. Copy each file's content from GitHub</h2>
+  <p>Open each file on GitHub, click the <b>Raw</b> button, select all, copy, and paste into the matching
+  empty file. Raw gives plain text (no HTML wrapping). URL pattern:</p>
+  <div class="cb"><button class="copy">Copy</button><pre><code>https://raw.githubusercontent.com/NamHT4Devlop/nam-claude-skill/main/&lt;path&gt;</code></pre></div>
+  <p class="muted">e.g. <code>.../main/skills/namht-build/SKILL.md</code>, <code>.../main/commands/build.md</code>,
+  <code>.../main/hooks/git-guard.sh</code>.</p>
+  <p><b>Files to fill (61):</b> 21 × <code>skills/*/SKILL.md</code> · 22 × <code>commands/*.md</code> ·
+  7 × <code>agents/*.md</code> · 4 × <code>resources/*</code> · <code>hooks/git-guard.sh</code> ·
+  <code>scripts/personal-install.sh</code> · <code>scripts/sync-bundles.sh</code> · 4 unique map/pdf references.</p>
+  <table>
+    <thead><tr><th>Optional / can skip</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><code>skills/namht-map/references/graph-builder.js</code></td><td>Large (compiled) — only for <code>/namht-map</code>. Skip the 3 map references if you don't need the graph.</td></tr>
+      <tr><td><code>vendor/*.min.js</code></td><td>Offline diagram rendering. Skip if the machine has internet (diagrams fall back to CDN). Air-gapped + need diagrams → copy the 2 minified libs (large).</td></tr>
+      <tr><td><code>README / SECURITY / LICENSE / docs / tests / .github / .claude-plugin / hooks.json</code></td><td>Not needed to run the personal install.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 3 -->
+  <h2 id="build">🔧 3. Build / Install (after all files are filled)</h2>
+  <div class="cb"><button class="copy">Copy</button><pre><code>ROOT=~/nam-claude-skill
+
+<span class="cmt"># 1) make scripts executable (editor-created files have no execute bit — required)</span>
+chmod +x "$ROOT"/scripts/*.sh "$ROOT"/hooks/git-guard.sh \
+         "$ROOT"/skills/namht-pdf/references/html-to-pdf.sh 2&gt;/dev/null
+
+<span class="cmt"># 2) fan out the shared reference files into every skill (from resources/)</span>
+cd "$ROOT" && bash scripts/sync-bundles.sh
+
+<span class="cmt"># 3) install for you (symlinks into ~/.claude; commands get a namht- prefix)</span>
+bash "$ROOT/scripts/personal-install.sh"
+
+<span class="cmt"># 4) prevent leaks: global gitignore</span>
+touch ~/.gitignore_global
+printf '%s\n' 'spec-kit-sessions/' 'knowledge-base/' '.codegraph/' 'CLAUDE.local.md' '.spec-kit/' &gt;&gt; ~/.gitignore_global
+git config --global core.excludesfile ~/.gitignore_global</code></pre></div>
+
+  <h3>5) Arm the git guard</h3>
+  <p>Open <code>~/.claude/settings.json</code> and merge this block in (don't delete what's there):</p>
+  <div class="cb"><button class="copy">Copy</button><pre><code>{
+  "permissions": { "deny": [
+    "Bash(git remote add:*)", "Bash(git remote set-url:*)", "Bash(git remote remove:*)",
+    "Bash(git reset --hard:*)", "Bash(git clean -f:*)", "Bash(git rebase:*)",
+    "Bash(git commit --amend:*)", "Bash(git restore:*)", "Bash(git branch -D:*)", "Bash(git send-email:*)"
+  ] },
+  "hooks": { "PreToolUse": [
+    { "matcher": "Bash", "hooks": [
+      { "type": "command", "command": "~/.claude/hooks/namht-git-guard.sh", "timeout": 10 } ] }
+  ] }
+}</code></pre></div>
+  <div class="box danger"><div class="ti">🎯 Safest on a company machine</div>
+    Open <code>"$ROOT"/hooks/git-guard.sh</code> and set <code>ALLOW_OWNER_RE='__NONE__'</code> to forbid the AI from
+    pushing anywhere. Then <b>restart Claude Code</b> so the guard loads.</div>
+
+  <h3>6) Verify</h3>
+  <div class="cb"><button class="copy">Copy</button><pre><code>ls -la ~/.claude/skills | grep namht-     <span class="cmt"># 21 skills appear</span>
+<span class="cmt"># git guard → should print JSON "deny"</span>
+printf '{"tool_input":{"command":"git push https://github.com/some-org/x"}}' | ~/.claude/hooks/namht-git-guard.sh</code></pre></div>
+  <p>In Claude Code, type <span class="kbd">/</span> → you see <code>/namht-*</code>; run <code>/namht-help</code>.</p>
+
+  <!-- 4 -->
+  <h2 id="notes">⚠️ 4. Important notes</h2>
+  <ul>
+    <li><b>Paste content verbatim</b> — keep the first line intact (e.g. <code>#!/usr/bin/env bash</code> in
+      <code>git-guard.sh</code>, and the <code>.cjs</code>/<code>.js</code>/<code>.sh</code> files). A wrong first
+      character breaks the script.</li>
+    <li><b>Execute bit</b> is not preserved when you create files in an editor — the <code>chmod +x</code> in step 3 is required.</li>
+    <li><b>No <code>git pull</code> updates</b> (you didn't clone). To update, re-paste the changed files' content, then re-run <code>sync-bundles.sh</code> + <code>personal-install.sh</code>.</li>
+    <li><b>Company policy:</b> recreating an external tool on a work machine may still fall under IT/security rules — confirm before relying on it.</li>
+  </ul>
+
+  <hr>
+  <footer>
+    Spec Kit (namht-*) · a port of Auto Spec Kit · Repo: <code>NamHT4Devlop/nam-claude-skill</code><br>
+    This file: <code>&lt;TOOL&gt;/docs/manual-setup-guide.html</code> — open in any browser.
+  </footer>
+
+</div>
+
+<script>
+  document.querySelectorAll('.cb .copy').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var text = btn.parentElement.querySelector('code').innerText;
+      navigator.clipboard.writeText(text).then(function(){
+        var old = btn.textContent; btn.textContent='✓ Copied'; btn.classList.add('done');
+        setTimeout(function(){ btn.textContent=old; btn.classList.remove('done'); }, 1400);
+      });
+    });
+  });
+</script>
+</body>
+</html>
