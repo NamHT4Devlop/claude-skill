@@ -9,7 +9,7 @@ description: >-
 
 # namht-retro — engineering retrospective from git history
 
-(Adapted from gstack's "retro" idea, MIT.) A periodic look-back grounded in real history.
+A periodic look-back grounded in real history.
 
 ## Gather (read-only git + artifacts)
 - Window: default last 7 days (or what the user names). `git log --since=<window> --stat`,

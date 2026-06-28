@@ -256,8 +256,7 @@ If you keep many repos under one parent folder (a "workspace"), follow this sepa
 
 **Recommended flow:** `discover` → `plan` → `plan-review` → `qa` (design tests) → `build` →
 `qa-integration` (run them) → `review`/`security-audit` → `pr`. Run `scan` once first; `rescan` to
-keep the KB fresh. (Adopted ideas from [gstack](https://github.com/garrytan/gstack), MIT:
-discover, plan-review, qa-integration, design-review, pdf, retro, skillify.)
+keep the KB fresh.
 
 ---
 

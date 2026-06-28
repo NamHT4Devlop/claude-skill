@@ -9,7 +9,7 @@ description: >-
 
 # namht-pdf — export a report/doc to PDF
 
-(Adapted from gstack's make-pdf idea, MIT.) Turn a Markdown or HTML report into a shareable PDF.
+Turn a Markdown or HTML report into a shareable PDF.
 
 ## Steps
 1. **Resolve the input.** If given a `.md`, first render it to a self-contained HTML with the

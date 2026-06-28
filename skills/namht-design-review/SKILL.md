@@ -11,7 +11,7 @@ description: >-
 
 # namht-design-review — UI/UX + accessibility review
 
-(Adapted from gstack's design-review idea, MIT.) Catch design problems an LLM-built UI tends to
+Catch design problems an LLM-built UI tends to
 have. Works on a **live URL** (preferred — real screenshots) or on **frontend code/components**.
 
 ## Inputs

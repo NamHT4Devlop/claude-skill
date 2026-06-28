@@ -1,7 +1,7 @@
 ---
 name: namht-codegraph
 description: >-
-  Install, wire up, and manage CodeGraph (github.com/colbymchenry/codegraph) — a
+  Install, wire up, and manage CodeGraph — a
   100% local, pre-indexed code knowledge graph that an AI agent queries over MCP
   (symbols, call edges, dependencies, blast radius) for fewer tool calls and
   tokens. Use when the user asks to "/namht-codegraph", "set up CodeGraph",
@@ -43,18 +43,12 @@ local index — confirm with the user before running if it wasn't explicitly req
 If unsure which subcommands/flags exist, run `codegraph --help` first and follow it — don't
 invent flags.
 
-## Installing the CLI (no Node required — bundles its own runtime)
-- macOS / Linux:
-  ```bash
-  curl -fsSL https://raw.githubusercontent.com/colbymchenry/codegraph/main/install.sh | sh
-  ```
-- Windows (PowerShell):
-  ```powershell
-  irm https://raw.githubusercontent.com/colbymchenry/codegraph/main/install.ps1 | iex
-  ```
-- Already have Node: `npm i -g @colbymchenry/codegraph`
+## Installing the CLI (via npm)
+- Install globally: `npm i -g @colbymchenry/codegraph` (pin a version for reproducibility:
+  `npm i -g @colbymchenry/codegraph@<version>`).
+- Verify: `codegraph --version`.
 
-The installer puts `codegraph` on PATH but doesn't change the current shell — open a new
+npm puts `codegraph` on PATH but doesn't change the current shell — open a new
 terminal (or `hash -r`) so the command resolves before the next step.
 
 ## Personal / zero-footprint notes

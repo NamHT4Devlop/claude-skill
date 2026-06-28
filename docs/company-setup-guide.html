@@ -169,14 +169,14 @@ git config --global core.excludesfile ~/.gitignore_global</code></pre></div>
   <!-- 4 -->
   <h2 id="codegraph">4. CodeGraph (khuyến nghị — giúp AI hiểu code nhanh, ít token)</h2>
   <p>CodeGraph dựng “bản đồ code” cục bộ để AI truy vấn qua MCP thay vì đọc mò. 100% local.</p>
-  <div class="cb"><button class="copy">Copy</button><pre><code><span class="cmt"># macOS/Linux: cài CLI (tự bundle runtime)</span>
-curl -fsSL https://raw.githubusercontent.com/colbymchenry/codegraph/main/install.sh | sh
+  <div class="cb"><button class="copy">Copy</button><pre><code><span class="cmt"># cài CLI qua npm</span>
+npm i -g @colbymchenry/codegraph
 <span class="cmt"># nối vào Claude Code (mức global) + tắt telemetry</span>
 codegraph install -t claude -l global -y
 codegraph telemetry off</code></pre></div>
   <div class="box warn"><div class="ti">🏢 Chuẩn enterprise hơn</div>
-    Thay vì <code>curl|sh</code>, nếu công ty siết supply-chain: cài qua npm pin phiên bản
-    (<code>npm i -g @colbymchenry/codegraph@&lt;version&gt;</code>) hoặc mirror nội bộ. Windows: dùng <code>install.ps1</code>.</div>
+    Nếu công ty siết supply-chain: cài qua npm pin phiên bản
+    (<code>npm i -g @colbymchenry/codegraph@&lt;version&gt;</code>) hoặc qua mirror nội bộ.</div>
 
   <!-- 5 -->
   <h2 id="first">5. Dùng lần đầu trên 1 repo</h2>

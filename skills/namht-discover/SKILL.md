@@ -11,7 +11,7 @@ description: >-
 
 # namht-discover — sharpen the problem before any plan/code
 
-(Adapted from gstack's "office-hours" idea, MIT.) Stop a vague idea from becoming the wrong build.
+Stop a vague idea from becoming the wrong build.
 Interrogate first, then restate a crisp problem. Conversational — output is a sharpened brief, not code.
 
 ## Forcing questions (ask the ones still unanswered; 1–2 at a time, not a wall)

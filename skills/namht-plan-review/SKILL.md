@@ -11,7 +11,7 @@ description: >-
 
 # namht-plan-review — multi-lens critique of a plan (catch bad plans early)
 
-(Adapted from gstack's plan-ceo/eng/design/devex-review ideas, MIT.) A plan is the cheapest place
+A plan is the cheapest place
 to fix a mistake. Review the plan (from `/namht-plan`, `/namht-discover`, or pasted) before code.
 
 ## Input

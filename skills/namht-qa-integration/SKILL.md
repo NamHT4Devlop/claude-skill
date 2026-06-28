@@ -11,7 +11,7 @@ description: >-
 
 # namht-qa-integration — run QA against a live app (browser-driven)
 
-(Adapted from gstack's browser-QA idea, MIT.) Where `/namht-qa` *designs* test cases, this one
+Where `/namht-qa` *designs* test cases, this one
 **executes** them against a running app and reports actual pass/fail with evidence.
 
 ## Prerequisites
