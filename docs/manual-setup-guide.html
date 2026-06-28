@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Spec Kit (namht-*) — Manual setup (no clone, no download)</title>
+<title>Spec Kit (namht-*) — Cài thủ công (không clone, không tải)</title>
 <style>
   :root{
     --bg:#0f1115; --panel:#171a21; --panel2:#1d2129; --border:#2a2f3a;
@@ -69,45 +69,54 @@
 <div class="wrap">
 
   <header class="hero">
-    <div class="eyebrow">Claude Code · Manual setup · Locked-down machine</div>
-    <h1>📋 Manual setup — no clone, no download</h1>
-    <p class="sub">For a machine where you may <b>not</b> <code>git clone</code> or download anything, and may
-    not transfer files (USB/share). The plan: paste one script to <b>scaffold empty files</b>, then
-    <b>copy each file's content from GitHub (Raw)</b> into your editor, then run the <b>build/install</b> steps.</p>
+    <div class="eyebrow">Claude Code · Cài thủ công · Máy bị siết</div>
+    <h1>📋 Cài thủ công — không clone, không tải</h1>
+    <p class="sub">Dành cho máy <b>không được</b> <code>git clone</code> hay tải gì, và không chép file qua được
+    (USB/ổ chia sẻ). Cách làm: dán 1 script để <b>tạo khung file rỗng</b>, rồi <b>copy nội dung từng file từ
+    GitHub (Raw)</b> vào editor, cuối cùng chạy <b>build/cài đặt</b>.</p>
     <div style="margin-top:10px">
-      <span class="pill">🙅 No clone</span><span class="pill">🙅 No download</span>
-      <span class="pill">✍️ Paste content by hand</span><span class="pill">🔑 No API key</span>
+      <span class="pill">🙅 Không clone</span><span class="pill">🙅 Không tải</span>
+      <span class="pill">✍️ Dán nội dung tay</span><span class="pill">📁 Đặt ở đâu cũng được</span>
+      <span class="pill">🔑 Không cần API key</span>
     </div>
   </header>
 
+  <div class="box ok">
+    <div class="ti">📁 Đặt project ở ĐÂU CŨNG ĐƯỢC</div>
+    <p style="margin:.2em 0">Chỉ cần đổi biến <code>ROOT</code> thành đường dẫn bạn muốn — ví dụ
+    <code>~/tools/nam-claude-skill</code>, <code>/opt/nam-claude-skill</code>, hay một ổ khác. Toolkit chạy được
+    từ <b>mọi vị trí</b> vì <code>personal-install.sh</code> tự xác định đường dẫn của chính nó và chỉ tạo
+    <b>symlink vào <code>~/.claude</code></b> (nơi Claude Code đọc). Mọi lệnh bên dưới đều dùng
+    <code>"$ROOT"</code> nên đổi 1 chỗ là xong.</p>
+  </div>
+
   <div class="box info">
-    <div class="ti">💡 The shortcut that saves ~30 copies</div>
-    <p style="margin:.2em 0">Files under <code>skills/*/references/</code> (<code>html-builder.js</code>,
-    <code>render-html.cjs</code>, <code>review-skills-universal.md</code>, <code>kb-steps.md</code>) are just
-    <b>copies</b> generated from <code>resources/</code> by <code>scripts/sync-bundles.sh</code>. So you copy the
-    <b>4 source files in <code>resources/</code> once</b>, then run <code>sync-bundles.sh</code> to fan them out to
-    every skill. You only hand-paste <b>~61 files</b> instead of ~90.</p>
+    <div class="ti">💡 Mẹo giúp đỡ ~30 lần copy</div>
+    <p style="margin:.2em 0">Các file trong <code>skills/*/references/</code> (<code>html-builder.js</code>,
+    <code>render-html.cjs</code>, <code>review-skills-universal.md</code>, <code>kb-steps.md</code>) chỉ là
+    <b>bản sao</b> sinh ra từ <code>resources/</code> bằng <code>scripts/sync-bundles.sh</code>. Nên bạn chỉ
+    copy <b>4 file gốc trong <code>resources/</code> một lần</b>, rồi chạy <code>sync-bundles.sh</code> để nó tự
+    nhân ra mọi skill. Bạn chỉ phải dán tay <b>~61 file</b> thay vì ~90.</p>
   </div>
 
   <nav class="toc">
-    <strong>Steps</strong>
+    <strong>Các bước</strong>
     <ol>
-      <li><a href="#scaffold">1. Scaffold the folders &amp; empty files (one paste)</a></li>
-      <li><a href="#copy">2. Copy each file's content from GitHub</a></li>
-      <li><a href="#build">3. Build / Install after copying</a></li>
-      <li><a href="#notes">4. Important notes</a></li>
+      <li><a href="#scaffold">1. Tạo cây thư mục &amp; file rỗng (dán 1 lần)</a></li>
+      <li><a href="#copy">2. Copy nội dung từng file từ GitHub</a></li>
+      <li><a href="#build">3. Build / Cài đặt sau khi copy xong</a></li>
+      <li><a href="#notes">4. Lưu ý quan trọng</a></li>
     </ol>
   </nav>
 
   <!-- 1 -->
-  <h2 id="scaffold">🧱 1. Scaffold the folders &amp; empty files</h2>
-  <p>Paste this once into the target machine's terminal. It creates the exact tree and empty files
-  (you fill them in step 2). The reference copies are intentionally left out — <code>sync-bundles.sh</code>
-  generates them in step 3.</p>
-  <div class="cb"><button class="copy">Copy</button><pre><code>ROOT=~/nam-claude-skill
+  <h2 id="scaffold">🧱 1. Tạo cây thư mục &amp; file rỗng</h2>
+  <p>Dán đoạn này 1 lần vào terminal máy đích. Nó tạo đúng cây thư mục + file rỗng (bạn điền nội dung ở
+  bước 2). Các file reference được cố tình bỏ qua — <code>sync-bundles.sh</code> sẽ sinh chúng ở bước 3.</p>
+  <div class="cb"><button class="copy">Copy</button><pre><code>ROOT=~/nam-claude-skill          <span class="cmt"># ⬅ đổi thành BẤT KỲ đường dẫn nào bạn muốn</span>
 mkdir -p "$ROOT"/{commands,agents,hooks,scripts,resources}
 
-<span class="cmt"># 21 skills → one SKILL.md each</span>
+<span class="cmt"># 21 skill → mỗi skill 1 file SKILL.md</span>
 for s in namht-ask namht-build namht-codegraph namht-design-review namht-discover \
          namht-document namht-fix-bug namht-map namht-pdf namht-plan namht-plan-review \
          namht-pr namht-qa namht-qa-integration namht-rescan namht-retro namht-review \
@@ -115,69 +124,69 @@ for s in namht-ask namht-build namht-codegraph namht-design-review namht-discove
   mkdir -p "$ROOT/skills/$s"; touch "$ROOT/skills/$s/SKILL.md"
 done
 
-<span class="cmt"># unique references (NOT auto-synced) — map &amp; pdf only</span>
+<span class="cmt"># reference RIÊNG (không tự sync) — chỉ map &amp; pdf</span>
 mkdir -p "$ROOT/skills/namht-map/references" "$ROOT/skills/namht-pdf/references"
 touch "$ROOT/skills/namht-map/references/"{build-map.cjs,graph-builder.js,viewer-template.html}
 touch "$ROOT/skills/namht-pdf/references/html-to-pdf.sh"
 
-<span class="cmt"># 4 canonical files (sync-bundles fans these out to the other skills)</span>
+<span class="cmt"># 4 file gốc (sync-bundles sẽ nhân ra các skill khác)</span>
 touch "$ROOT/resources/"{html-builder.js,render-html.cjs,review-skills-universal.md,kb-steps.md}
 
-<span class="cmt"># 22 commands</span>
+<span class="cmt"># 22 command</span>
 for c in ask build codegraph design-review discover document fix-bug help map pdf \
          plan-review plan pr qa-integration qa rescan retro review scan security-audit \
          skillify system-map; do touch "$ROOT/commands/$c.md"; done
 
-<span class="cmt"># 7 agents</span>
+<span class="cmt"># 7 agent</span>
 for a in namht-architecture-reviewer namht-business-consistency-reviewer \
          namht-business-flow-tracer namht-codebase-analyzer namht-impact-detector \
          namht-performance-reviewer namht-security-reviewer; do touch "$ROOT/agents/$a.md"; done
 
-<span class="cmt"># hooks + scripts</span>
+<span class="cmt"># hook + script</span>
 touch "$ROOT/hooks/git-guard.sh" "$ROOT/scripts/personal-install.sh" "$ROOT/scripts/sync-bundles.sh"
 
-echo "✅ Scaffold done. Files to fill with content:"; find "$ROOT" -type f | sort</code></pre></div>
+echo "✅ Tạo khung xong. Danh sách file cần dán nội dung:"; find "$ROOT" -type f | sort</code></pre></div>
 
   <!-- 2 -->
-  <h2 id="copy">📥 2. Copy each file's content from GitHub</h2>
-  <p>Open each file on GitHub, click the <b>Raw</b> button, select all, copy, and paste into the matching
-  empty file. Raw gives plain text (no HTML wrapping). URL pattern:</p>
-  <div class="cb"><button class="copy">Copy</button><pre><code>https://raw.githubusercontent.com/NamHT4Devlop/nam-claude-skill/main/&lt;path&gt;</code></pre></div>
-  <p class="muted">e.g. <code>.../main/skills/namht-build/SKILL.md</code>, <code>.../main/commands/build.md</code>,
+  <h2 id="copy">📥 2. Copy nội dung từng file từ GitHub</h2>
+  <p>Mở từng file trên GitHub, bấm nút <b>Raw</b>, chọn hết, copy, rồi dán vào đúng file rỗng tương ứng.
+  Raw cho text thuần (không dính HTML). Mẫu URL:</p>
+  <div class="cb"><button class="copy">Copy</button><pre><code>https://raw.githubusercontent.com/NamHT4Devlop/nam-claude-skill/main/&lt;đường-dẫn&gt;</code></pre></div>
+  <p class="muted">Ví dụ: <code>.../main/skills/namht-build/SKILL.md</code>, <code>.../main/commands/build.md</code>,
   <code>.../main/hooks/git-guard.sh</code>.</p>
-  <p><b>Files to fill (61):</b> 21 × <code>skills/*/SKILL.md</code> · 22 × <code>commands/*.md</code> ·
+  <p><b>Phải dán (61 file):</b> 21 × <code>skills/*/SKILL.md</code> · 22 × <code>commands/*.md</code> ·
   7 × <code>agents/*.md</code> · 4 × <code>resources/*</code> · <code>hooks/git-guard.sh</code> ·
-  <code>scripts/personal-install.sh</code> · <code>scripts/sync-bundles.sh</code> · 4 unique map/pdf references.</p>
+  <code>scripts/personal-install.sh</code> · <code>scripts/sync-bundles.sh</code> · 4 file riêng của map/pdf.</p>
   <table>
-    <thead><tr><th>Optional / can skip</th><th>Why</th></tr></thead>
+    <thead><tr><th>Tùy chọn / bỏ được</th><th>Lý do</th></tr></thead>
     <tbody>
-      <tr><td><code>skills/namht-map/references/graph-builder.js</code></td><td>Large (compiled) — only for <code>/namht-map</code>. Skip the 3 map references if you don't need the graph.</td></tr>
-      <tr><td><code>vendor/*.min.js</code></td><td>Offline diagram rendering. Skip if the machine has internet (diagrams fall back to CDN). Air-gapped + need diagrams → copy the 2 minified libs (large).</td></tr>
-      <tr><td><code>README / SECURITY / LICENSE / docs / tests / .github / .claude-plugin / hooks.json</code></td><td>Not needed to run the personal install.</td></tr>
+      <tr><td><code>skills/namht-map/references/graph-builder.js</code></td><td>File lớn (compiled) — chỉ cho <code>/namht-map</code>. Không cần map thì bỏ luôn 3 file của map.</td></tr>
+      <tr><td><code>vendor/*.min.js</code></td><td>Render diagram offline. Bỏ được nếu máy có mạng (diagram tự dùng CDN). Air-gapped + cần diagram mới phải copy 2 file minified (rất to).</td></tr>
+      <tr><td><code>README / SECURITY / LICENSE / docs / tests / .github / .claude-plugin / hooks.json</code></td><td>Không cần để chạy bản cài cá nhân.</td></tr>
     </tbody>
   </table>
 
   <!-- 3 -->
-  <h2 id="build">🔧 3. Build / Install (after all files are filled)</h2>
-  <div class="cb"><button class="copy">Copy</button><pre><code>ROOT=~/nam-claude-skill
+  <h2 id="build">🔧 3. Build / Cài đặt (sau khi đã dán xong hết)</h2>
+  <div class="cb"><button class="copy">Copy</button><pre><code>ROOT=~/nam-claude-skill          <span class="cmt"># ⬅ cùng đường dẫn đã chọn ở bước 1</span>
 
-<span class="cmt"># 1) make scripts executable (editor-created files have no execute bit — required)</span>
+<span class="cmt"># 1) cấp quyền chạy (file tạo bằng editor KHÔNG có execute bit — bắt buộc)</span>
 chmod +x "$ROOT"/scripts/*.sh "$ROOT"/hooks/git-guard.sh \
          "$ROOT"/skills/namht-pdf/references/html-to-pdf.sh 2&gt;/dev/null
 
-<span class="cmt"># 2) fan out the shared reference files into every skill (from resources/)</span>
+<span class="cmt"># 2) nhân các file reference dùng chung ra mọi skill (từ resources/)</span>
 cd "$ROOT" && bash scripts/sync-bundles.sh
 
-<span class="cmt"># 3) install for you (symlinks into ~/.claude; commands get a namht- prefix)</span>
+<span class="cmt"># 3) cài cho riêng bạn (symlink vào ~/.claude; command tự thêm tiền tố namht-)</span>
 bash "$ROOT/scripts/personal-install.sh"
 
-<span class="cmt"># 4) prevent leaks: global gitignore</span>
+<span class="cmt"># 4) chặn rò rỉ: global gitignore</span>
 touch ~/.gitignore_global
 printf '%s\n' 'spec-kit-sessions/' 'knowledge-base/' '.codegraph/' 'CLAUDE.local.md' '.spec-kit/' &gt;&gt; ~/.gitignore_global
 git config --global core.excludesfile ~/.gitignore_global</code></pre></div>
 
-  <h3>5) Arm the git guard</h3>
-  <p>Open <code>~/.claude/settings.json</code> and merge this block in (don't delete what's there):</p>
+  <h3>5) Lắp rào git</h3>
+  <p>Mở <code>~/.claude/settings.json</code> và gộp khối sau vào (đừng xoá phần đang có):</p>
   <div class="cb"><button class="copy">Copy</button><pre><code>{
   "permissions": { "deny": [
     "Bash(git remote add:*)", "Bash(git remote set-url:*)", "Bash(git remote remove:*)",
@@ -189,31 +198,30 @@ git config --global core.excludesfile ~/.gitignore_global</code></pre></div>
       { "type": "command", "command": "~/.claude/hooks/namht-git-guard.sh", "timeout": 10 } ] }
   ] }
 }</code></pre></div>
-  <div class="box danger"><div class="ti">🎯 Safest on a company machine</div>
-    Open <code>"$ROOT"/hooks/git-guard.sh</code> and set <code>ALLOW_OWNER_RE='__NONE__'</code> to forbid the AI from
-    pushing anywhere. Then <b>restart Claude Code</b> so the guard loads.</div>
+  <div class="box danger"><div class="ti">🎯 An toàn nhất trên máy công ty</div>
+    Mở <code>"$ROOT"/hooks/git-guard.sh</code> và đặt <code>ALLOW_OWNER_RE='__NONE__'</code> để cấm AI push đi bất kỳ
+    đâu. Sau đó <b>restart Claude Code</b> để rào có hiệu lực.</div>
 
-  <h3>6) Verify</h3>
-  <div class="cb"><button class="copy">Copy</button><pre><code>ls -la ~/.claude/skills | grep namht-     <span class="cmt"># 21 skills appear</span>
-<span class="cmt"># git guard → should print JSON "deny"</span>
+  <h3>6) Kiểm tra</h3>
+  <div class="cb"><button class="copy">Copy</button><pre><code>ls -la ~/.claude/skills | grep namht-     <span class="cmt"># thấy 21 skill</span>
+<span class="cmt"># rào git → phải in ra JSON "deny"</span>
 printf '{"tool_input":{"command":"git push https://github.com/some-org/x"}}' | ~/.claude/hooks/namht-git-guard.sh</code></pre></div>
-  <p>In Claude Code, type <span class="kbd">/</span> → you see <code>/namht-*</code>; run <code>/namht-help</code>.</p>
+  <p>Trong Claude Code gõ <span class="kbd">/</span> → thấy <code>/namht-*</code>; chạy <code>/namht-help</code>.</p>
 
   <!-- 4 -->
-  <h2 id="notes">⚠️ 4. Important notes</h2>
+  <h2 id="notes">⚠️ 4. Lưu ý quan trọng</h2>
   <ul>
-    <li><b>Paste content verbatim</b> — keep the first line intact (e.g. <code>#!/usr/bin/env bash</code> in
-      <code>git-guard.sh</code>, and the <code>.cjs</code>/<code>.js</code>/<code>.sh</code> files). A wrong first
-      character breaks the script.</li>
-    <li><b>Execute bit</b> is not preserved when you create files in an editor — the <code>chmod +x</code> in step 3 is required.</li>
-    <li><b>No <code>git pull</code> updates</b> (you didn't clone). To update, re-paste the changed files' content, then re-run <code>sync-bundles.sh</code> + <code>personal-install.sh</code>.</li>
-    <li><b>Company policy:</b> recreating an external tool on a work machine may still fall under IT/security rules — confirm before relying on it.</li>
+    <li><b>Dán nguyên văn</b> — giữ nguyên dòng đầu (vd <code>#!/usr/bin/env bash</code> trong
+      <code>git-guard.sh</code>, và các file <code>.cjs</code>/<code>.js</code>/<code>.sh</code>). Sai 1 ký tự đầu là script lỗi.</li>
+    <li><b>Execute bit</b> không được giữ khi bạn tạo file bằng editor — bước <code>chmod +x</code> ở mục 3 là bắt buộc.</li>
+    <li><b>Không có <code>git pull</code></b> (bạn không clone). Muốn cập nhật: dán lại nội dung các file đã đổi, rồi chạy lại <code>sync-bundles.sh</code> + <code>personal-install.sh</code>.</li>
+    <li><b>Chính sách công ty:</b> dựng lại tool ngoài trên máy công ty vẫn có thể thuộc diện quản lý của IT/Security — xác nhận trước khi dùng.</li>
   </ul>
 
   <hr>
   <footer>
-    Spec Kit (namht-*) · a port of Auto Spec Kit · Repo: <code>NamHT4Devlop/nam-claude-skill</code><br>
-    This file: <code>&lt;TOOL&gt;/docs/manual-setup-guide.html</code> — open in any browser.
+    Spec Kit (namht-*) · port của Auto Spec Kit · Repo: <code>NamHT4Devlop/nam-claude-skill</code><br>
+    File này: <code>&lt;TOOL&gt;/docs/manual-setup-guide.html</code> — mở bằng trình duyệt bất kỳ.
   </footer>
 
 </div>
@@ -223,7 +231,7 @@ printf '{"tool_input":{"command":"git push https://github.com/some-org/x"}}' | ~
     btn.addEventListener('click', function(){
       var text = btn.parentElement.querySelector('code').innerText;
       navigator.clipboard.writeText(text).then(function(){
-        var old = btn.textContent; btn.textContent='✓ Copied'; btn.classList.add('done');
+        var old = btn.textContent; btn.textContent='✓ Đã copy'; btn.classList.add('done');
         setTimeout(function(){ btn.textContent=old; btn.classList.remove('done'); }, 1400);
       });
     });
