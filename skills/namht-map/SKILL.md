@@ -49,8 +49,10 @@ Go, Ruby, C#, PHP and Rust, then injects the graph into `references/viewer-templ
   `knowledge-base/*.md` as domain nodes, so the KB shows beside the code when present.
 - Large repos: if a graph exceeds ~1800 nodes the generator auto-switches to `files` mode for
   readability; you can also pass `files` explicitly, or point it at a sub-module to drill in.
-- The HTML loads Cytoscape from a CDN (needs internet to render). Your graph data is embedded
-  inline — no code leaves the machine.
+- **Offline by default when vendored.** If the repo has `vendor/cytoscape.min.js`, the generator
+  **inlines** it so the HTML is fully self-contained — zero external network calls (enterprise /
+  air-gapped safe). Without `vendor/`, it falls back to a Cytoscape CDN link (needs internet).
+  Either way your graph data is embedded inline — no code leaves the machine.
 - Output lives under `spec-kit-sessions/maps/` which is gitignored, so nothing lands in a commit.
 - If the user instead wants a graph the AGENT can query (à la CodeGraph) rather than a human
   visual, that's a different tool — say so rather than forcing this viewer to do it.

@@ -24,6 +24,10 @@ This KB is the grounding for every other Spec Kit command.
   `codegraph_explore` / `codegraph files` to map structure, symbols and call paths quickly
   (saves a lot of Read/Grep) — but you STILL read real source for *business intent*: CodeGraph
   gives the skeleton, the KB documents the why. Pass `projectPath` if needed.
+- **Secret safety.** Never read, quote, or write the contents of `.env*`, key/cert files
+  (`*.pem`, `*.key`, `*.p12`), or credential files into the KB. Document that a secret exists and
+  where, never its value. (The bundled analyzer only parses recognized source extensions, so
+  raw secret files are skipped by default — keep it that way.)
 - Confirm the target repo (default: cwd). Detect the stack first (language, framework,
   DB, build tool) by reading `package.json` / `pom.xml` / `build.gradle` / `go.mod` /
   `Gemfile` / `requirements.txt` / `*.csproj`, etc. Tailor analysis hints to the stack

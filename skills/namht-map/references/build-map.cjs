@@ -38,9 +38,10 @@ if (data.nodes.length > 1800 && mode === 'all') {
 
 const tpl = fs.readFileSync(path.join(__dirname, 'viewer-template.html'), 'utf8');
 const projectName = data.metadata.projectName || path.basename(root);
-const html = tpl
+let html = tpl
   .replace(/__PROJECT__/g, escapeHtml(projectName))
   .replace('__GRAPH_DATA__', JSON.stringify(data).replace(/<\//g, '<\\/'));
+html = inlineVendored(html, __dirname); // offline: inline Cytoscape from vendor/ if present
 
 // Default output: <root>/spec-kit-sessions/maps/<name>-<YYYY-MM-DD>.html  (gitignored)
 if (!out) {
@@ -55,3 +56,23 @@ console.error(`✔ ${data.nodes.length} nodes · ${data.edges.length} edges · l
 console.log(out); // stdout = the path, so callers can open it
 
 function escapeHtml(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+
+/** Inline cdnjs <script src=…> from vendor/<lib>.min.js (offline) when available; else keep CDN. */
+function inlineVendored(html, dir) {
+  const vendorDir = path.resolve(dir, '..', '..', '..', 'vendor');
+  if (!fs.existsSync(vendorDir)) return html;
+  let out = html.replace(
+    /<script\b([^>]*)\bsrc="https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/([^/]+)\/[^"]+\.min\.js"([^>]*)><\/script>/gi,
+    (m, pre, lib, post) => {
+      const f = path.join(vendorDir, lib + '.min.js');
+      if (!fs.existsSync(f)) return m;
+      const nonce = ((pre + post).match(/nonce="([^"]+)"/) || [])[1];
+      const code = fs.readFileSync(f, 'utf8').replace(/<\/script/gi, '<\\/script');
+      return `<script${nonce ? ` nonce="${nonce}"` : ''}>\n/* vendored ${lib} — offline, no external fetch */\n${code}\n</script>`;
+    },
+  );
+  if (!/src="https:\/\/cdnjs\.cloudflare\.com/i.test(out)) {
+    out = out.replace(/\s*https:\/\/cdnjs\.cloudflare\.com/gi, '');
+  }
+  return out;
+}

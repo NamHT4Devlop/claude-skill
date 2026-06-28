@@ -263,6 +263,21 @@ It's strictly opt-in and degrades cleanly: **no `.codegraph/` → the kit falls 
 Read/Grep/Glob** (and `namht-map`'s own bundled analyzer). CodeGraph supplies code *structure*;
 the `knowledge-base/` still supplies business *intent* — they're complementary, not redundant.
 
+## Security & enterprise
+
+See **[SECURITY.md](SECURITY.md)** for the full audit. In short:
+- Executable code is **pure local** (`fs`/`path`/`crypto`) — no shell exec, `eval`, dynamic
+  `require`, network calls, or secrets. Safe to copy to a company machine.
+- **Offline HTML:** with `vendor/` (Mermaid + Cytoscape, bundled) the generated HTML inlines the
+  chart libs → **zero external network calls** (air-gapped / strict-proxy safe). Delete `vendor/`
+  to get smaller CDN-linked output instead.
+- **Change discipline** is built into `namht-build`/`namht-review`: scope-locked, minimal diff,
+  no drive-by refactors, verify-and-rollback (don't leave the build broken), confirm before
+  destructive/outward actions, never touch secrets.
+- The real data-egress is the AI agent reading code (inherent to any AI assistant), fine under a
+  company **Team/Enterprise** Claude plan. `knowledge-base/`, `.codegraph/`, `spec-kit-sessions/`
+  are gitignored machine-wide.
+
 ## How this maps to the original extension
 
 | Auto Spec Kit (VS Code + Copilot) | Spec Kit for Claude Code |

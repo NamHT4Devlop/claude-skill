@@ -41,6 +41,27 @@ sub-agents, `Edit/Write` to apply code, and `Bash` to run tests.
 6. **Stop and ask** before doing something destructive or ambiguous. Prefer a TodoList
    (TaskCreate/TaskUpdate) so the user can follow the 13 steps.
 
+## Change discipline (NON-NEGOTIABLE — read before editing anything)
+This is what keeps the tool from "breaking the project" or making rambling edits:
+- **Scope lock.** Edit ONLY the files in the approved plan. If you discover another change is
+  needed, STOP and add it to the plan (or ask) — do not silently expand scope.
+- **Minimal diff.** Make the smallest change that satisfies the requirement. NO drive-by
+  refactors, renames, reformatting, import reordering, or "while I'm here" cleanups in files
+  you're touching for another reason. Match the surrounding style exactly.
+- **Preserve behavior.** Never delete or rewrite existing logic unless the task requires it and
+  the plan says so. If you must change a shared function, check its blast radius first
+  (CodeGraph `impact`/`callers`) and update every caller intentionally.
+- **No structure churn.** Don't move files, change the folder layout, swap libraries, or alter
+  build/config/CI unless explicitly requested. Follow the existing architecture (rule 2).
+- **Plan-approval gate.** For anything non-trivial, show the plan and get an explicit "go"
+  before writing code (Steps 2–3). Don't start editing on a vague requirement.
+- **Don't leave the tree broken.** After edits, the project must still build/lint/typecheck and
+  tests must pass (Step 11). If your change makes it red and you can't fix it quickly, **revert
+  your edits** rather than leaving broken code.
+- **Confirm before irreversible/outward actions.** Deleting files, DB migrations, `git push`,
+  installing dependencies, or anything network/outbound — ask first. Respect untrusted workspaces.
+- **Never touch secrets.** Don't read, print, move, or commit `.env`, keys, or credentials.
+
 ## Step 0 — Clarify (gate)
 Assess the requirement's clarity. If it's vague or under-specified (missing acceptance
 criteria, ambiguous scope, unknown entities), ask **2–4 targeted questions** before
@@ -108,11 +129,19 @@ fix gaps, finalize.
 ## Step 10 — Save files
 Ensure all code + test files are written to the correct paths in the repo. Confirm the file list.
 
-## Step 11 — Execute tests
-Run the project's test command via `Bash`. Discover it from `package.json` scripts,
-`pytest`, `go test`, `mvn`/`gradle`, `Gemfile`, etc., or ask the user. In an untrusted
-context, ask before running. Capture pass/fail, coverage, and key failures. If tests fail,
-loop back: diagnose → fix code or tests → re-run (a few iterations) before reporting failure.
+## Step 11 — Verify (build + lint + typecheck + tests) with rollback
+Prove you didn't break the project. Discover and run the relevant gates via `Bash`
+(in an untrusted workspace, ask before running):
+- **Build / typecheck**: `tsc --noEmit`, `npm run build`, `go build ./...`, `mvn -q compile`, etc.
+- **Lint**: `eslint`, `ruff`, `golangci-lint`, `rubocop` — only if the project already uses it.
+- **Tests**: from `package.json` scripts, `pytest`, `go test`, `mvn/gradle`, `Gemfile`, etc.
+
+Capture pass/fail, coverage, and key failures. **Compare against a baseline** — if the gate was
+green before your change and is red after, that's a regression YOU introduced.
+- If tests/build fail: loop back → diagnose → fix code or tests → re-run (a few iterations).
+- **If you can't get it green within a few iterations, REVERT your edits** (leave the tree as you
+  found it) and report what blocked you — never hand back broken code as "done".
+Only report success when the gates you ran actually passed.
 
 ## Step 12 — Evidence report
 Write `07-evidence/EVIDENCE.md` with: a header table (requirement, session, date, test

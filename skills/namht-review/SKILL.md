@@ -81,7 +81,13 @@ Cross-reference the Knowledge Base:
 risk may merge with a follow-up ticket. `[MINOR]`/`[NIT]` don't block. Section 14
 (project-specific) rules have the highest priority when present.
 
-## Optional: apply fixes
-If the user asks, apply the `[CRITICAL]`/high-risk `[MAJOR]` fixes directly with Edit, then
-re-verify. Otherwise leave the review as a report. You may save it to
-`spec-kit-sessions/reviews/<file>-<date>.md`.
+## Optional: apply fixes (with discipline)
+If the user asks, apply the `[CRITICAL]`/high-risk `[MAJOR]` fixes directly with Edit — but
+follow the same change discipline as `/namht-build`:
+- **Minimal diff, scope-locked**: only the lines needed for each accepted fix; no drive-by
+  refactors/reformatting; match surrounding style.
+- **One fix at a time**, then re-verify; preserve existing behavior elsewhere.
+- **Don't leave the tree broken**: run the project's build/lint/tests after; if red and not
+  quickly fixable, **revert** and report.
+- **Confirm before destructive/outward actions**; never touch secrets.
+Otherwise leave the review as a report. You may save it to `spec-kit-sessions/reviews/<file>-<date>.md`.
