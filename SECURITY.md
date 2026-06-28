@@ -78,12 +78,15 @@ not by the model's goodwill. This holds even for chained commands (`cd x && git 
 and ignores the word "push" inside a quoted commit message.
 
 - **Allowed** (read / sync-in): `fetch`, `pull`, `status`, `log`, `diff`, `show`, `blame`,
-  `branch` (list), `add`, `commit`, `stash`, `merge`, `checkout <branch>`.
-- **Blocked**: `push` (all forms), `remote add/set-url/remove/rename/set-head/set-branches/prune`,
-  `send-email`, `svn dcommit`, `p4 submit`, `config remote.*`; and destructive local:
-  `reset --hard`, `clean -f`, `checkout -- / . / -f / --force`, `restore`, `branch -D`,
-  `commit --amend`, `rebase`, `filter-branch/filter-repo`, `reflog expire`, `gc --prune`,
-  `update-ref -d`.
+  `branch` (list), `add`, `commit`, `stash`, `merge`, `checkout <branch>` — **plus `push` ONLY
+  to a whitelisted personal remote** (default `github.com/NamHT4Devlop/*`; edit `ALLOW_OWNER_RE`
+  in `hooks/git-guard.sh`). The guard resolves the actual target (explicit URL, `git -C <dir>`,
+  leading `cd`, or the remote's configured URL) and allows the push only if its owner is whitelisted.
+- **Blocked**: `push` to **any non-whitelisted remote** (team/org repos — e.g. Agenta-AI,
+  rubyforgood), `remote add/set-url/remove/rename/set-head/set-branches/prune`, `send-email`,
+  `svn dcommit`, `p4 submit`, `config remote.*`; and destructive local: `reset --hard`,
+  `clean -f`, `checkout -- / . / -f / --force`, `restore`, `branch -D`, `commit --amend`,
+  `rebase`, `filter-branch/filter-repo`, `reflog expire`, `gc --prune`, `update-ref -d`.
 
 Wire it into `~/.claude/settings.json` (the installer symlinks the script to
 `~/.claude/hooks/namht-git-guard.sh`; arm it once with this snippet):
@@ -92,11 +95,12 @@ Wire it into `~/.claude/settings.json` (the installer symlinks the script to
 {
   "permissions": {
     "deny": [
-      "Bash(git push:*)", "Bash(git push)", "Bash(git remote add:*)",
-      "Bash(git remote set-url:*)", "Bash(git remote remove:*)", "Bash(git reset --hard:*)",
-      "Bash(git clean -f:*)", "Bash(git rebase:*)", "Bash(git commit --amend:*)",
-      "Bash(git restore:*)", "Bash(git branch -D:*)", "Bash(git send-email:*)"
+      "Bash(git remote add:*)", "Bash(git remote set-url:*)", "Bash(git remote remove:*)",
+      "Bash(git reset --hard:*)", "Bash(git clean -f:*)", "Bash(git rebase:*)",
+      "Bash(git commit --amend:*)", "Bash(git restore:*)", "Bash(git branch -D:*)",
+      "Bash(git send-email:*)"
     ]
+    // NOTE: no blanket "git push" deny here — the hook decides push by target owner (whitelist).
   },
   "hooks": {
     "PreToolUse": [
@@ -107,9 +111,11 @@ Wire it into `~/.claude/settings.json` (the installer symlinks the script to
 }
 ```
 
-Verify: `printf '{"tool_input":{"command":"git push"}}' | ~/.claude/hooks/namht-git-guard.sh`
-→ prints a `permissionDecision":"deny"` JSON. `git pull` → no output (allowed). Adjust the rules
-in `hooks/git-guard.sh` to taste. (A hook/settings change needs a Claude Code reload to go live.)
+Verify (push to a team URL is denied, pull is allowed):
+`printf '{"tool_input":{"command":"git push https://github.com/some-org/repo"}}' | ~/.claude/hooks/namht-git-guard.sh`
+→ `permissionDecision":"deny"`. A push to a whitelisted personal remote returns no output (allowed).
+Edit `ALLOW_OWNER_RE` / the rules in `hooks/git-guard.sh` to taste. (A settings change needs a
+Claude Code reload to go live; editing the hook script itself takes effect immediately.)
 
 ## Recommended enterprise hardening
 1. Use a company **Team/Enterprise** Claude plan (not a personal consumer plan).

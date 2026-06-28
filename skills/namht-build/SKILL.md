@@ -61,11 +61,12 @@ This is what keeps the tool from "breaking the project" or making rambling edits
 - **Confirm before irreversible/outward actions.** Deleting files, DB migrations, `git push`,
   installing dependencies, or anything network/outbound — ask first. Respect untrusted workspaces.
 - **Never touch secrets.** Don't read, print, move, or commit `.env`, keys, or credentials.
-- **Git: read/sync-in only.** Use `git` solely for fetch, pull, status, log, diff, show, blame
-  (and local `add`/`commit` when the user asks). **NEVER** `push` or otherwise mutate the remote,
-  and never run destructive git (`reset --hard`, `clean -f`, `checkout --`/`.`, `restore`,
-  `rebase`, `branch -D`, `commit --amend`). A harness git-guard hook enforces this — don't try to
-  work around it; if a remote/destructive op is truly needed, ask the user to run it themselves.
+- **Git: don't push as part of a build; read/sync-in only.** Use `git` for fetch, pull, status,
+  log, diff, show, blame (and local `add`/`commit` when the user asks). Do not `push` during a
+  build, and never run destructive git (`reset --hard`, `clean -f`, `checkout --`/`.`, `restore`,
+  `rebase`, `branch -D`, `commit --amend`). A harness git-guard hook enforces this — it blocks
+  pushes to team/org repos and all destructive git regardless (only whitelisted personal remotes
+  may receive an explicit push). Don't work around it; if unsure, ask the user.
 
 ## Step 0 — Clarify (gate)
 Assess the requirement's clarity. If it's vague or under-specified (missing acceptance

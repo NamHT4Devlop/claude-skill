@@ -275,10 +275,11 @@ See **[SECURITY.md](SECURITY.md)** for the full audit. In short:
   no drive-by refactors, verify-and-rollback (don't leave the build broken), confirm before
   destructive/outward actions, never touch secrets.
 - **Git guardrail (hard-enforced):** a PreToolUse hook (`hooks/git-guard.sh`) + `permissions.deny`
-  allow only read/sync-in git (fetch, pull, status, log, diff, show, blame, add, commit, …) and
-  **absolutely block** anything that touches the remote (`push`, `remote set-url`, …) or destroys
-  local work (`reset --hard`, `clean -f`, `checkout --`, `rebase`, `branch -D`, …) — even in
-  chained commands. See [SECURITY.md](SECURITY.md#git-guardrail-hard-blocked-readsync-in-only).
+  allow read/sync-in git (fetch, pull, status, log, diff, show, blame, add, commit, …) **plus
+  `push` only to a whitelisted personal remote** (`ALLOW_OWNER_RE`, default `NamHT4Devlop/*`).
+  It **blocks** push to any other (team/org) remote, all remote-config mutation, and destructive
+  local git (`reset --hard`, `clean -f`, `checkout --`, `rebase`, `branch -D`, …) — even in chained
+  commands. See [SECURITY.md](SECURITY.md#git-guardrail-hard-blocked-readsync-in-only).
 - The real data-egress is the AI agent reading code (inherent to any AI assistant), fine under a
   company **Team/Enterprise** Claude plan. `knowledge-base/`, `.codegraph/`, `spec-kit-sessions/`
   are gitignored machine-wide.
