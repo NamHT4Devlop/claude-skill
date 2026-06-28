@@ -1,0 +1,46 @@
+---
+name: namht-design-review
+description: >-
+  Review UI/UX, visual quality and accessibility of a running app (via browser
+  screenshots) or frontend components — catches "AI slop" (generic/inconsistent
+  UI), spacing/alignment/hierarchy issues, responsive breakage, and a11y problems
+  (contrast, alt, labels, keyboard, ARIA) against the project's design system if
+  documented. Use when the user says "/design-review", "review the UI/design",
+  "is this UI good", "check accessibility", "design QA". Read-only.
+---
+
+# namht-design-review — UI/UX + accessibility review
+
+(Adapted from gstack's design-review idea, MIT.) Catch design problems an LLM-built UI tends to
+have. Works on a **live URL** (preferred — real screenshots) or on **frontend code/components**.
+
+## Inputs
+- A **URL** (local/staging) and/or the **frontend code** (components/pages). For a URL, use the
+  **Claude-in-Chrome MCP** to navigate + **screenshot** each key screen (desktop + a mobile width).
+- Any **design system / UX rules** in the KB (`12-conventions`, a `design`/`ui` doc, tokens) — use
+  as the standard; otherwise apply general heuristics.
+
+## Review dimensions (cite the screen/component + screenshot/file)
+1. **Visual consistency** — spacing scale, alignment, typography hierarchy, color/token use; does it
+   match the design system or look like inconsistent "AI slop"?
+2. **Layout & hierarchy** — is the primary action obvious? clutter? grouping? empty/loading/error states present?
+3. **Responsive** — does it hold at mobile width (overflow, tap targets, wrapping)?
+4. **Accessibility** — color contrast (WCAG AA), image `alt`, form labels, focus order, keyboard
+   operability, ARIA roles, semantic HTML, motion/reduced-motion.
+5. **Microcopy** — clear, consistent, not placeholder/lorem; error messages helpful.
+6. **Interaction** — hover/focus/disabled states; destructive actions confirmed; feedback on action.
+
+## Output (dual-audience; save `spec-kit-sessions/design/<app>-<date>.md`; render HTML; keep screenshots)
+```
+## In plain words            ← overall: is the UI ready? top 3 things to fix
+## Screens reviewed          ← list + screenshot refs (desktop/mobile)
+## Findings                  ← grouped by dimension: severity [CRITICAL/MAJOR/MINOR] · screen · issue · fix
+## Accessibility summary     ← WCAG checks pass/fail table
+## Strengths                 ← what's good (≥2)
+```
+
+## Rules
+- Prefer **real screenshots** as evidence; don't critique a UI you haven't seen — if no URL and no
+  code, ask. Cite the exact screen/component for every finding.
+- Read-only — propose fixes (with the concrete change), don't edit code here; hand to `/namht-build`.
+- Accessibility is not optional — always run dimension 4.

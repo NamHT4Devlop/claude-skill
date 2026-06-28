@@ -39,6 +39,14 @@ fixes. Read-only — it does NOT change code (hand fixes to `/namht-fix-bug` or 
    data exfiltration in prompts, unvalidated tool/function-call output, missing output guards.
 8. **Misc** — CORS/headers, rate limiting, mass assignment, insecure deserialization, file-upload type/size.
 
+## STRIDE threat model (per trust boundary / data flow)
+Beyond the OWASP checklist, run a quick **STRIDE** pass on each major component / trust boundary
+(entry point → service → data store; cross-service calls): **S**poofing (identity/auth),
+**T**ampering (integrity of data/requests), **R**epudiation (audit trail/logging), **I**nformation
+disclosure (leaks), **D**enial of service (resource limits), **E**levation of privilege (authz
+bypass). Output a small table — `| Component/flow | STRIDE category | Threat | Mitigation present? |`
+— and fold any gaps into Findings.
+
 ## Method
 1. Enumerate the attack surface (entry points) from KB + CodeGraph.
 2. For each category, inspect the relevant code (CodeGraph `explore`/`callers` to follow untrusted

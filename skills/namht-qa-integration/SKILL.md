@@ -1,0 +1,50 @@
+---
+name: namht-qa-integration
+description: >-
+  EXECUTE integration / end-to-end QA against a RUNNING app via a real browser:
+  take test cases (from /namht-qa) or a user story + a URL, drive the browser
+  (navigate, log in, fill, click), assert expected results from the DOM/screenshots,
+  run both the new-flow and regression cases, and produce a pass/fail report with
+  screenshots. Use when the user says "/qa-integration", "run QA on <url>", "test
+  the app live", "e2e test", "integration test against staging". Needs a browser.
+---
+
+# namht-qa-integration — run QA against a live app (browser-driven)
+
+(Adapted from gstack's browser-QA idea, MIT.) Where `/namht-qa` *designs* test cases, this one
+**executes** them against a running app and reports actual pass/fail with evidence.
+
+## Prerequisites
+- A **running app URL** (local/staging) the user provides. If none, ask for it; don't guess.
+- **Browser automation:** use the **Claude-in-Chrome MCP** (`mcp__claude-in-chrome__*`) — navigate,
+  read page, find, click, form-input, screenshot. (If that extension isn't connected, ask the user
+  to connect it; fall back to computer-use only for a native app.) NEVER click suspicious links.
+- **Test cases:** from a `/namht-qa` plan (under `spec-kit-sessions/qa/`) if available; else derive
+  the key cases first (happy + the regression set from KB/CodeGraph blast radius).
+- **Credentials:** ask the user for a test login if the flow needs auth; never invent or reuse prod creds.
+
+## Procedure
+1. **Load the test cases** (or generate a focused set: happy path + main error/edge + the regression
+   flows the change touches per KB/CodeGraph).
+2. **Open the app**, establish session (log in via the test account if needed).
+3. **For each case**: perform the steps in the browser (navigate, fill, click), then **assert** the
+   expected result by reading the DOM/page text and a **screenshot**. Record PASS/FAIL + evidence.
+4. **Run regression cases too** — verify the old flows the change touched still work (the point).
+5. **On failure**: capture the screenshot + the actual vs expected + the console/network error if
+   visible; don't stop — continue the suite.
+
+## Output (save `spec-kit-sessions/qa-runs/<app>-<date>.md`; render HTML; screenshots alongside)
+```
+## In plain words            ← passed X/Y; what's broken; safe to ship?
+## Environment               ← URL, browser, test account, date
+## Results                   ← | TC | Title | Type (new/regression) | Result | Evidence (screenshot/note) |
+## Failures (detail)         ← steps to reproduce + actual vs expected + screenshot + any console/network error
+## Coverage & gaps           ← cases not runnable (why), flows not covered
+```
+
+## Rules
+- **Read/observe only** — this is testing, not changing app data beyond what a test case requires;
+  never run destructive actions on a shared/prod environment (ask if unsure; prefer a test env).
+- Every result needs **evidence** (DOM assertion + screenshot) — no "looks fine" without proof.
+- Be honest: if you couldn't reach the app, log in, or run a case, mark it BLOCKED and say why.
+- Found a real bug? Offer **`/namht-fix-bug`** with the reproduction you captured.

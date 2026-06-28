@@ -230,6 +230,13 @@ claude
       <tr><td><code>/namht-system-map</code></td><td><b>Xuyên service</b>: ghép API+integration nhiều microservice → đồ thị phụ thuộc + luồng end-to-end (sequence)</td><td>Workspace nhiều service</td></tr>
       <tr><td><code>/namht-document</code></td><td>Tài liệu business↔code chi tiết tới từng field</td><td>Viết doc 1 module/entity</td></tr>
       <tr><td><code>/namht-codegraph</code></td><td><b>CodeGraph</b>: đồ thị code cho AGENT truy vấn qua MCP (100% local). Khác <code>/namht-map</code> (cho người xem)</td><td>Giảm token/tool-call</td></tr>
+      <tr><td><code>/namht-discover</code></td><td>Tra hỏi yêu cầu trước khi plan (forcing questions) → brief sắc</td><td>Đầu phễu</td></tr>
+      <tr><td><code>/namht-plan-review</code></td><td>Phản biện plan đa lăng kính (product/kiến trúc/rủi ro/devex)</td><td>Trước khi build</td></tr>
+      <tr><td><code>/namht-qa-integration</code></td><td>Chạy E2E QA trên app thật qua browser → pass/fail + screenshot</td><td>QA thực thi</td></tr>
+      <tr><td><code>/namht-design-review</code></td><td>Review UI/UX + accessibility (screenshot qua browser)</td><td>Frontend</td></tr>
+      <tr><td><code>/namht-pdf</code></td><td>Xuất report .md/.html ra PDF</td><td>Chia sẻ</td></tr>
+      <tr><td><code>/namht-retro</code></td><td>Retrospective từ git history → action items</td><td>Cuối tuần/sprint</td></tr>
+      <tr><td><code>/namht-skillify</code></td><td>Tự sinh skill namht-* mới theo chuẩn</td><td>Mở rộng bộ</td></tr>
       <tr><td><code>/namht-help</code></td><td>Liệt kê lệnh + báo trạng thái KB của repo hiện tại</td><td>Khi quên</td></tr>
     </tbody>
   </table>

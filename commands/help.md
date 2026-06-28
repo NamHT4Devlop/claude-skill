@@ -24,6 +24,13 @@ Commands (all namespaced under `/namht-`):
 | `/namht-system-map` | Multi-service workspace: cross-service dependency graph + end-to-end business flows (run at workspace root). |
 | `/namht-document <topic>` | Business↔code field-level technical document for a feature/entity/module. |
 | `/namht-codegraph [setup]` | Install/manage CodeGraph — the agent-queryable code graph (MCP), 100% local. |
+| `/namht-discover <idea>` | Discovery before planning — forcing questions, sharpen the problem brief. |
+| `/namht-plan-review <plan>` | Critique a plan (Product/Architecture/Risk-QA/DevEx) before building. |
+| `/namht-qa-integration <url>` | Run E2E QA against a RUNNING app via a real browser; pass/fail + screenshots. |
+| `/namht-design-review <url\|path>` | UI/UX + accessibility review (browser screenshots / frontend code). |
+| `/namht-pdf <file>` | Export a Markdown/HTML report to PDF (Mermaid drawn). |
+| `/namht-retro [window]` | Engineering retrospective from git history — shipped, pain, action items. |
+| `/namht-skillify <name+purpose>` | Scaffold a new namht-* skill + command (self-extend the kit). |
 
 Recommended flow: **scan** once → **ask/map/document** to understand → **plan** to break down
 work → **build** to implement → **rescan** to keep the KB fresh. The KB lives in
