@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# sync-bundles.sh — single source of truth for bundled files.
+#
+# Canonical copies live in resources/. Each skill that needs one carries its own copy under
+# skills/<skill>/references/ (so a skill stays self-contained when copied standalone). This
+# script regenerates those copies from resources/ — edit the file ONCE in resources/, run this,
+# commit. Run `scripts/sync-bundles.sh --check` in CI to fail if any copy drifted.
+#
+# (Map-only files — graph-builder.js, build-map.cjs, viewer-template.html — live solely in
+#  skills/namht-map/references and are not duplicated, so they're not managed here.)
+set -euo pipefail
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+SRC=resources
+CHECK="${1:-}"
+
+# canonical-file  ->  space-separated list of skills that bundle it
+map_review="namht-build namht-review namht-scan namht-rescan namht-security-audit"
+map_kb="namht-scan namht-rescan"
+map_html="namht-ask namht-document namht-plan namht-qa namht-system-map namht-pr namht-security-audit"  # html-builder.js + render-html.cjs
+
+emit() { # <canonical-file> <skill-list>
+  local file="$1"; shift
+  for sk in $@; do
+    local dir="skills/$sk/references"
+    [ -d "skills/$sk" ] || continue
+    if [ "$CHECK" = "--check" ]; then
+      if ! cmp -s "$SRC/$file" "$dir/$file" 2>/dev/null; then echo "DRIFT: $dir/$file ≠ $SRC/$file"; DRIFT=1; fi
+    else
+      mkdir -p "$dir"; cp "$SRC/$file" "$dir/$file"
+    fi
+  done
+}
+
+DRIFT=0
+emit review-skills-universal.md $map_review
+emit kb-steps.md               $map_kb
+emit html-builder.js           $map_html
+emit render-html.cjs           $map_html
+
+if [ "$CHECK" = "--check" ]; then
+  [ "$DRIFT" = 0 ] && { echo "✔ bundles in sync with resources/"; exit 0; } || { echo "✗ drift — run scripts/sync-bundles.sh to fix"; exit 1; }
+fi
+# render-html.cjs needs +x
+for sk in $map_html; do [ -f "skills/$sk/references/render-html.cjs" ] && chmod +x "skills/$sk/references/render-html.cjs"; done
+echo "✔ synced bundles from resources/ into skill references/"
