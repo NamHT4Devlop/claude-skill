@@ -100,7 +100,7 @@
     <li><b>Claude Code</b> installed &amp; working: open a terminal and run <code>claude --version</code> to see a version number. (If <code>/plugin</code> is unknown → update Claude Code.)</li>
     <li><b>git</b>: <code>git --version</code>. <b>Node.js</b> (for map &amp; HTML): <code>node --version</code> (ideally ≥ 18).</li>
     <li><b>Your company's Claude plan is Team/Enterprise</b> (a commercial plan — Anthropic does not train on your code). Ask your admin if unsure.</li>
-    <li><b>Access to the toolkit repo</b> <code>NamHT4Devlop/nam-claude-skill</code> (private) — or copy the folder over yourself.</li>
+    <li><b>Access to the toolkit repo</b> <code>NamHT4Devlop/nam-claude-skill</code> (public) — or copy the folder over yourself.</li>
   </ul>
   <div class="box warn"><div class="ti">⚠️ Note on the Claude plan</div>
     Use this only on an <b>organization plan (Team/Enterprise)</b>. Don't use a personal plan (Pro/Max) for company code — the data policy is different.</div>
@@ -250,7 +250,7 @@ codegraph uninstall</code></pre></div>
       <tr><td><code>/plugin</code> or <code>/hooks</code> is unknown</td><td>Update Claude Code to a newer build.</td></tr>
       <tr><td>A command says “no knowledge-base”</td><td>Run <code>/namht-scan</code> once in that repo.</td></tr>
       <tr><td>The git guard isn't blocking</td><td>Open <span class="kbd">/hooks</span> or restart to load <code>settings.json</code>.</td></tr>
-      <tr><td><code>git clone</code> asks for a password</td><td>Private repo — use an account with access / an SSH key, or copy the folder manually.</td></tr>
+      <tr><td><code>git clone</code> asks for a password</td><td>Public repo — clone the HTTPS URL (no auth), or set up an SSH key for the git@ URL.</td></tr>
       <tr><td>Map/HTML doesn't render diagrams</td><td>Needs Node; the offline build bundles the libraries, so no network is required.</td></tr>
     </tbody>
   </table>

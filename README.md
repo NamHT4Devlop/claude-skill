@@ -45,9 +45,8 @@ read-only specialists the build/review steps fan out to in parallel.
   recent version — if `/plugin` is unknown, update Claude Code first (`claude update` or
   reinstall from the official docs).
 - **git** installed (`git --version`) — needed to clone this repo and used by `rescan`/`review`.
-- **Access to this repository.** It is currently **private**, so cloning requires that your
-  GitHub account has access (or ask the owner to add you / make it public). The plugin itself
-  needs **no API key** — it runs on your existing Claude Code.
+- **Access to this repository.** It is **public**, so anyone can clone it — no special access
+  needed. The plugin itself needs **no API key** — it runs on your existing Claude Code.
 - Paths below use `~/.claude` (macOS/Linux). On **Windows** use `%USERPROFILE%\.claude`
   (PowerShell: `$HOME\.claude`).
 
@@ -196,7 +195,7 @@ git config --global core.excludesfile ~/.gitignore_global
 |---------|-----|
 | `/plugin` is not recognized | Update Claude Code; plugins require a recent version. |
 | `marketplace add` fails on a path | Pass an **absolute** path to `<PLUGIN_DIR>` and ensure `.claude-plugin/marketplace.json` exists there. |
-| `git clone` asks for a password / permission denied | The repo is private — use an account with access, set up SSH keys, or have the owner share/publish it. |
+| `git clone` asks for a password / permission denied | The repo is public — clone the HTTPS URL (no auth needed), or set up an SSH key for the `git@` URL. |
 | Commands don't show up | Reload the Claude Code window/session after install; for plain skills, confirm files landed in `.claude/commands` & `.claude/skills`. |
 | A command says "no knowledge-base found" | Run `/namht-scan` once in that repo (or reuse an existing `knowledge-base/` folder). |
 | Command name clash (Option B) | Rename the files in `.claude/commands/`. |

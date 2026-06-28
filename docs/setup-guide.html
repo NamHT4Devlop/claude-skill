@@ -276,7 +276,7 @@ claude
       <tr><td>A command says "no knowledge-base found"</td><td>Run <code>/namht-scan</code> once in that repo</td></tr>
       <tr><td>Duplicate commands / defined twice</td><td>You installed both the symlink and the plugin — remove one (run <code>… uninstall</code> or <code>/plugin uninstall namht</code>)</td></tr>
       <tr><td>You actually want to commit the KB for a personal project</td><td>The KB is ignored machine-wide → force it: <code>git add -f knowledge-base/</code></td></tr>
-      <tr><td><code>git clone</code> asks for a password / permission denied</td><td>Private repo — use an account with access or configure an SSH key</td></tr>
+      <tr><td><code>git clone</code> asks for a password / permission denied</td><td>Public repo — clone the HTTPS URL (no auth), or configure an SSH key for git@</td></tr>
     </tbody>
   </table>
 
