@@ -1,0 +1,69 @@
+---
+name: namht-security-audit
+description: >-
+  Run a whole-repo security audit: sweep the codebase for vulnerabilities by
+  category (input validation, injection, broken authn/authz & IDOR, secrets &
+  crypto, sensitive-data exposure, dependency risk, and AI/LLM-specific issues),
+  grounded in the project's review-skills checklist + auth model (KB) + CodeGraph
+  (entry points = attack surface, blast radius). Use when the user says
+  "/security-audit", "security review of the repo", "find vulnerabilities",
+  "OWASP audit", "is this secure", or before a release/pentest. Read-only.
+---
+
+# namht-security-audit — whole-repo security sweep
+
+A repo-wide security audit (broader than `/namht-review`, which is per-file). It enumerates the
+**attack surface**, checks it against a security checklist, and reports prioritized findings with
+fixes. Read-only — it does NOT change code (hand fixes to `/namht-fix-bug` or `/namht-build`).
+
+## Inputs & grounding
+- **Checklist:** `knowledge-base/review-skills.md` §2 SECURITY + §8 AI/LLM (fallback bundled
+  `references/review-skills-universal.md`). Plus project rules (Section 14) if present.
+- **Attack surface (CodeGraph + KB):** find every external entry point — HTTP/gRPC routes,
+  message consumers, scheduled jobs, CLI, file/upload handlers, auth flows — via KB
+  `03-entry-points.md` / `09-auth-security.md` / `11-api-docs.md` and `codegraph_explore` on the
+  controllers/handlers. These are where untrusted input enters.
+- If no KB/`.codegraph/`, fall back to Grep/Glob (note reduced coverage).
+
+## Audit categories (cover each; cite file·function·line)
+1. **Input validation** — every entry point validates untrusted input at the boundary? whitelist > blacklist?
+2. **Injection** — SQL/NoSQL (string-built queries), command, XSS, path traversal, SSRF, template injection.
+3. **AuthN / AuthZ** — auth on every protected endpoint; **IDOR** (can a user reach others' resources?);
+   role/permission checks at the top; tenant isolation; token expiry/rotation.
+4. **Secrets & crypto** — hardcoded secrets/keys, secrets in logs, weak hashing (MD5/SHA1/plain),
+   insecure randomness, secrets read from env/secret-manager.
+5. **Sensitive-data exposure** — PII/tokens in responses or logs; stack traces to clients; verbose errors.
+6. **Dependencies** — known-vulnerable patterns; unpinned versions; recommend an audit
+   (`npm audit`/`pip-audit`/`govulncheck`) — note, don't run network installs.
+7. **AI/LLM (if the repo calls an LLM)** — prompt injection (user input in system prompt),
+   data exfiltration in prompts, unvalidated tool/function-call output, missing output guards.
+8. **Misc** — CORS/headers, rate limiting, mass assignment, insecure deserialization, file-upload type/size.
+
+## Method
+1. Enumerate the attack surface (entry points) from KB + CodeGraph.
+2. For each category, inspect the relevant code (CodeGraph `explore`/`callers` to follow untrusted
+   data from entry → sink). Prefer fanning out the **`namht-security-reviewer`** sub-agent on the
+   high-risk areas.
+3. Rate each finding: severity `[CRITICAL]/[MAJOR]/[MINOR]`, exploitability, and business impact.
+
+## Output (dual-audience; save + render HTML)
+Save to `spec-kit-sessions/security/audit-<date>.md`, then render to HTML and open it.
+```
+# Security Audit — <project> (<date>)
+## In plain words            ← overall risk posture, # criticals, are we safe to ship?
+## Attack surface            ← entry points enumerated (table)
+## Findings                  ← grouped by category:
+### [CRITICAL] <title> · file·func·line
+> Risk / how it's exploited · business impact
+**Vulnerable code:** … **Fix:** … (complete, no placeholders)
+## Severity summary          ← table: CRITICAL/MAJOR/MINOR counts by category
+## Prioritized remediation   ← ordered fix list (what to do first)
+## Out of scope / assumptions
+```
+
+## Rules
+- **Don't fabricate.** Only report issues you can cite in the code; if a control exists, say so
+  ("✅ parameterized queries used in …"). No generic "you should validate input" without a location.
+- Read-only — never edit/exploit. Never print real secret values found (mask them; just point to the location).
+- Highest-confidence first; mark uncertain items as "verify".
+- For each [CRITICAL]/[MAJOR], offer to fix via `/namht-fix-bug`.
