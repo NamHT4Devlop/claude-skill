@@ -1,4 +1,4 @@
-# Security & Enterprise Notes — `claude-skill`
+# Security & Enterprise Notes — `nam-claude-skill`
 
 This document is for a security reviewer evaluating whether to use this toolkit on a
 company machine. It describes exactly what the code does, what it does **not** do, and how to

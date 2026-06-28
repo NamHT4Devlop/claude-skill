@@ -28,7 +28,7 @@ deny "git commit --amend -m x"
 deny "git send-email"
 
 echo "git-guard: ALLOW cases"
-allow "git push https://github.com/NamHT4Devlop/claude-skill main"
+allow "git push https://github.com/NamHT4Devlop/nam-claude-skill main"
 allow "git push git@github.com:NamHT4Devlop/x.git"
 allow "git pull"
 allow "git fetch --all"
