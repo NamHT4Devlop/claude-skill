@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spec Kit (namht-*) — Hướng dẫn cài trên máy công ty (cho người mới dùng Claude)</title>
+<style>
+  :root{ --bg:#0f1115; --panel:#171a21; --panel2:#1d2129; --border:#2a2f3a; --text:#e6e9ef;
+    --muted:#9aa3b2; --accent:#7c9cff; --accent2:#5ad1a8; --warn:#ffcf6b; --danger:#ff7b72; --code:#0b0d12; --chip:#222734; }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f6f7fb; --panel:#fff; --panel2:#f0f2f7; --border:#e2e6ee; --text:#1b2230;
+      --muted:#5a6475; --accent:#3b5bdb; --accent2:#0a9d6e; --warn:#a86a00; --danger:#c0392b; --code:#0b0d12; --chip:#eef1f7; } }
+  *{box-sizing:border-box} html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;font-size:16px}
+  .wrap{max-width:900px;margin:0 auto;padding:32px 20px 100px}
+  header.hero{padding:26px 0 10px;border-bottom:1px solid var(--border);margin-bottom:24px}
+  .eyebrow{color:var(--accent);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:12px}
+  h1{font-size:29px;margin:.25em 0 .2em;line-height:1.22}
+  h2{font-size:21px;margin:2em 0 .5em;display:flex;align-items:center;gap:.5em;border-top:1px solid var(--border);padding-top:1.1em}
+  h2:first-of-type{border-top:none}
+  h3{font-size:16px;margin:1.3em 0 .4em}
+  .sub{color:var(--muted);max-width:64ch}
+  p{margin:.6em 0} a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em;background:var(--chip);padding:.1em .4em;border-radius:6px}
+  .muted{color:var(--muted)} b{color:var(--text)}
+  .pill{display:inline-block;background:var(--chip);border:1px solid var(--border);border-radius:999px;padding:3px 12px;font-size:13px;color:var(--muted);margin:2px 4px 2px 0}
+  nav.toc{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px 18px;margin:18px 0}
+  nav.toc strong{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+  nav.toc ol{margin:.5em 0 0;padding-left:1.3em;columns:2;column-gap:28px} nav.toc li{margin:.25em 0}
+  .box{border:1px solid var(--border);border-radius:14px;padding:14px 18px;margin:16px 0;background:var(--panel)}
+  .box .ti{font-weight:700;margin-bottom:.2em;display:flex;align-items:center;gap:.5em}
+  .box.info{border-left:4px solid var(--accent)} .box.ok{border-left:4px solid var(--accent2)}
+  .box.warn{border-left:4px solid var(--warn)} .box.danger{border-left:4px solid var(--danger)}
+  .step{display:flex;gap:15px;margin:16px 0;align-items:flex-start}
+  .step .num{flex:0 0 34px;height:34px;width:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#9b7cff);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:15px}
+  .step .body{flex:1;min-width:0} .step .body h3{margin-top:.1em}
+  .cb{position:relative;margin:.7em 0}
+  .cb pre{background:var(--code);color:#e8edf6;border:1px solid #20242e;border-radius:12px;padding:13px 46px 13px 15px;overflow:auto;margin:0;font-size:13px;line-height:1.55}
+  .cb pre code{background:none;padding:0;color:inherit}
+  .cb .copy{position:absolute;top:7px;right:7px;background:#2a3140;color:#cbd5e7;border:1px solid #3a4356;border-radius:8px;font-size:12px;padding:4px 9px;cursor:pointer}
+  .cb .copy:hover{background:#384156} .cb .copy.done{background:var(--accent2);color:#04120c;border-color:transparent}
+  .cmt{color:#7e8aa0}
+  table{border-collapse:collapse;width:100%;margin:1em 0;font-size:14.5px;background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+  th{background:var(--panel2);font-size:12.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+  tr:last-child td{border-bottom:none} td code{white-space:nowrap}
+  .kbd{font-family:ui-monospace,monospace;background:var(--chip);border:1px solid var(--border);border-bottom-width:2px;border-radius:6px;padding:1px 7px;font-size:12.5px}
+  .chk{list-style:none;padding-left:0} .chk li{margin:.35em 0;padding-left:1.6em;position:relative}
+  .chk li:before{content:"☐";position:absolute;left:0;color:var(--accent)}
+  footer{color:var(--muted);font-size:13px;margin-top:40px;text-align:center;border-top:1px solid var(--border);padding-top:16px}
+  .tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;background:rgba(124,156,255,.16);color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">Claude Code · Cài trên máy công ty · Cho người mới</div>
+    <h1>🏢 Cài “Spec Kit” (bộ lệnh <code>/namht-*</code>) trên máy công ty</h1>
+    <p class="sub">Hướng dẫn từng bước, dễ hiểu cho người <b>mới dùng Claude Code</b>: copy bộ công cụ
+    <code>claude-skill</code> sang máy công ty, cài an toàn (không lộ code, không đụng repo team),
+    rồi dùng được ngay: hiểu codebase, build tính năng, fix bug, review, tạo tài liệu.</p>
+    <div style="margin-top:10px">
+      <span class="pill">⏱ ~15 phút</span><span class="pill">🔒 An toàn enterprise</span>
+      <span class="pill">🙈 Zero footprint repo team</span><span class="pill">🔑 Không cần API key</span>
+    </div>
+  </header>
+
+  <div class="box info">
+    <div class="ti">🧠 Trước tiên, vài khái niệm (đọc 30 giây)</div>
+    <table style="margin:.4em 0 0">
+      <tr><td><b>Claude Code</b></td><td>Trợ lý lập trình AI chạy trong terminal/IDE — thứ bạn gõ lệnh vào.</td></tr>
+      <tr><td><b>Skill / Command</b></td><td>“Kỹ năng” đóng gói sẵn. Gõ <code>/tên-lệnh</code> để chạy (vd <code>/namht-build</code>).</td></tr>
+      <tr><td><b>Knowledge Base (KB)</b></td><td>Thư mục <code>knowledge-base/</code> trong mỗi repo — AI đọc để hiểu nghiệp vụ dự án.</td></tr>
+      <tr><td><b>MCP</b></td><td>Cách nối công cụ ngoài (vd CodeGraph) vào Claude để nó truy vấn.</td></tr>
+      <tr><td><b>Hook</b></td><td>Luật chặn ở tầng hệ thống (vd cấm <code>git push</code> repo team) — AI không tự gỡ tuỳ tiện.</td></tr>
+    </table>
+  </div>
+
+  <nav class="toc">
+    <strong>Các bước</strong>
+    <ol>
+      <li><a href="#pre">0. Điều kiện cần</a></li>
+      <li><a href="#get">1. Lấy bộ công cụ về</a></li>
+      <li><a href="#install">2. Cài cho riêng bạn</a></li>
+      <li><a href="#safe">3. Bật rào an toàn (quan trọng)</a></li>
+      <li><a href="#codegraph">4. CodeGraph (khuyến nghị)</a></li>
+      <li><a href="#first">5. Dùng lần đầu trên 1 repo</a></li>
+      <li><a href="#daily">6. Bảng lệnh &amp; luồng hằng ngày</a></li>
+      <li><a href="#verify">7. Kiểm tra đã chạy</a></li>
+      <li><a href="#maintain">8. Cập nhật / Gỡ</a></li>
+      <li><a href="#trouble">9. Sự cố thường gặp</a></li>
+      <li><a href="#faq">10. FAQ &amp; an toàn</a></li>
+    </ol>
+  </nav>
+
+  <!-- 0 -->
+  <h2 id="pre">0. Điều kiện cần</h2>
+  <ul class="chk">
+    <li><b>Claude Code</b> đã cài & chạy được: mở terminal gõ <code>claude --version</code> ra số phiên bản. (Nếu lệnh <code>/plugin</code> báo lạ → cập nhật Claude Code.)</li>
+    <li><b>git</b>: <code>git --version</code>. <b>Node.js</b> (cho map &amp; HTML): <code>node --version</code> (nên ≥ 18).</li>
+    <li><b>Gói Claude của công ty là Team/Enterprise</b> (gói thương mại — Anthropic không dùng code của bạn để train). Hỏi admin nếu chưa rõ.</li>
+    <li><b>Quyền truy cập repo công cụ</b> <code>NamHT4Devlop/claude-skill</code> (private) — hoặc bạn tự copy thư mục sang.</li>
+  </ul>
+  <div class="box warn"><div class="ti">⚠️ Lưu ý gói Claude</div>
+    Chỉ dùng trên <b>gói tổ chức (Team/Enterprise)</b>. Đừng dùng gói cá nhân (Pro/Max) cho code công ty — chính sách dữ liệu khác.</div>
+
+  <!-- 1 -->
+  <h2 id="get">1. Lấy bộ công cụ về máy</h2>
+  <p>Đặt ở một chỗ cố định để sau này cập nhật bằng <code>git pull</code>. Ví dụ <code>~/claude-skill</code>:</p>
+  <div class="cb"><button class="copy">Copy</button><pre><code><span class="cmt"># cách 1: clone từ GitHub (cần quyền truy cập repo)</span>
+git clone https://github.com/NamHT4Devlop/claude-skill.git ~/claude-skill
+
+<span class="cmt"># cách 2: nếu được đưa file zip/thư mục → giải nén vào ~/claude-skill</span></code></pre></div>
+  <p class="muted">Bên dưới gọi thư mục này là <b>&lt;TOOL&gt;</b>. Windows: thay <code>~</code> bằng <code>%USERPROFILE%</code>.</p>
+
+  <!-- 2 -->
+  <h2 id="install">2. Cài cho riêng bạn (1 lệnh)</h2>
+  <p>Lệnh này tạo <b>symlink</b> các skill/command/agent vào thư mục cá nhân <code>~/.claude</code> →
+  dùng được ở <b>mọi repo</b>, và <b>không</b> nằm trong repo nào (team không thấy gì).</p>
+  <div class="cb"><button class="copy">Copy</button><pre><code>~/claude-skill/scripts/personal-install.sh</code></pre></div>
+  <p>Nó in ra số skill/command đã link + nhắc đoạn cấu hình rào git (làm ở bước 3).
+  Vì là symlink nên sau này <code>cd ~/claude-skill &amp;&amp; git pull</code> là cập nhật ngay.</p>
+  <div class="box info"><div class="ti">💡</div> Skill tự kích hoạt khi bạn nói tự nhiên (vd “review file này”), hoặc gõ thẳng <code>/namht-...</code>. Không cần API key — chạy bằng chính Claude Code của bạn.</div>
+
+  <!-- 3 -->
+  <h2 id="safe">3. Bật rào an toàn — QUAN TRỌNG cho máy công ty</h2>
+  <p>Hai việc giúp “chạy gì cũng không hại repo team”:</p>
+
+  <div class="step"><div class="num">A</div><div class="body">
+    <h3>Global gitignore — không để dấu vết lọt vào commit</h3>
+    <p>Mọi <code>knowledge-base/</code>, <code>spec-kit-sessions/</code>, <code>.codegraph/</code> sẽ bị git bỏ qua trên toàn máy (không sửa repo nào):</p>
+    <div class="cb"><button class="copy">Copy</button><pre><code>touch ~/.gitignore_global
+printf '%s\n' 'spec-kit-sessions/' 'knowledge-base/' '.codegraph/' 'CLAUDE.local.md' '.spec-kit/' >> ~/.gitignore_global
+git config --global core.excludesfile ~/.gitignore_global</code></pre></div>
+  </div></div>
+
+  <div class="step"><div class="num">B</div><div class="body">
+    <h3>Rào git — chỉ đọc/đồng bộ, cấm push repo team</h3>
+    <p><code>personal-install.sh</code> đã đặt sẵn script chặn tại <code>~/.claude/hooks/namht-git-guard.sh</code>.
+    Giờ “lắp” nó vào Claude Code: mở <code>~/.claude/settings.json</code> và thêm khối sau (gộp vào, đừng xoá phần đang có):</p>
+    <div class="cb"><button class="copy">Copy</button><pre><code>{
+  "permissions": {
+    "deny": [
+      "Bash(git remote add:*)", "Bash(git remote set-url:*)", "Bash(git remote remove:*)",
+      "Bash(git reset --hard:*)", "Bash(git clean -f:*)", "Bash(git rebase:*)",
+      "Bash(git commit --amend:*)", "Bash(git restore:*)", "Bash(git branch -D:*)",
+      "Bash(git send-email:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      { "matcher": "Bash", "hooks": [
+        { "type": "command", "command": "~/.claude/hooks/namht-git-guard.sh", "timeout": 10 } ] }
+    ]
+  }
+}</code></pre></div>
+    <p>Kết quả: cho phép <code>fetch · pull · status · log · diff · add · commit</code>; <b>chặn cứng</b> push repo team + các lệnh phá huỷ (<code>reset --hard</code>, <code>rebase</code>…).</p>
+    <div class="box danger"><div class="ti">🎯 Chỉnh whitelist push cho máy công ty</div>
+      Mở <code>~/claude-skill/hooks/git-guard.sh</code>, dòng <code>ALLOW_OWNER_RE</code>:
+      <ul style="margin:.4em 0">
+        <li>Cho AI push repo <b>cá nhân của bạn</b>: đổi <code>NamHT4Devlop</code> → username GitHub cá nhân của bạn.</li>
+        <li><b>An toàn nhất (khuyên cho công ty):</b> chặn AI push <i>mọi nơi</i> — đặt <code>ALLOW_OWNER_RE='__NONE__'</code>. Khi cần push, bạn tự chạy trong terminal.</li>
+      </ul>
+    </div>
+  </div></div>
+  <div class="box warn"><div class="ti">🔁 Nạp lại</div> Sau khi sửa <code>settings.json</code>, mở <span class="kbd">/hooks</span> một lần hoặc khởi động lại Claude Code để rào có hiệu lực.</div>
+
+  <!-- 4 -->
+  <h2 id="codegraph">4. CodeGraph (khuyến nghị — giúp AI hiểu code nhanh, ít token)</h2>
+  <p>CodeGraph dựng “bản đồ code” cục bộ để AI truy vấn qua MCP thay vì đọc mò. 100% local.</p>
+  <div class="cb"><button class="copy">Copy</button><pre><code><span class="cmt"># macOS/Linux: cài CLI (tự bundle runtime)</span>
+curl -fsSL https://raw.githubusercontent.com/colbymchenry/codegraph/main/install.sh | sh
+<span class="cmt"># nối vào Claude Code (mức global) + tắt telemetry</span>
+codegraph install -t claude -l global -y
+codegraph telemetry off</code></pre></div>
+  <div class="box warn"><div class="ti">🏢 Chuẩn enterprise hơn</div>
+    Thay vì <code>curl|sh</code>, nếu công ty siết supply-chain: cài qua npm pin phiên bản
+    (<code>npm i -g @colbymchenry/codegraph@&lt;version&gt;</code>) hoặc mirror nội bộ. Windows: dùng <code>install.ps1</code>.</div>
+
+  <!-- 5 -->
+  <h2 id="first">5. Dùng lần đầu trên 1 repo</h2>
+  <div class="cb"><button class="copy">Copy</button><pre><code><span class="cmt"># 1) vào ĐÚNG project bạn muốn làm</span>
+cd /đường/dẫn/tới/project-cua-ban
+<span class="cmt"># 2) (nếu dùng CodeGraph) dựng index 1 lần — tự cập nhật về sau</span>
+codegraph init
+<span class="cmt"># 3) mở Claude Code</span>
+claude</code></pre></div>
+  <p>Trong Claude Code, lần đầu với 1 repo hãy tạo Knowledge Base, rồi dùng:</p>
+  <div class="cb"><button class="copy">Copy</button><pre><code>/namht-scan                 <span class="cmt"># quét repo → sinh knowledge-base/ (chạy 1 lần)</span>
+/namht-ask luồng đăng nhập hoạt động thế nào?
+/namht-build thêm tính năng quên mật khẩu qua email OTP
+/namht-fix-bug API /tasks trả 500 khi status sai</code></pre></div>
+  <p class="muted">Đã có <code>knowledge-base/</code> sẵn từ máy khác? Cứ copy vào repo là dùng lại được, khỏi scan.</p>
+
+  <!-- 6 -->
+  <h2 id="daily">6. Bảng lệnh &amp; luồng hằng ngày</h2>
+  <table>
+    <thead><tr><th>Lệnh</th><th>Làm gì</th></tr></thead>
+    <tbody>
+      <tr><td><code>/namht-scan</code></td><td>Tạo Knowledge Base từ codebase (chạy đầu tiên).</td></tr>
+      <tr><td><code>/namht-rescan</code></td><td>Cập nhật KB sau khi code đổi.</td></tr>
+      <tr><td><code>/namht-build</code></td><td>Làm tính năng: plan → code → review → test → evidence.</td></tr>
+      <tr><td><code>/namht-fix-bug</code></td><td>Bug production → nguyên nhân gốc → test hồi quy → fix tối thiểu → verify.</td></tr>
+      <tr><td><code>/namht-review</code></td><td>Review file/diff: chất lượng + nhất quán nghiệp vụ.</td></tr>
+      <tr><td><code>/namht-ask</code></td><td>Hỏi-đáp codebase (giải thích + sơ đồ + chi tiết kỹ thuật).</td></tr>
+      <tr><td><code>/namht-plan</code></td><td>PO/BA: Epic → user stories → sprint plan.</td></tr>
+      <tr><td><code>/namht-map</code></td><td>Đồ thị phụ thuộc tương tác (HTML) mở trên trình duyệt.</td></tr>
+      <tr><td><code>/namht-document</code></td><td>Tài liệu business↔code, xuất HTML.</td></tr>
+      <tr><td><code>/namht-help</code></td><td>Liệt kê lệnh + trạng thái KB của repo.</td></tr>
+    </tbody>
+  </table>
+  <p><b>Luồng đề xuất:</b> <code>scan</code> (1 lần) → <code>ask/map/document</code> (hiểu) → <code>plan</code> (chia việc) → <code>build</code>/<code>fix-bug</code> (làm) → <code>rescan</code> (giữ KB tươi).</p>
+
+  <!-- 7 -->
+  <h2 id="verify">7. Kiểm tra đã chạy đúng</h2>
+  <ul class="chk">
+    <li>Trong Claude Code gõ <span class="kbd">/</span> → thấy các lệnh <code>/namht-*</code>.</li>
+    <li>Chạy <code>/namht-help</code> → in danh sách lệnh + báo repo có KB hay chưa.</li>
+    <li>Rào git: <code>printf '{"tool_input":{"command":"git push https://github.com/some-org/x"}}' | ~/.claude/hooks/namht-git-guard.sh</code> → ra JSON <code>deny</code>.</li>
+    <li>CodeGraph: gõ <span class="kbd">/</span> hoặc hỏi một câu về code → Claude tự dùng được (sau khi <code>codegraph init</code> + reload).</li>
+  </ul>
+
+  <!-- 8 -->
+  <h2 id="maintain">8. Cập nhật / Gỡ</h2>
+  <div class="cb"><button class="copy">Copy</button><pre><code><span class="cmt"># cập nhật bộ công cụ</span>
+cd ~/claude-skill && git pull        <span class="cmt"># symlink nên áp dụng ngay</span>
+<span class="cmt"># gỡ (chỉ xoá symlink trong ~/.claude, không đụng repo nào)</span>
+~/claude-skill/scripts/personal-install.sh uninstall
+<span class="cmt"># gỡ CodeGraph khỏi Claude Code</span>
+codegraph uninstall</code></pre></div>
+
+  <!-- 9 -->
+  <h2 id="trouble">9. Sự cố thường gặp</h2>
+  <table>
+    <thead><tr><th>Triệu chứng</th><th>Cách xử lý</th></tr></thead>
+    <tbody>
+      <tr><td>Không thấy lệnh <code>/namht-*</code></td><td>Reload/khởi động lại Claude Code; kiểm tra <code>ls ~/.claude/skills | grep namht-</code>.</td></tr>
+      <tr><td><code>/plugin</code> hoặc <code>/hooks</code> báo lạ</td><td>Cập nhật Claude Code lên bản mới.</td></tr>
+      <tr><td>Lệnh báo “no knowledge-base”</td><td>Chạy <code>/namht-scan</code> một lần trong repo đó.</td></tr>
+      <tr><td>Rào git chưa chặn</td><td>Mở <span class="kbd">/hooks</span> hoặc restart để nạp <code>settings.json</code>.</td></tr>
+      <tr><td><code>git clone</code> đòi mật khẩu</td><td>Repo private — dùng tài khoản có quyền / SSH key, hoặc copy thư mục thủ công.</td></tr>
+      <tr><td>Map/HTML không render sơ đồ</td><td>Cần Node; bản offline đã nhúng sẵn thư viện nên không cần mạng.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 10 -->
+  <h2 id="faq">10. FAQ &amp; an toàn enterprise</h2>
+  <h3>Copy vào máy công ty có an toàn không?</h3>
+  <p>Code công cụ là <b>thuần local</b> (đọc/ghi file), <b>không</b> gọi mạng/exec/eval, không chứa secret.
+  Chi tiết audit + cách tự kiểm: xem <code>&lt;TOOL&gt;/SECURITY.md</code>.</p>
+  <h3>Dữ liệu code có bị gửi đi đâu không?</h3>
+  <p>KB/CodeGraph nằm local. Khi AI đọc code để trả lời, đoạn đó vào ngữ cảnh LLM — <b>giống như Claude đọc file bình thường</b>, và đã được tổ chức cho phép (gói Team/Enterprise không train trên data của bạn).</p>
+  <h3>Làm sao chắc chắn không đụng repo team?</h3>
+  <p>Global gitignore (bước 3A) + rào git (3B) + đặt <code>ALLOW_OWNER_RE='__NONE__'</code> để cấm AI push mọi nơi. Mạnh hơn nữa: bật <b>branch protection</b> trên GitHub repo team.</p>
+  <h3>Nó có nhớ tôi giữa các phiên không?</h3>
+  <p>Có. Claude Code có auto-memory (per-project) + bạn có thể để sở thích chung trong <code>~/.claude/CLAUDE.md</code> (load mọi repo). KB của mỗi repo cũng lớn dần qua mỗi lần build/rescan.</p>
+
+  <footer>
+    Spec Kit (namht-*) · port của Auto Spec Kit · Repo <code>NamHT4Devlop/claude-skill</code><br>
+    File này: <code>&lt;TOOL&gt;/docs/company-setup-guide.html</code> — mở bằng trình duyệt bất kỳ. Bảo mật chi tiết: <code>SECURITY.md</code>.
+  </footer>
+</div>
+
+<script>
+  document.querySelectorAll('.cb .copy').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var t = btn.parentElement.querySelector('code').innerText;
+      navigator.clipboard.writeText(t).then(function(){
+        var o = btn.textContent; btn.textContent='✓ Đã copy'; btn.classList.add('done');
+        setTimeout(function(){ btn.textContent=o; btn.classList.remove('done'); }, 1400);
+      });
+    });
+  });
+</script>
+</body>
+</html>
