@@ -35,7 +35,9 @@ unlink_ours() {
 if [ "${1:-install}" = "uninstall" ]; then
   echo "▶  Uninstalling (personal)…"
   unlink_ours
+  [ -L "$DEST/hooks/namht-git-guard.sh" ] && rm -f "$DEST/hooks/namht-git-guard.sh" && echo "   - removed hooks/namht-git-guard.sh"
   echo "✔  Done. Removed our symlinks from $DEST — your repos were never touched."
+  echo "   NOTE: the git-guard hook+deny entries in $DEST/settings.json are left as-is — remove them by hand if you want."
   exit 0
 fi
 
@@ -51,5 +53,15 @@ for f in "$SRC"/agents/*.md;   do [ -f "$f" ] && ln -sfn "$f"     "$DEST/agents/
 for f in "$SRC"/commands/*.md; do [ -f "$f" ] && ln -sfn "$f"     "$DEST/commands/$(basename "$f")" && n_c=$((n_c+1)); done
 
 echo "   ✅ linked $n_s skills, $n_a agents, $n_c commands"
+
+# ── git-guard hook (read/sync-in git only; block remote-affecting + destructive) ──
+mkdir -p "$DEST/hooks"
+ln -sfn "$SRC/hooks/git-guard.sh" "$DEST/hooks/namht-git-guard.sh"
+echo "   ✅ linked hooks/namht-git-guard.sh"
+echo "   ⚠  To ARM the git guard, add this to $DEST/settings.json (one time):"
+echo '        hooks.PreToolUse += { "matcher":"Bash", "hooks":[{"type":"command",'
+echo "          \"command\":\"$DEST/hooks/namht-git-guard.sh\",\"timeout\":10}] }"
+echo '        permissions.deny += "Bash(git push:*)", "Bash(git reset --hard:*)", … (see SECURITY.md)'
+
 echo "✔  Done. Open Claude Code in any project and use /namht-build, /namht-ask, /namht-review, …"
 echo "   (Skills also auto-activate from plain English — slash commands are optional.)"

@@ -70,6 +70,47 @@ minified) — provenance: the author's own `auto-spec-extension` repo.
 - All tool calls (Bash, Edit, installs) remain gated by Claude Code's permission system — the
   user approves them. Use an **untrusted workspace** until you trust a repo.
 
+## Git guardrail (hard-blocked, read/sync-in only)
+
+A **PreToolUse hook** (`hooks/git-guard.sh`) + **`permissions.deny`** rules make git commands that
+touch the **remote** or **destroy local work** *impossible* — enforced by the Claude Code harness,
+not by the model's goodwill. This holds even for chained commands (`cd x && git push`), `git -C`,
+and ignores the word "push" inside a quoted commit message.
+
+- **Allowed** (read / sync-in): `fetch`, `pull`, `status`, `log`, `diff`, `show`, `blame`,
+  `branch` (list), `add`, `commit`, `stash`, `merge`, `checkout <branch>`.
+- **Blocked**: `push` (all forms), `remote add/set-url/remove/rename/set-head/set-branches/prune`,
+  `send-email`, `svn dcommit`, `p4 submit`, `config remote.*`; and destructive local:
+  `reset --hard`, `clean -f`, `checkout -- / . / -f / --force`, `restore`, `branch -D`,
+  `commit --amend`, `rebase`, `filter-branch/filter-repo`, `reflog expire`, `gc --prune`,
+  `update-ref -d`.
+
+Wire it into `~/.claude/settings.json` (the installer symlinks the script to
+`~/.claude/hooks/namht-git-guard.sh`; arm it once with this snippet):
+
+```jsonc
+{
+  "permissions": {
+    "deny": [
+      "Bash(git push:*)", "Bash(git push)", "Bash(git remote add:*)",
+      "Bash(git remote set-url:*)", "Bash(git remote remove:*)", "Bash(git reset --hard:*)",
+      "Bash(git clean -f:*)", "Bash(git rebase:*)", "Bash(git commit --amend:*)",
+      "Bash(git restore:*)", "Bash(git branch -D:*)", "Bash(git send-email:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      { "matcher": "Bash", "hooks": [
+        { "type": "command", "command": "~/.claude/hooks/namht-git-guard.sh", "timeout": 10 } ] }
+    ]
+  }
+}
+```
+
+Verify: `printf '{"tool_input":{"command":"git push"}}' | ~/.claude/hooks/namht-git-guard.sh`
+→ prints a `permissionDecision":"deny"` JSON. `git pull` → no output (allowed). Adjust the rules
+in `hooks/git-guard.sh` to taste. (A hook/settings change needs a Claude Code reload to go live.)
+
 ## Recommended enterprise hardening
 1. Use a company **Team/Enterprise** Claude plan (not a personal consumer plan).
 2. Install CodeGraph via a **pinned npm version** or build from source (instead of `curl | sh`),
