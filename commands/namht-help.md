@@ -18,6 +18,7 @@ Commands (all namespaced under `/namht-`):
 | `/namht-ask <question>` | Q&A grounded in the KB — plain language + Mermaid diagram + technical detail. |
 | `/namht-plan <epic>` | PO/BA: Epic → features → impact → user stories (Given/When/Then) → sprint plan. |
 | `/namht-map [scope]` | Interactive HTML code graph (Cytoscape) for humans — zoom/click/filter, opens in browser. |
+| `/namht-system-map` | Multi-service workspace: cross-service dependency graph + end-to-end business flows (run at workspace root). |
 | `/namht-document <topic>` | Business↔code field-level technical document for a feature/entity/module. |
 | `/namht-codegraph [setup]` | Install/manage CodeGraph — the agent-queryable code graph (MCP), 100% local. |
 

@@ -238,6 +238,7 @@ If you keep many repos under one parent folder (a "workspace"), follow this sepa
 | `/namht-ask <question>` | Q&A grounded in the KB — plain language + Mermaid diagram + technical detail. |
 | `/namht-plan <epic>` | PO/BA: Epic → features → impact → user stories (Given/When/Then) → sprint plan. |
 | `/namht-map [scope]` | Interactive HTML code graph (Cytoscape): files/classes + imports/DI/inheritance/calls; zoom, click, filter, search. Opens in browser. |
+| `/namht-system-map` | **Cross-service** map for a multi-repo microservices workspace: stitches each service's API/integrations into a dependency graph + end-to-end flows (sequence diagrams) + contracts/events + risks. Run at the workspace root. |
 | `/namht-document <topic>` | Business↔code field-level technical document for a feature/entity/module. |
 | `/namht-codegraph [setup]` | Install/manage **CodeGraph** — agent-queryable code graph over MCP (100% local). Distinct from `map` (human visual). |
 | `/namht-help` | Show all commands + KB status for the current repo. |
