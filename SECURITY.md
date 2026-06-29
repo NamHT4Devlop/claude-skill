@@ -20,7 +20,7 @@ verify it yourself.
 | Static code analyzer | `skills/namht-map/references/graph-builder.js` | Reads source files, builds a graph. `fs`/`path` only |
 | HTML renderers | `skills/*/references/html-builder.js` + `render-html.cjs`, `build-map.cjs` | Markdown/graph → HTML. `fs`/`path`/`crypto` only |
 | Vendored JS libs | `vendor/mermaid.min.js`, `vendor/cytoscape.min.js` | Upstream OSS, inlined into HTML for offline render |
-| Install scripts | `scripts/personal-install.sh`, `scripts/onboard-project.sh` | Symlink into `~/.claude`; write `.gitignore`/`CLAUDE.md` |
+| Install script | `scripts/personal-install.sh` | Symlink into `~/.claude` (uninstall removes only those symlinks) |
 
 ## Executable-surface audit (verify it yourself)
 ```bash
@@ -58,9 +58,6 @@ minified) — provenance: the author's own `auto-spec-extension` repo.
 - `personal-install.sh` only creates symlinks under `~/.claude/{skills,commands,agents}` and, on
   uninstall, **only removes symlinks whose target points back into this repo** (`case "$SRC"/*`).
   It cannot delete arbitrary files.
-- `onboard-project.sh` **writes into a target project** (`.gitignore` += `spec-kit-sessions/`,
-  and a starter `CLAUDE.md` if absent). Do **not** run it on a shared/team repo if you want zero
-  footprint — review its diff first.
 
 ## Built-in safety behavior (prompts)
 - `namht-build` / `namht-review` enforce a **change-discipline contract**: scope-locked, minimal

@@ -16,11 +16,8 @@ tools: file ops, Bash, git, parallel sub-agents) instead of GitHub Copilot / `vs
 
 ```
 nam-claude-skill/
-├── .claude-plugin/
-│   ├── plugin.json          # plugin manifest
-│   └── marketplace.json     # local marketplace (for one-command install)
-├── commands/                # 12 slash commands → /namht:build (plugin) or /namht-build (personal), …
-├── skills/                  # 11 skills (the methodology — also usable standalone)
+├── commands/                # 21 slash commands → /namht-build, /namht-scan, … (personal install)
+├── skills/                  # 20 skills (the methodology — also usable standalone)
 │   ├── namht-build/          #   13-step pipeline   (+ bundled review checklist)
 │   ├── namht-scan/           #   KB generation       (+ bundled kb-steps spec)
 │   ├── namht-rescan/         #   incremental KB update
@@ -30,6 +27,7 @@ nam-claude-skill/
 │   ├── namht-map/            #   interactive HTML code graph (Cytoscape)
 │   └── namht-document/       #   business↔code doc
 ├── agents/                  # 7 specialist sub-agents (planning + review)
+├── hooks/                   # git-guard.sh (read/sync-in-only git guard)
 └── resources/               # review-skills-universal.md, kb-steps.md
 ```
 
@@ -41,12 +39,11 @@ read-only specialists the build/review steps fan out to in parallel.
 
 ## Prerequisites
 
-- **Claude Code** installed and working (`claude --version`). Plugins/marketplaces need a
-  recent version — if `/plugin` is unknown, update Claude Code first (`claude update` or
-  reinstall from the official docs).
-- **git** installed (`git --version`) — needed to clone this repo and used by `rescan`/`review`.
+- **Claude Code** installed and working (`claude --version`) — a recent version (skills + hooks
+  support). Update with `claude update` or reinstall from the official docs if needed.
+- **git** installed (`git --version`) — used by `rescan`/`review` (and to clone this repo if you choose).
 - **Access to this repository.** It is **public**, so anyone can clone it — no special access
-  needed. The plugin itself needs **no API key** — it runs on your existing Claude Code.
+  needed. The kit needs **no API key** — it runs on your existing Claude Code.
 - Paths below use `~/.claude` (macOS/Linux). On **Windows** use `%USERPROFILE%\.claude`
   (PowerShell: `$HOME\.claude`).
 
@@ -54,7 +51,7 @@ read-only specialists the build/review steps fan out to in parallel.
 
 ## Get the code
 
-Pick a stable location to keep the plugin (so you can update it with `git pull` later):
+Pick a stable location to keep the toolkit (so you can update it with `git pull` later):
 
 ```bash
 # via SSH (recommended if your GitHub uses SSH keys)
@@ -69,41 +66,10 @@ If you keep the files somewhere else, substitute that absolute path.
 
 ---
 
-## Install — Option A: as a plugin (recommended)
+## Install — Option A: plain skills (copy into a repo or `~/.claude`)
 
-Best when you want every command available across **all** your repos on a machine, with clean
-`/namht:*` namespacing. Run these **inside a Claude Code session** (the `/plugin`
-commands are typed into Claude Code, not your shell):
-
-```
-/plugin marketplace add ~/nam-claude-skill
-/plugin install namht@namht-marketplace
-```
-
-- `marketplace add <PLUGIN_DIR>` registers the local marketplace defined in
-  `.claude-plugin/marketplace.json`. You can also point it straight at the GitHub repo:
-  `/plugin marketplace add NamHT4Devlop/nam-claude-skill` (Claude Code clones it for you; requires
-  repo access).
-- `install namht@namht-marketplace` installs the plugin named `namht` from that
-  marketplace.
-- Reload when prompted (or run `/plugin` to manage installed plugins).
-
-After install, commands are namespaced by the plugin (type `/` to see them):
-`/namht:scan`, `/namht:rescan`, `/namht:build`, `/namht:fix-bug`, `/namht:review`, `/namht:ask`,
-`/namht:plan`, `/namht:map`, `/namht:system-map`, `/namht:document`, `/namht:codegraph`, `/namht:help`.
-The 11 skills and 7 sub-agents load automatically (skills also activate from plain English), and the
-**git-guard hook ships with the plugin** (`hooks/hooks.json`) so it's active right after install.
-(The personal symlink install — Option C — exposes the same commands as `/namht-build`, etc.)
-
-> **Team install:** commit/host this repo, then each teammate runs the two `/plugin` commands
-> above pointing at their clone (or at `NamHT4Devlop/nam-claude-skill`). To pin the plugin for a
-> whole project automatically, add it to the project's `.claude/settings.json` under
-> `enabledPlugins` / configure a marketplace there (see Claude Code plugin docs).
-
-## Install — Option B: plain skills (no plugin machinery)
-
-Best when you want to **commit the skills into a specific repo** (so collaborators get them on
-clone), or you prefer not to use marketplaces.
+Best when you want to **copy the skills into a specific repo** (so collaborators get them on
+clone), or onto a machine where you can't symlink.
 
 **B1 — Per project** (only that repo gets the commands/skills):
 
@@ -130,13 +96,13 @@ comes along automatically with `cp -R skills/*`:
 `namht-build`/`namht-review`/`namht-scan`/`namht-rescan` carry the review checklist and/or the
 KB-section spec. `resources/` at the repo root is only a canonical copy for the plugin form.
 
-> ⚠️ **Difference from Option A:** as plain skills the slash commands are **not** namespaced —
-> they're `/build`, `/review`, `/scan`, etc. If those names clash with other commands you have,
-> rename the files in `.claude/commands/` (e.g. `build.md` → `namht-build.md`).
+> ⚠️ **Note:** copied this way the slash commands are **not** prefixed — they're `/build`,
+> `/review`, `/scan`, etc. If those clash with other commands, rename the files in
+> `.claude/commands/` (e.g. `build.md` → `namht-build.md`), or use Option B (symlink) which prefixes them.
 
-## Install — Option C: personal-only, zero footprint in any repo (just for you)
+## Install — Option B: personal-only symlink, zero footprint (recommended)
 
-Use this when the plugin/skills are **for your eyes only** and must never appear in — or be
+Use this when the skills are **for your eyes only** and must never appear in — or be
 committed to — any team/project repo. It installs into your home dir via symlinks and routes
 all generated artifacts to a machine-wide gitignore.
 
@@ -155,7 +121,7 @@ git config --global core.excludesfile ~/.gitignore_global
 - Because it's symlinks, `git pull` in `<PLUGIN_DIR>` instantly updates your install.
 - The global gitignore means even if you run `/namht-scan` inside a team repo, its
   `knowledge-base/` and `spec-kit-sessions/` stay **local and uncommitted** — nothing leaks.
-- **Pick ONE method** — if you use this, do *not* also `/plugin install` the same plugin.
+- **Pick ONE method** — use either this (symlink) or Option A (copy), not both, to avoid duplicate commands.
 - Uninstall: `<PLUGIN_DIR>/scripts/personal-install.sh uninstall`.
 
 > Note: a global ignore of `knowledge-base/` keeps your KBs private. If a project legitimately
@@ -165,40 +131,31 @@ git config --global core.excludesfile ~/.gitignore_global
 
 ## Verify the install
 
-1. In a Claude Code session, type `/` and confirm the `namht:` commands (Option A) or
-   `/build`, `/scan`… (Option B) appear.
+1. In a Claude Code session, type `/` and confirm the commands appear — `/namht-build`, … with the
+   symlink install (Option B), or `/build`, `/scan`… with the plain-skills copy (Option A).
 2. Run `/namht-help` (or `/help` for plain skills) — it prints all commands **and** checks
    whether the current repo has a `knowledge-base/`.
-3. Plugin only: run `/plugin` → you should see **namht** listed as installed/enabled.
 
 ## Update to the latest version
 
-- **Option A (plugin):**
-  ```bash
-  cd <PLUGIN_DIR> && git pull
-  ```
-  then in Claude Code: `/plugin marketplace update namht-marketplace` (or remove & re-add
-  the marketplace, then reinstall). Reload when prompted.
-- **Option B (plain skills):** `git pull` in `<PLUGIN_DIR>`, then re-run the `cp -R` commands
+- **Option B (symlink):** `git pull` in `<PLUGIN_DIR>` — symlinks pick it up instantly.
+- **Option A (plain skills):** `git pull` in `<PLUGIN_DIR>`, then re-run the `cp -R` commands
   to overwrite the copies.
 
 ## Uninstall
 
-- **Option A:** `/plugin uninstall namht` (and optionally
-  `/plugin marketplace remove namht-marketplace`).
-- **Option B:** delete the copied folders, e.g.
-  run `<PLUGIN_DIR>/scripts/personal-install.sh uninstall` (removes only the symlinks that point back to this repo).
+- **Option B (symlink):** `<PLUGIN_DIR>/scripts/personal-install.sh uninstall` (removes only the
+  symlinks that point back to this repo).
+- **Option A (plain skills):** delete the copied `namht-*` files from `.claude/{skills,commands,agents}`.
 
 ## Troubleshooting
 
 | Symptom | Fix |
 |---------|-----|
-| `/plugin` is not recognized | Update Claude Code; plugins require a recent version. |
-| `marketplace add` fails on a path | Pass an **absolute** path to `<PLUGIN_DIR>` and ensure `.claude-plugin/marketplace.json` exists there. |
 | `git clone` asks for a password / permission denied | The repo is public — clone the HTTPS URL (no auth needed), or set up an SSH key for the `git@` URL. |
 | Commands don't show up | Reload the Claude Code window/session after install; for plain skills, confirm files landed in `.claude/commands` & `.claude/skills`. |
 | A command says "no knowledge-base found" | Run `/namht-scan` once in that repo (or reuse an existing `knowledge-base/` folder). |
-| Command name clash (Option B) | Rename the files in `.claude/commands/`. |
+| Command name clash (plain-skills copy) | Rename the files in `.claude/commands/` (add a `namht-` prefix). |
 
 ---
 
@@ -206,8 +163,8 @@ git config --global core.excludesfile ~/.gitignore_global
 
 If you keep many repos under one parent folder (a "workspace"), follow this separation:
 
-- **Tool = global, from git.** Install once as a plugin (Option A). Update everywhere with one
-  `git pull` + marketplace update. Don't copy skills into each repo.
+- **Tool = global.** Install once via the symlink (Option B). Update everywhere with one
+  `git pull`. Don't copy skills into each repo.
 - **Knowledge Base = per project, versioned with the code.** Each repo keeps its own
   `knowledge-base/`; commit it so the team shares it. Refresh with `/namht-rescan`.
 - **Operate one project per session.** `cd <project> && claude` so commands read *that*
@@ -215,16 +172,9 @@ If you keep many repos under one parent folder (a "workspace"), follow this sepa
   from the workspace root and expect commands to guess which sub-project you mean. (A true
   **monorepo** — one git repo, many packages — is the opposite: run at the repo root; `scan`
   produces per-module docs under `knowledge-base/modules/`.)
-- **Per-project hygiene** — gitignore the generated `spec-kit-sessions/`, and drop a short
-  `CLAUDE.md` so every session in that repo knows the KB exists. Automate it:
-
-  ```bash
-  # from your clone of this repo
-  scripts/onboard-project.sh /path/to/your/project   # idempotent; commits nothing
-  ```
-
-  It adds `spec-kit-sessions/` to `.gitignore`, creates a starter `CLAUDE.md` (only if absent),
-  and reports whether the project has a KB yet (→ run `/namht-scan` if not).
+- **Per-project hygiene** — gitignore the generated `spec-kit-sessions/` (or rely on the
+  machine-wide global gitignore from Option B), and optionally drop a short `CLAUDE.md` in the
+  repo so every session there knows the KB exists.
 
 ## Commands
 
@@ -243,7 +193,6 @@ If you keep many repos under one parent folder (a "workspace"), follow this sepa
 | `/namht-map [scope]` | Interactive HTML code graph (Cytoscape): files/classes + imports/DI/inheritance/calls; zoom, click, filter, search. Opens in browser. |
 | `/namht-system-map` | **Cross-service** map for a multi-repo microservices workspace: stitches each service's API/integrations into a dependency graph + end-to-end flows (sequence diagrams) + contracts/events + risks. Run at the workspace root. |
 | `/namht-document <topic>` | Business↔code field-level technical document for a feature/entity/module. |
-| `/namht-codegraph [setup]` | Install/manage **CodeGraph** — agent-queryable code graph over MCP (100% local). Distinct from `map` (human visual). |
 | `/namht-discover <idea>` | Discovery before planning: forcing questions, push back on framing, output a sharpened problem brief. |
 | `/namht-plan-review <plan>` | Critique a plan before building — Product / Architecture / Risk-QA / DevEx lenses + verdict. |
 | `/namht-qa-integration <url>` | Execute E2E/integration QA against a **running app** via a real browser (Claude-in-Chrome); pass/fail + screenshots. |
@@ -259,22 +208,16 @@ keep the KB fresh.
 
 ---
 
-## CodeGraph integration
+## Working without CodeGraph (the default)
 
-If a repo has a `.codegraph/` index (set up via `/namht-codegraph`), the kit prefers the
-**`codegraph_explore`** MCP tool over Grep/Read loops — one call returns the relevant symbols'
-verbatim source, the call paths between them, and a blast-radius / "no covering tests" summary.
-This is wired into:
+CodeGraph is **optional and not required**. If a repo happens to have a `.codegraph/` index, the
+sub-agents and `namht-build`/`review`/`ask`/`document`/`scan` will use the `codegraph_explore` MCP
+tool when it's available; **otherwise the kit falls back automatically to Read/Grep/Glob + the
+Knowledge Base** (and `namht-map`'s bundled analyzer for dependency views) — no configuration needed.
 
-- the 7 sub-agents (planning + review) — granted the `codegraph_explore` / `codegraph_node` MCP
-  tools and told to call them first;
-- `namht-build` (Step 1 impact analysis → real blast radius), `namht-review` (target + impacted
-  consumers + test gaps), `namht-ask` and `namht-document` (ground technical detail in real
-  source), and `namht-scan` (structure/skeleton, while still reading source for business intent).
-
-It's strictly opt-in and degrades cleanly: **no `.codegraph/` → the kit falls back to
-Read/Grep/Glob** (and `namht-map`'s own bundled analyzer). CodeGraph supplies code *structure*;
-the `knowledge-base/` still supplies business *intent* — they're complementary, not redundant.
+For microservices, the cross-service **Event/Contract Catalog** produced by `namht-scan`
+(`17-async-events.md`) + `namht-system-map` is the primary way to see who-calls-who across repos
+(SQS/REST/events) — language-agnostic and needs no CodeGraph.
 
 ## Security & enterprise
 
