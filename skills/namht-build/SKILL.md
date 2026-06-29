@@ -80,7 +80,7 @@ sub-agents** via the `Task` tool (see `agents/` — `namht-codebase-analyzer`,
 analyses yourself in sequence. Then synthesize a **comprehensive implementation plan**
 with these sections:
 1. **Requirement Analysis** — scope (do / don't), ≥5 specific & measurable acceptance criteria, edge cases.
-2. **Impact Analysis** — files that MUST change, downstream consumers (trace the blast radius via real imports/callers), API-contract changes, DB impact/migrations, breaking changes, side effects, a risk matrix `| Risk | Likelihood | Impact | Mitigation |`.
+2. **Impact Analysis** — files that MUST change, downstream consumers (trace the blast radius via real imports/callers), API-contract changes, DB impact/migrations, breaking changes, side effects, **cross-service impact** (if the change alters a published message / SQS topic / REST contract, list the **consumer services** from the Event/Contract Catalog — `17-async-events.md` or the workspace `system-map/` — plus async hazards: duplicate/idempotency, ordering, DLQ, schema/version skew), a risk matrix `| Risk | Likelihood | Impact | Mitigation |`.
 3. **Business Flow Mapping** — existing flows affected (before→after), new flow step-by-step, state-machine changes.
 4. **Technical Design** — modules/layers affected, files to CREATE (full paths following existing patterns), files to MODIFY, reusable components to leverage.
 5. **Implementation Steps** — ordered by dependency, as a checklist.

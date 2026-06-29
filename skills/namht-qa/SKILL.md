@@ -41,6 +41,11 @@ CodeGraph (real endpoints/handlers). This is **test design** — it does NOT wri
    - **KB = WHAT business flow each impacted point belongs to.** Map those impacted
      symbols/endpoints to documented flows & rules (`10-core-flows`, `13-business-rules`,
      `modules/`) → the user-facing behavior each regression target protects.
+   - **Cross-service (events/queues) — the regression CodeGraph can't see.** If the change touches a
+     **published message / SQS topic / REST contract**, open the **Event/Contract Catalog**
+     (`17-async-events.md` or the workspace `system-map/`): every **consumer service** of that channel is a
+     **regression target in another repo**. Add async cases: duplicate delivery (idempotency), out-of-order,
+     DLQ/poison handling, old-schema consumers (version skew). Name the downstream services explicitly.
    - **Result:** the **NEW flow** (from the story) + a concrete **regression set** =
      CodeGraph blast radius × KB flows/rules. No `.codegraph/` → fall back to KB + grep and say the
      impact analysis is weaker (likely misses non-obvious consumers).

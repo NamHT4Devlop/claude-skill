@@ -23,7 +23,7 @@ for a full rebuild. If there is no existing KB, fall back to a full `/namht-scan
    - changed flows/services → `10-core-flows.md`, `06-modules.md`, the relevant `modules/<m>.md`
    - new validation/business logic → `13-business-rules.md`, `04-business-domain.md`
    - auth changes → `09-auth-security.md`
-   - new integrations → `14-integrations.md`
+   - new/changed integrations, SQS queues/topics, events, Camel routes → `14-integrations.md`, `17-async-events.md` (Event/Contract Catalog)
    - structural/dependency changes → `01-project-structure.md`, `16-architecture-patterns.md`
 3. **Re-analyze only those areas** (read the changed files + their immediate context) and
    **merge** updates into the existing docs — preserve unrelated content; update, don't

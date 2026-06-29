@@ -33,8 +33,8 @@ service repos in possibly different languages.
 
 ## What to build
 For each service, read its KB: `11-api-docs.md` (endpoints it **exposes**), `14-integrations.md`
-(systems/services/queues it **calls out to**), `03-entry-points.md`, `06-modules.md`, plus
-`10-core-flows.md` (its internal flows). Then:
+(systems/services/queues it **calls out to**), `17-async-events.md` (its Event/Contract Catalog),
+`03-entry-points.md`, `06-modules.md`, plus `10-core-flows.md` (its internal flows). Then:
 
 1. **Service inventory** — name, language/stack, role, base URL/route prefix, exposed surface.
 2. **Cross-service dependency graph** — match each service's **outbound** targets (base URLs,
@@ -45,11 +45,16 @@ For each service, read its KB: `11-api-docs.md` (endpoints it **exposes**), `14-
    service** through every downstream hop to completion. For each: a Mermaid `sequenceDiagram`
    (participant per service), the trigger, each hop (service · endpoint/handler · protocol),
    state changes, and failure/compensation paths. Cite the file/endpoint in each service.
-4. **Shared contracts & events** — catalog cross-service contracts: REST request/response shapes
-   at boundaries, gRPC protos, **event/topic schemas** (producer ↔ consumers). Note ownership.
-5. **Risks** — synchronous chains (latency/cascade failure), missing idempotency on consumers,
-   contract/version skew between services, single points of failure, chatty calls, no
-   circuit-breaker/timeout, auth between services.
+4. **Event/Contract Catalog** — the cross-service backbone. Build one table from every service's
+   `17-async-events.md` + `14-integrations.md`, one row per channel:
+   `channel (queue/topic/event) · publisher · consumer(s) · message schema · owner · FIFO? · DLQ? · idempotent?`.
+   Also catalog REST/gRPC contracts at boundaries. Match **publisher→consumer by exact channel name** — this
+   is the authoritative answer to "if I change this message, who breaks?".
+5. **Risks (async-first)** — for each event edge: **at-least-once duplicates** without consumer
+   idempotency, **missing DLQ / poison-message** handling, **ordering** assumptions on standard (non-FIFO)
+   queues, **contract/version skew** between producer and consumer, fan-out **cascade/back-pressure**, no
+   retry/visibility tuning. For sync edges: long synchronous chains (latency/cascade), no
+   circuit-breaker/timeout, chatty calls, single points of failure, auth between services, shared-DB coupling.
 
 ## Output (write to `<workspace>/system-map/`)
 Dual-audience (plain summary + technical detail), each file Markdown:

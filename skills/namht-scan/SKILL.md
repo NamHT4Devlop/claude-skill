@@ -33,6 +33,17 @@ This KB is the grounding for every other Spec Kit command.
   `Gemfile` / `requirements.txt` / `*.csproj`, etc. Tailor analysis hints to the stack
   (Spring annotations, MyBatis mapper XML, Camel routes, Flyway/Liquibase migrations,
   JPA/Hibernate, Kafka/SQS, Rails ActiveRecord, Prisma, …).
+- **Async messaging & integrations — extract DEEPLY (critical for microservices).** Record the
+  **direction** and the **wire contract**, not just that a channel exists:
+  - **SQS/SNS**: queue/topic names; **producers** (`SendMessage`/`PublishCommand`, Spring `@SqsListener`
+    targets, Camel `to("aws2-sqs:…")`, Rails Shoryuken/Sidekiq workers + `aws-sdk`, Node `sqs-consumer` /
+    `@aws-sdk/client-sqs`) vs **consumers**; FIFO vs standard; **DLQ**/redrive; visibility/retry; the
+    **message schema** (fields) and any **idempotency key**.
+  - **Apache Camel**: each route's `from(...)`/`to(...)` endpoints + EIPs — these ARE integration edges.
+  - **HTTP/gRPC**: outbound base URLs/clients (who this service calls) vs inbound routes.
+  - **DB**: engine (MySQL/Postgres), owned schema, **Flyway/Liquibase** migration history; flag any table
+    touched by more than one service (shared-DB anti-pattern).
+  Capture producer↔consumer by **exact channel name** so `/namht-system-map` can stitch services.
 - If docs exist (README, `docs/`, `.github/`), ask whether to use them as context or do a
   **source-only** scan (recommended when docs may be stale).
 - Output dir: `knowledge-base/` (configurable).
@@ -65,6 +76,10 @@ Angles to split across sub-agents (then merge, deduplicate, keep every cited ite
    large modules, analyze in chunks then merge (deduplicate, preserve every flow/rule).
 3. **`_coverage-report.md`** — files discovered vs analyzed; note that all files are also
    covered by the global section docs.
+4. **`17-async-events.md` (only if the service uses messaging/events)** — a per-service **Event/Contract
+   Catalog**: one row per channel — `channel (queue/topic/event) · role (produce/consume) · message schema ·
+   trigger · FIFO? · DLQ? · idempotency key` — plus Camel routes and outbound HTTP/gRPC targets. This is the
+   language-agnostic surface `/namht-system-map`, `/namht-qa`, and `/namht-build` use for cross-service impact.
 
 ## Architecture invariants doc (16) is special
 `16-architecture-patterns.md` is the **guardrail** consumed by `/namht-build` and
