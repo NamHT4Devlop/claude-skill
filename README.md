@@ -16,8 +16,8 @@ tools: file ops, Bash, git, parallel sub-agents) instead of GitHub Copilot / `vs
 
 ```
 nam-claude-skill/
-├── commands/                # 21 slash commands → /namht-build, /namht-scan, … (personal install)
-├── skills/                  # 20 skills (the methodology — also usable standalone)
+├── commands/                # 19 slash commands → /namht-build, /namht-scan, … (personal install)
+├── skills/                  # 18 skills (the methodology — also usable standalone)
 │   ├── namht-build/          #   13-step pipeline   (+ bundled review checklist)
 │   ├── namht-scan/           #   KB generation       (+ bundled kb-steps spec)
 │   ├── namht-rescan/         #   incremental KB update
@@ -197,8 +197,6 @@ If you keep many repos under one parent folder (a "workspace"), follow this sepa
 | `/namht-plan-review <plan>` | Critique a plan before building — Product / Architecture / Risk-QA / DevEx lenses + verdict. |
 | `/namht-qa-integration <url>` | Execute E2E/integration QA against a **running app** via a real browser (Claude-in-Chrome); pass/fail + screenshots. |
 | `/namht-design-review <url\|path>` | UI/UX + accessibility review via browser screenshots / frontend code; findings + fixes. Read-only. |
-| `/namht-pdf <file>` | Export a Markdown/HTML report to PDF (renders Mermaid first; headless Chrome/wkhtmltopdf). |
-| `/namht-retro [window]` | Engineering retrospective from git history — shipped, pain, quality signals, action items. |
 | `/namht-skillify <name+purpose>` | Scaffold a new `namht-*` skill + command following the conventions (self-extend the kit). |
 | `/namht-help` | Show all commands + KB status for the current repo. |
 
