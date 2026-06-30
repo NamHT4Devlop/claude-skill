@@ -90,7 +90,7 @@ commands are typed into Claude Code, not your shell):
 
 After install, commands are namespaced by the plugin (type `/` to see them):
 `/namht:scan`, `/namht:rescan`, `/namht:build`, `/namht:fix-bug`, `/namht:review`, `/namht:ask`,
-`/namht:plan`, `/namht:map`, `/namht:system-map`, `/namht:document`, `/namht:codegraph`, `/namht:help`.
+`/namht:plan`, `/namht:map`, `/namht:system-map`, `/namht:document`, `/namht:help`.
 The 11 skills and 7 sub-agents load automatically (skills also activate from plain English), and the
 **git-guard hook ships with the plugin** (`hooks/hooks.json`) so it's active right after install.
 (The personal symlink install — Option C — exposes the same commands as `/namht-build`, etc.)
@@ -243,7 +243,6 @@ If you keep many repos under one parent folder (a "workspace"), follow this sepa
 | `/namht-map [scope]` | Interactive HTML code graph (Cytoscape): files/classes + imports/DI/inheritance/calls; zoom, click, filter, search. Opens in browser. |
 | `/namht-system-map` | **Cross-service** map for a multi-repo microservices workspace: stitches each service's API/integrations into a dependency graph + end-to-end flows (sequence diagrams) + contracts/events + risks. Run at the workspace root. |
 | `/namht-document <topic>` | Business↔code field-level technical document for a feature/entity/module. |
-| `/namht-codegraph [setup]` | Install/manage **CodeGraph** — agent-queryable code graph over MCP (100% local). Distinct from `map` (human visual). |
 | `/namht-discover <idea>` | Discovery before planning: forcing questions, push back on framing, output a sharpened problem brief. |
 | `/namht-plan-review <plan>` | Critique a plan before building — Product / Architecture / Risk-QA / DevEx lenses + verdict. |
 | `/namht-qa-integration <url>` | Execute E2E/integration QA against a **running app** via a real browser (Claude-in-Chrome); pass/fail + screenshots. |
@@ -259,22 +258,16 @@ keep the KB fresh.
 
 ---
 
-## CodeGraph integration
+## Working without CodeGraph (the default)
 
-If a repo has a `.codegraph/` index (set up via `/namht-codegraph`), the kit prefers the
-**`codegraph_explore`** MCP tool over Grep/Read loops — one call returns the relevant symbols'
-verbatim source, the call paths between them, and a blast-radius / "no covering tests" summary.
-This is wired into:
+CodeGraph is **optional and not required**. If a repo happens to have a `.codegraph/` index, the
+sub-agents and `namht-build`/`review`/`ask`/`document`/`scan` will use the `codegraph_explore` MCP
+tool when it's available; **otherwise the kit falls back automatically to Read/Grep/Glob + the
+Knowledge Base** (and `namht-map`'s bundled analyzer for dependency views) — no configuration needed.
 
-- the 7 sub-agents (planning + review) — granted the `codegraph_explore` / `codegraph_node` MCP
-  tools and told to call them first;
-- `namht-build` (Step 1 impact analysis → real blast radius), `namht-review` (target + impacted
-  consumers + test gaps), `namht-ask` and `namht-document` (ground technical detail in real
-  source), and `namht-scan` (structure/skeleton, while still reading source for business intent).
-
-It's strictly opt-in and degrades cleanly: **no `.codegraph/` → the kit falls back to
-Read/Grep/Glob** (and `namht-map`'s own bundled analyzer). CodeGraph supplies code *structure*;
-the `knowledge-base/` still supplies business *intent* — they're complementary, not redundant.
+For microservices, the cross-service **Event/Contract Catalog** produced by `namht-scan`
+(`17-async-events.md`) + `namht-system-map` is the primary way to see who-calls-who across repos
+(SQS/REST/events) — language-agnostic and needs no CodeGraph.
 
 ## Security & enterprise
 
