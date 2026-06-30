@@ -23,8 +23,19 @@ variable; **if a variable is NOT provided, OMIT that clause entirely** (do not g
 - **C = `cai_app`** — the app. Accept a **list** of apps → one row per app in the table. If `C` is
   omitted, query without `cai_app` and break it down in `stats` (`by cai_app`) so the table still
   has per-app rows.
-- **Time window** — default **today** (`earliest=@d latest=now`). Accept "last 24h" (`-24h@h`) or an explicit range.
-- **Slack channel** — the target channel (or user). Confirm before posting.
+- **Time window** — if not provided, default **last 1 day** (`earliest=-24h@m latest=now`). For a
+  **custom** window accept a friendly value and translate it to Splunk:
+  `4h`→`earliest=-4h@m`, `30m`→`-30m@m`, `7d`→`-7d@d`, `today`→`@d`, or an explicit
+  `earliest=.../latest=...` range (epoch or `MM/DD/YYYY:HH:MM:SS`). Always print the range you used.
+- **Error criteria** — what counts as an "error" differs per app/schema, so **ask** (or accept) it.
+  Sensible **broad default** when the user has none:
+  `(error OR ERROR OR Exception OR exception OR Throwable OR FATAL OR CRITICAL OR SEVERE OR log_level=ERROR OR level=error OR status>=500)`.
+  Let the user **override** with their own predicate — a field/value (`log_level IN (ERROR,FATAL)`,
+  `cai_level=error`), an HTTP `status>=500`, a message pattern, etc. Offer to group by **message
+  signature** so many different error texts collapse into a few error types (table stays useful).
+- **Slack destination** — **ASK the user**; they provide a **Slack incoming-webhook URL** (or a
+  channel URL). Post to exactly what they give. Treat the URL as a **secret** (don't echo/commit it).
+  Never assume a channel; confirm the message before sending.
 
 ## Access — use whatever is available, in this order
 **Splunk (read-only search):**
@@ -33,24 +44,28 @@ variable; **if a variable is NOT provided, OMIT that clause entirely** (do not g
    ```bash
    curl -s -H "Authorization: Bearer $SPLUNK_TOKEN" \
      "$SPLUNK_HOST/services/search/jobs/export" \
-     --data-urlencode 'search=search index={A} cai_enviroment={B} cai_app={C} (error OR Exception OR FATAL OR log_level=ERROR) earliest=@d latest=now | stats count AS total by error_type, log_level | sort -total' \
+     --data-urlencode 'search=search index={A} cai_enviroment={B} cai_app={C} {ERROR_CRITERIA} earliest=-24h@m latest=now | stats count AS total by error_type, log_level | sort -total' \
      --data-urlencode output_mode=json
    ```
-   Substitute `{A}`/`{B}`/`{C}` with the values the user gave, and **drop any of `index=` /
-   `cai_enviroment=` / `cai_app=` whose variable was not provided**. Adapt `error_type`/`log_level`
-   to the project's schema.
+   Substitute `{A}`/`{B}`/`{C}` with the user's values and **drop any of `index=` /
+   `cai_enviroment=` / `cai_app=` whose variable was not provided**; substitute `{ERROR_CRITERIA}`
+   and the `earliest`/`latest` with the chosen error predicate + time window. Adapt
+   `error_type`/`log_level` to the project's schema.
 3. **Splunk CLI** — `splunk search '<spl>'` if installed.
 4. None available/authed → ask the user to connect Splunk or paste the search results; don't guess.
 
-**Slack (post the report):**
-1. A connected **Slack MCP** (`mcp__*slack*…send_message`) — preferred.
-2. **Incoming webhook** — `curl -X POST -H 'Content-type: application/json' --data '{"text":"…"}' "$SLACK_WEBHOOK_URL"`.
-3. None → save the report and give the user the text to paste; offer to connect Slack.
+**Slack (post the report) — to the destination the user gave:**
+1. **Incoming-webhook URL** the user provided →
+   `curl -X POST -H 'Content-type: application/json' --data '{"text":"…"}' "<that URL>"`
+   (treat the URL as a secret — don't echo it back or commit it).
+2. Or a connected **Slack MCP** (`mcp__*slack*…send_message`) to the named channel.
+3. Neither → save the report and give the user the text to paste.
 
 ## Procedure
-1. **Ask for `index` (A), `cai_enviroment` (B), `cai_app` (C)**, the time window, and the Slack
-   channel. Build the base filter `index={A} cai_enviroment={B} cai_app={C}`, **dropping any clause
-   whose variable the user did not provide**. Confirm the channel.
+1. **Ask for**: `index` (A), `cai_enviroment` (B), `cai_app` (C), the **time window** (default last
+   1 day), the **error criteria** (default broad set), and the **Slack webhook URL**. Build the base
+   filter `index={A} cai_enviroment={B} cai_app={C}`, **dropping any clause whose variable wasn't
+   provided**; then append the error criteria + the time window. Confirm the destination.
 2. **Run the error search per app** (read-only) — loop once per `cai_app` value the user gave (or,
    if `C` was omitted, run one search with `… | stats count by cai_app, error_type`). Capture:
    total errors, the top N error types/messages with counts, and a breakdown by severity/level.
@@ -66,7 +81,7 @@ variable; **if a variable is NOT provided, OMIT that clause entirely** (do not g
 
 ## Output (Slack message shape)
 ```
-:rotating_light: Error digest — <date> (today, <tz>)
+:rotating_light: Error digest — <date> (window: <e.g. last 24h / 4h>, <tz>)
 App         | Errors | Top error              | Count
 ------------|--------|------------------------|------
 payments    |    142 | NullPointerException   |    61
