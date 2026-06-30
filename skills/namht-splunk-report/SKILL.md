@@ -14,12 +14,16 @@ Pull error/exception counts from Splunk for each app, roll them up into one tabl
 Slack. **Read-only** on Splunk; **never** stores or prints credentials. (This skill needs network +
 Splunk/Slack access — unlike the rest of the kit, which is local-only.)
 
-## Inputs
-- **Apps** — the apps/services to report on, each mapped to its Splunk `index`/`sourcetype` (or a
-  saved search). Take it from the user, a list they provide, or the workspace's services. If the
-  index/sourcetype per app is unknown, ask once and remember it for the run.
-- **Time window** — default **today** (`earliest=@d latest=now`). Accept "last 24h" (`-24h@h`), a
-  named range, or explicit `earliest`/`latest`.
+## Inputs — ASK the user for these (they form the query filter)
+The base Splunk filter is **`index={A} cai_enviroment={B} cai_app={C}`**. Ask the user for each
+variable; **if a variable is NOT provided, OMIT that clause entirely** (do not guess a value):
+- **A = `index`** — the Splunk index.
+- **B = `cai_enviroment`** — the environment (e.g. prod/staging). *(Field name kept verbatim as it
+  is in the user's Splunk schema — do not "correct" the spelling.)*
+- **C = `cai_app`** — the app. Accept a **list** of apps → one row per app in the table. If `C` is
+  omitted, query without `cai_app` and break it down in `stats` (`by cai_app`) so the table still
+  has per-app rows.
+- **Time window** — default **today** (`earliest=@d latest=now`). Accept "last 24h" (`-24h@h`) or an explicit range.
 - **Slack channel** — the target channel (or user). Confirm before posting.
 
 ## Access — use whatever is available, in this order
@@ -29,10 +33,12 @@ Splunk/Slack access — unlike the rest of the kit, which is local-only.)
    ```bash
    curl -s -H "Authorization: Bearer $SPLUNK_TOKEN" \
      "$SPLUNK_HOST/services/search/jobs/export" \
-     --data-urlencode 'search=search index=<app> (error OR Exception OR FATAL OR log_level=ERROR) earliest=@d latest=now | stats count AS total by error_type, log_level | sort -total' \
+     --data-urlencode 'search=search index={A} cai_enviroment={B} cai_app={C} (error OR Exception OR FATAL OR log_level=ERROR) earliest=@d latest=now | stats count AS total by error_type, log_level | sort -total' \
      --data-urlencode output_mode=json
    ```
-   Adapt the field names (`index`, `error_type`, `log_level`) to the project's Splunk schema.
+   Substitute `{A}`/`{B}`/`{C}` with the values the user gave, and **drop any of `index=` /
+   `cai_enviroment=` / `cai_app=` whose variable was not provided**. Adapt `error_type`/`log_level`
+   to the project's schema.
 3. **Splunk CLI** — `splunk search '<spl>'` if installed.
 4. None available/authed → ask the user to connect Splunk or paste the search results; don't guess.
 
@@ -42,9 +48,13 @@ Splunk/Slack access — unlike the rest of the kit, which is local-only.)
 3. None → save the report and give the user the text to paste; offer to connect Slack.
 
 ## Procedure
-1. **Resolve** the app list, time window, and Slack channel. Confirm the channel.
-2. **Per app, run the error search** (read-only). Capture: total errors, the top N error
-   types/messages with counts, and a breakdown by severity/level. Record the exact SPL + time range.
+1. **Ask for `index` (A), `cai_enviroment` (B), `cai_app` (C)**, the time window, and the Slack
+   channel. Build the base filter `index={A} cai_enviroment={B} cai_app={C}`, **dropping any clause
+   whose variable the user did not provide**. Confirm the channel.
+2. **Run the error search per app** (read-only) — loop once per `cai_app` value the user gave (or,
+   if `C` was omitted, run one search with `… | stats count by cai_app, error_type`). Capture:
+   total errors, the top N error types/messages with counts, and a breakdown by severity/level.
+   Record the exact SPL + time range.
 3. **Aggregate into one table** across all apps, sorted by total desc, with a TOTAL row:
    `| App | Total | Top error | Count | Severity | Notable |`.
    Flag spikes / new error types vs. a prior run if that context is available.
