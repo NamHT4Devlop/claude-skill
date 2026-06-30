@@ -105,8 +105,7 @@
       <li><a href="#scaffold">1. Tạo cây thư mục &amp; file rỗng (dán 1 lần)</a></li>
       <li><a href="#copy">2. Copy nội dung từng file từ GitHub</a></li>
       <li><a href="#build">3. Build / Cài đặt sau khi copy xong</a></li>
-      <li><a href="#nocodegraph">4. Không dùng CodeGraph (vẫn chạy đủ)</a></li>
-      <li><a href="#notes">5. Lưu ý quan trọng</a></li>
+      <li><a href="#notes">4. Lưu ý quan trọng</a></li>
     </ol>
   </nav>
 
@@ -133,8 +132,8 @@ touch "$ROOT/skills/namht-pdf/references/html-to-pdf.sh"
 <span class="cmt"># 4 file gốc (sync-bundles sẽ nhân ra các skill khác)</span>
 touch "$ROOT/resources/"{html-builder.js,render-html.cjs,review-skills-universal.md,kb-steps.md}
 
-<span class="cmt"># 22 command</span>
-for c in ask build codegraph design-review discover document fix-bug help map pdf \
+<span class="cmt"># 21 command</span>
+for c in ask build design-review discover document fix-bug help map pdf \
          plan-review plan pr qa-integration qa rescan retro review scan security-audit \
          skillify system-map; do touch "$ROOT/commands/$c.md"; done
 
@@ -183,7 +182,7 @@ bash "$ROOT/scripts/personal-install.sh"
 
 <span class="cmt"># 4) chặn rò rỉ: global gitignore</span>
 touch ~/.gitignore_global
-printf '%s\n' 'spec-kit-sessions/' 'knowledge-base/' '.codegraph/' 'CLAUDE.local.md' '.spec-kit/' &gt;&gt; ~/.gitignore_global
+printf '%s\n' 'spec-kit-sessions/' 'knowledge-base/' 'CLAUDE.local.md' '.spec-kit/' &gt;&gt; ~/.gitignore_global
 git config --global core.excludesfile ~/.gitignore_global</code></pre></div>
 
   <h3>5) Lắp rào git</h3>
@@ -210,31 +209,7 @@ printf '{"tool_input":{"command":"git push https://github.com/some-org/x"}}' | ~
   <p>Trong Claude Code gõ <span class="kbd">/</span> → thấy <code>/namht-*</code>; chạy <code>/namht-help</code>.</p>
 
   <!-- 4 -->
-  <h2 id="nocodegraph">🧭 4. Không dùng CodeGraph (vẫn chạy đủ)</h2>
-  <p>CodeGraph là <b>tùy chọn</b> — guide này vốn đã <b>không</b> cài nó. Các skill tự phát hiện "không có
-  <code>.codegraph/</code>" và chuyển sang dùng <b>Read/Grep/Glob</b> + <b>Knowledge Base</b>. Không cần cấu hình
-  gì thêm; bỏ qua mọi bước liên quan <code>codegraph</code> là xong.</p>
-  <table>
-    <thead><tr><th>CodeGraph cung cấp</th><th>Thay bằng (đã có sẵn)</th></tr></thead>
-    <tbody>
-      <tr><td>Tìm source + call-path nhanh</td><td>Read/Grep/Glob built-in của Claude Code</td></tr>
-      <tr><td>Blast radius (ai gọi cái gì), consumer ẩn</td><td>Knowledge Base (<code>10-core-flows</code>, <code>13-business-rules</code>, <code>14-integrations</code>, <code>modules/</code>) + grep tìm caller</td></tr>
-      <tr><td>Đồ thị code cho agent (MCP)</td><td><code>/namht-map</code> — đồ thị phụ thuộc HTML cho người xem (offline, KHÔNG cần CodeGraph; cần Node + 3 file của map)</td></tr>
-    </tbody>
-  </table>
-  <div class="box ok"><div class="ti">✅ Nên làm khi thiếu CodeGraph</div>
-    <ul style="margin:.3em 0 0">
-      <li><b>Đầu tư KB:</b> chạy <code>/namht-scan</code> 1 lần/repo, <code>/namht-rescan</code> sau khi code đổi — KB là nền tảng chính thay cho CodeGraph.</li>
-      <li><b>Xem phụ thuộc:</b> dùng <code>/namht-map</code> (nhớ copy <code>graph-builder.js</code> + <code>build-map.cjs</code> + <code>viewer-template.html</code> ở bước 2).</li>
-      <li><b>Khi sửa 1 hàm:</b> chủ động grep tên hàm/endpoint để tìm nơi gọi.</li>
-    </ul>
-  </div>
-  <div class="box warn"><div class="ti">⚠️ Điểm yếu cần biết</div>
-    Phân tích <b>blast-radius tự động yếu hơn</b> (dễ sót consumer ẩn / dynamic dispatch) ở <code>/namht-qa</code>
-    và <code>/namht-build</code>. Bù bằng KB đầy đủ + <code>/namht-map</code> + grep thủ công.</div>
-
-  <!-- 5 -->
-  <h2 id="notes">⚠️ 5. Lưu ý quan trọng</h2>
+  <h2 id="notes">⚠️ 4. Lưu ý quan trọng</h2>
   <ul>
     <li><b>Dán nguyên văn</b> — giữ nguyên dòng đầu (vd <code>#!/usr/bin/env bash</code> trong
       <code>git-guard.sh</code>, và các file <code>.cjs</code>/<code>.js</code>/<code>.sh</code>). Sai 1 ký tự đầu là script lỗi.</li>

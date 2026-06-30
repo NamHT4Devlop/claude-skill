@@ -5,7 +5,7 @@ description: >-
   commits, draft a PR title and description (what/why, changes, risk + blast radius,
   tests done, checklist). REVIEW mode: given a PR number/URL, pull its diff (gh pr
   diff) and run a two-phase review (quality checklist + business consistency vs KB)
-  with CodeGraph blast radius. Use when the user says "/pr", "prepare a PR", "write
+  with blast-radius (callers) analysis. Use when the user says "/pr", "prepare a PR", "write
   PR description", "review PR 123", "review this pull request". Does not push/merge.
 ---
 
@@ -13,15 +13,14 @@ description: >-
 
 Two modes (pick from the argument / context). Read-only on the remote: it **drafts** or
 **reviews**; it never pushes, merges, or creates the PR unless the user explicitly asks (and the
-git-guard hook blocks remote-mutating git anyway). CodeGraph-first for impact, KB for business
+git-guard hook blocks remote-mutating git anyway). Read/Grep for impact, KB for business
 consistency.
 
 ## Mode A — PREPARE a PR (default; from the current branch)
 1. **Gather the change.** `git diff <base>...HEAD` (base = the default branch, or one the user
    names) + `git log <base>..HEAD` for the commits + `git diff --stat`. (All read-only git — allowed.)
-2. **Assess impact.** If `.codegraph/` exists, run `codegraph_explore` / `codegraph impact` on the
-   changed symbols → downstream consumers & "no covering tests" flags. Ground business effects in
-   the KB (flows/rules touched).
+2. **Assess impact.** **Grep for callers** of the changed symbols → downstream consumers & any with
+   no covering tests. Ground business effects in the KB (flows/rules touched).
 3. **Draft the PR** (dual-audience Markdown, ready to paste):
    ```
    # <type(scope): concise title>
@@ -47,7 +46,7 @@ consistency.
      `references/review-skills-universal.md`): security, architecture/pattern conformance,
      performance, error handling, tests, etc.
    - Phase 2 — business consistency vs the KB (rules intact, no logic removed, valid state
-     transitions, API contract preserved, all ACs met). Use CodeGraph blast radius to find
+     transitions, API contract preserved, all ACs met). Grep for callers to find
      impacted consumers the PR didn't touch (regression risk).
 4. **Output** the review in the `/namht-review` format (Section coverage · Business consistency ·
    Issues with bad/fixed code · Strengths · Verdict APPROVED/NEEDS_REVISION · Score). Save to

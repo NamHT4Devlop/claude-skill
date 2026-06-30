@@ -6,7 +6,7 @@ argument-hint: <app URL> (+ optionally a /namht-qa plan path or story)
 Use the **namht-qa-integration** skill to execute QA against the running app below: drive the
 browser via the Claude-in-Chrome MCP (navigate, log in with a test account if needed, fill, click),
 assert each test case from the DOM + a screenshot, run BOTH the new-flow and regression cases
-(from a /namht-qa plan if available, else derive the key set via KB/CodeGraph), and produce a
+(from a /namht-qa plan if available, else derive the key set via the KB), and produce a
 pass/fail report with evidence. Read/observe only; never run destructive actions on a shared env;
 ask for a test login rather than inventing creds. Found a bug → offer /namht-fix-bug.
 

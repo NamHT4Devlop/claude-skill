@@ -4,7 +4,7 @@ argument-hint: <user story + acceptance criteria (paste), or a story ID>
 ---
 
 Use the **namht-qa** skill to turn the user story below into a complete QA test plan: map the new
-flow AND the existing (old) business flows it touches (via KB + CodeGraph), then design test cases
+flow AND the existing (old) business flows it touches (via the KB), then design test cases
 covering happy/alternate/error/edge/negative/permission/state for the NEW behavior **plus
 [REGRESSION] cases asserting the OLD flows still work** — with a traceability matrix (every AC and
 every touched flow covered), Gherkin + a manual test-case table. Save + render HTML. It designs

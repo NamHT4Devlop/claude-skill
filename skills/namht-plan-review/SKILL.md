@@ -4,7 +4,7 @@ description: >-
   Critique an implementation plan or user-story plan BEFORE building, through
   multiple lenses — Product (right thing? simpler? scope creep), Architecture/Eng
   (fits existing patterns, blast radius, risk), Risk/QA (what breaks, regression,
-  edge cases), DevEx (complexity, maintainability) — grounded in KB + CodeGraph,
+  edge cases), DevEx (complexity, maintainability) — grounded in the KB,
   ending with a verdict (proceed / revise) + concrete fixes. Use when the user says
   "/plan-review", "review this plan", "is this plan good", or after /namht-plan.
 ---
@@ -17,13 +17,13 @@ to fix a mistake. Review the plan (from `/namht-plan`, `/namht-discover`, or pas
 ## Input
 The plan / user stories (pasted, or a file under `spec-kit-sessions/`). Identify the feature + the
 modules/entities it targets. Ground in KB (`13-business-rules`, `16-architecture-patterns`,
-`10-core-flows`) + CodeGraph (blast radius of the proposed changes).
+`10-core-flows`) and by tracing callers (blast radius of the proposed changes).
 
 ## Lenses (score each: ✅ ok / ⚠️ concern / ❌ blocker)
 1. **Product** — is this the *right* thing? Is there a simpler version that delivers most value?
    Scope creep? Does it match the success metric? Anything that should be cut or deferred?
 2. **Architecture / Eng** — does it follow the documented pattern & layer rules
-   (`16-architecture-patterns`)? Blast radius via CodeGraph (who else is affected)? Migrations /
+   (`16-architecture-patterns`)? Blast radius (who else is affected — grep callers)? Migrations /
    breaking changes handled? Any risky shortcut?
 3. **Risk / QA** — what existing flows could break (regression)? Edge cases, error paths,
    concurrency, permissions, data states the plan ignores? Is it testable?
@@ -41,6 +41,6 @@ modules/entities it targets. Ground in KB (`13-business-rules`, `16-architecture
 
 ## Rules
 - Critique the PLAN, don't write code. Output actionable plan edits, not vague advice.
-- Ground every "this will break X" in KB/CodeGraph (real flow/consumer), not speculation.
+- Ground every "this will break X" in the KB (+ grep) (real flow/consumer), not speculation.
 - If the plan is solid, say so plainly — don't invent objections.
 - After revisions, hand to **`/namht-build`** (or `/namht-qa` for test design).

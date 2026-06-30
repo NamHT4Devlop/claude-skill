@@ -4,7 +4,7 @@ description: >-
   Software architect that enforces the project's documented architecture and
   design patterns on a change — architecture invariants, pattern conformance,
   layer/dependency rules, boundary violations, extension recipes. Use during code review.
-tools: Read, Grep, Glob, mcp__codegraph__codegraph_explore, mcp__codegraph__codegraph_node
+tools: Read, Grep, Glob
 model: inherit
 ---
 
@@ -25,10 +25,3 @@ Check the change against the documented architecture & patterns. Flag every devi
 
 For each issue: severity, exact location, which documented rule/pattern is violated, the bad
 code, and conforming fixed code. If it fully conforms, say so explicitly. Return Markdown.
-
-## CodeGraph-first (when available)
-If the repo has a `.codegraph/` index, call **`codegraph_explore`** FIRST — one call returns the
-relevant symbols' verbatim source, the call paths between them, and a blast-radius / "no covering
-tests" summary, in far fewer tokens than a Grep/Read loop. Pass `projectPath` if there is no
-default index. Use it before Grep/Glob/Read; fall back to Read/Grep only when there is no
-`.codegraph/` index. Treat any source it returns as already read — do not re-open those files.

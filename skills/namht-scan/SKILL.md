@@ -20,10 +20,9 @@ This KB is the grounding for every other Spec Kit command.
 > or an explicit fresh rebuild.
 
 ## Inputs & setup
-- **Use CodeGraph for structure if indexed.** If the repo has a `.codegraph/` index, use
-  `codegraph_explore` / `codegraph files` to map structure, symbols and call paths quickly
-  (saves a lot of Read/Grep) — but you STILL read real source for *business intent*: CodeGraph
-  gives the skeleton, the KB documents the why. Pass `projectPath` if needed.
+- **Map structure with Glob/Grep/Read.** Use Glob/Grep to map the file tree, symbols and imports
+  quickly, then read real source for *business intent* — the skeleton tells you where, the KB
+  documents the why.
 - **Secret safety.** Never read, quote, or write the contents of `.env*`, key/cert files
   (`*.pem`, `*.key`, `*.p12`), or credential files into the KB. Document that a secret exists and
   where, never its value. (The bundled analyzer only parses recognized source extensions, so

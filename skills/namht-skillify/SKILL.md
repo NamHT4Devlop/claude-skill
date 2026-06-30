@@ -17,8 +17,8 @@ and document it. Operate inside the `nam-claude-skill` repo (the toolkit source,
    should trigger, inputs, output, whether it needs the HTML renderer or the review checklist.
 2. **Create `skills/namht-<name>/SKILL.md`** with frontmatter:
    - `name: namht-<name>` (MUST equal the folder name), `description: >-` a 1–3 sentence trigger
-     description (when to use + key verbs/aliases). Body = the methodology, grounded in CodeGraph/KB
-     where relevant, with a clear Output section and Rules. Reuse the house style: CodeGraph-first,
+     description (when to use + key verbs/aliases). Body = the methodology, grounded in the KB
+     where relevant, with a clear Output section and Rules. Reuse the house style: KB-first,
      dual-audience output, change-discipline if it edits code.
 3. **Create `commands/<name>.md`** (UNPREFIXED filename) — thin entry: frontmatter `description` +
    `argument-hint`, body "Use the **namht-<name>** skill to … $ARGUMENTS".

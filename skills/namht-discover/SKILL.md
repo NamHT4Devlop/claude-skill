@@ -21,7 +21,7 @@ Interrogate first, then restate a crisp problem. Conversational — output is a 
 4. **Explicitly NOT** doing — what's out of scope (so we don't gold-plate)?
 5. **Success metric** — how do we KNOW it worked (a number/behavior change), not "users like it"?
 6. **Existing surface** — which current flow/entity/endpoint does it touch? (check KB
-   `10-core-flows`/`13-business-rules` + CodeGraph) — reuse vs new.
+   `10-core-flows`/`13-business-rules`) — reuse vs new.
 
 ## Push back (don't just take the framing)
 If the stated "solution" hides a different real problem, say so and reframe ("you said X app, but you
@@ -34,11 +34,11 @@ described Y"). Challenge scope creep, premature solutions, and unmeasurable goal
 ## Smallest valuable slice   ← the thin first version
 ## Scope                     ← In / Out (explicit)
 ## Success metric            ← measurable signal it worked
-## Touches (existing)        ← flows/entities/endpoints affected (KB/CodeGraph), reuse vs new
+## Touches (existing)        ← flows/entities/endpoints affected (KB), reuse vs new
 ## Open questions            ← what still needs a decision (who decides)
 ```
 
 ## Rules
 - Don't design the solution yet — sharpen the problem. Hand the brief to **`/namht-plan`** next.
-- Ground "touches" in the KB/CodeGraph (don't invent existing flows). If no KB, say so.
+- Ground "touches" in the KB (don't invent existing flows). If no KB, say so.
 - Keep it short and high-signal; never produce a 30-question survey.

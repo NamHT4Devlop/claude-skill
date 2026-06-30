@@ -10,8 +10,7 @@ verify it yourself.
 - The only external dependency is **at view-time**: generated HTML can load a JS chart library
   (Mermaid/Cytoscape) from a CDN — and even that is **eliminated** when the bundled `vendor/`
   libraries are present (default in this repo → fully offline, self-contained HTML).
-- It contains **no credentials**. It does not phone home. Telemetry is not part of this repo
-  (that belongs to the separate CodeGraph tool — disable with `codegraph telemetry off`).
+- It contains **no credentials**. It does not phone home. There is no telemetry in this repo.
 
 ## What's in the repo
 | Type | Files | Risk |
@@ -41,10 +40,9 @@ calls, no hardcoded secrets. `graph-builder.js`/`html-builder.js` are readable `
 minified) — provenance: the author's own `auto-spec-extension` repo.
 
 ## Data flow & egress
-- **CodeGraph / KB / analyzer**: 100% local. The graph index and `knowledge-base/` never leave
-  the machine.
-- **The real egress is the AI agent itself**: when Claude reads code (via `Read` or
-  `codegraph_explore`), that source enters the LLM context (Anthropic). This is inherent to using
+- **KB / analyzer**: 100% local. The `knowledge-base/` never leaves the machine.
+- **The real egress is the AI agent itself**: when Claude reads code (via `Read`),
+  that source enters the LLM context (Anthropic). This is inherent to using
   an AI coding assistant — **not added by this toolkit**. It is acceptable under a company
   **Team/Enterprise** Claude plan (commercial terms; Anthropic does not train on your data by
   default). Confirm your plan tier with your admin.
@@ -119,8 +117,7 @@ Claude Code reload to go live; editing the hook script itself takes effect immed
 
 ## Recommended enterprise hardening
 1. Use a company **Team/Enterprise** Claude plan (not a personal consumer plan).
-2. Install CodeGraph via a **pinned npm version** or build from source (instead of `curl | sh`),
-   from an internal mirror; run `codegraph telemetry off`.
+2. Pin the toolkit to a specific commit/tag and review diffs before pulling updates.
 3. Keep `vendor/` so generated HTML is fully offline.
 4. Keep secrets out of repos (the toolkit won't index raw secret files, but config source files
    are read like any other code).

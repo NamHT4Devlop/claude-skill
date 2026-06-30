@@ -20,12 +20,12 @@ Where `/namht-qa` *designs* test cases, this one
   read page, find, click, form-input, screenshot. (If that extension isn't connected, ask the user
   to connect it; fall back to computer-use only for a native app.) NEVER click suspicious links.
 - **Test cases:** from a `/namht-qa` plan (under `spec-kit-sessions/qa/`) if available; else derive
-  the key cases first (happy + the regression set from KB/CodeGraph blast radius).
+  the key cases first (happy + the regression set from the KB blast radius).
 - **Credentials:** ask the user for a test login if the flow needs auth; never invent or reuse prod creds.
 
 ## Procedure
 1. **Load the test cases** (or generate a focused set: happy path + main error/edge + the regression
-   flows the change touches per KB/CodeGraph).
+   flows the change touches per the KB).
 2. **Open the app**, establish session (log in via the test account if needed).
 3. **For each case**: perform the steps in the browser (navigate, fill, click), then **assert** the
    expected result by reading the DOM/page text and a **screenshot**. Record PASS/FAIL + evidence.

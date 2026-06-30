@@ -4,7 +4,7 @@ argument-hint: <error message / stack trace / bug description>
 ---
 
 Use the **namht-fix-bug** skill to diagnose and fix the production bug below: triage → locate the
-code path (CodeGraph-first) → reproduce → **root-cause analysis** (not just the symptom) → blast
+code path (read the code first) → reproduce → **root-cause analysis** (not just the symptom) → blast
 radius → minimal surgical fix with a **failing-then-passing regression test** → verify (tests +
 build, rollback if broken) → hotfix report + KB update. Do NOT deploy/push — the human deploys.
 

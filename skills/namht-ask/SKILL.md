@@ -15,10 +15,9 @@ A native port of Auto Spec Kit's `/ask`. Answer using **only** the project's Kno
 never invent files, APIs, fields, or behavior.
 
 ## Procedure
-0. **Prefer CodeGraph for code grounding.** If the repo has a `.codegraph/` index and the
-   question is about *how code works / where something is*, call the `codegraph_explore` MCP
-   tool (verbatim source + call paths in one shot) to ground the **Technical detail** section —
-   far cheaper than Grep/Read. The KB still supplies business meaning. Pass `projectPath` if needed.
+0. **Ground code answers in real source.** When the question is about *how code works / where
+   something is*, use Grep/Glob/Read to ground the **Technical detail** section in real files; the
+   KB supplies business meaning.
 1. **Select relevant KB context.** Map the question to topics and load just those
    `knowledge-base/` docs (don't dump the whole KB). If the question names a module/feature,
    load the matching `knowledge-base/modules/<module>.md` first — those deep docs are the
@@ -47,7 +46,7 @@ sequenceDiagram for an interaction. Use a valid ```mermaid block, short plain la
 diagram truly doesn't apply, write "(no diagram needed)".
 
 ## Technical detail (engineers)
-The precise answer, citing concrete names from the KB / CodeGraph: files, modules, endpoints,
+The precise answer, citing concrete names from the KB: files, modules, endpoints,
 entities, fields, functions. Full accuracy here — don't dumb it down.
 
 ## In plain words (glossary)

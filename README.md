@@ -233,13 +233,13 @@ If you keep many repos under one parent folder (a "workspace"), follow this sepa
 | `/namht-scan` | Generate the Knowledge Base from the codebase (16 docs + `review-skills.md` + per-module docs). Run first on a new repo. |
 | `/namht-rescan` | Update the KB incrementally after code changes (git-diff aware). |
 | `/namht-build <requirement>` | 13-step pipeline: clarify → plan (impact + business flow) → code → multi-lens review → tests → run tests → evidence → update KB. |
-| `/namht-fix-bug <error/stack trace>` | Production hotfix: triage → locate (CodeGraph) → root-cause → failing regression test → minimal surgical fix → verify (tests+build, rollback) → hotfix report + KB update. Does not deploy. |
+| `/namht-fix-bug <error/stack trace>` | Production hotfix: triage → locate (read the code) → root-cause → failing regression test → minimal surgical fix → verify (tests+build, rollback) → hotfix report + KB update. Does not deploy. |
 | `/namht-review [file\|PR#]` | Two-phase review: quality checklist + business consistency vs the KB. Empty arg = current branch vs the default branch (or working-tree diff if uncommitted); accepts a PR #/URL (`gh pr diff`). |
 | `/namht-ask <question>` | Q&A grounded in the KB — plain language + Mermaid diagram + technical detail. |
 | `/namht-plan <epic>` | PO/BA: Epic → features → impact → user stories (Given/When/Then) → sprint plan. |
 | `/namht-qa <user story>` | QA: user story → test cases covering the **NEW flow + regression for OLD business flows** (Gherkin + manual table + AC↔case traceability). Designs tests; doesn't code them. |
 | `/namht-pr [review <PR#>]` | Prepare a PR description from the current branch, or review a GitHub PR (`gh pr diff` → two-phase review + blast radius). Read-only on the remote. |
-| `/namht-security-audit [scope]` | Whole-repo security audit: attack surface + injection/authz/IDOR/secrets/exposure/AI, grounded in CodeGraph + KB, with severities + fixes. Read-only. |
+| `/namht-security-audit [scope]` | Whole-repo security audit: attack surface + injection/authz/IDOR/secrets/exposure/AI, grounded in the KB, with severities + fixes. Read-only. |
 | `/namht-map [scope]` | Interactive HTML code graph (Cytoscape): files/classes + imports/DI/inheritance/calls; zoom, click, filter, search. Opens in browser. |
 | `/namht-system-map` | **Cross-service** map for a multi-repo microservices workspace: stitches each service's API/integrations into a dependency graph + end-to-end flows (sequence diagrams) + contracts/events + risks. Run at the workspace root. |
 | `/namht-document <topic>` | Business↔code field-level technical document for a feature/entity/module. |
@@ -257,17 +257,6 @@ If you keep many repos under one parent folder (a "workspace"), follow this sepa
 keep the KB fresh.
 
 ---
-
-## Working without CodeGraph (the default)
-
-CodeGraph is **optional and not required**. If a repo happens to have a `.codegraph/` index, the
-sub-agents and `namht-build`/`review`/`ask`/`document`/`scan` will use the `codegraph_explore` MCP
-tool when it's available; **otherwise the kit falls back automatically to Read/Grep/Glob + the
-Knowledge Base** (and `namht-map`'s bundled analyzer for dependency views) — no configuration needed.
-
-For microservices, the cross-service **Event/Contract Catalog** produced by `namht-scan`
-(`17-async-events.md`) + `namht-system-map` is the primary way to see who-calls-who across repos
-(SQS/REST/events) — language-agnostic and needs no CodeGraph.
 
 ## Security & enterprise
 
@@ -287,7 +276,7 @@ See **[SECURITY.md](SECURITY.md)** for the full audit. In short:
   local git (`reset --hard`, `clean -f`, `checkout --`, `rebase`, `branch -D`, …) — even in chained
   commands. See [SECURITY.md](SECURITY.md#git-guardrail-hard-blocked-readsync-in-only).
 - The real data-egress is the AI agent reading code (inherent to any AI assistant), fine under a
-  company **Team/Enterprise** Claude plan. `knowledge-base/`, `.codegraph/`, `spec-kit-sessions/`
+  company **Team/Enterprise** Claude plan. `knowledge-base/` and `spec-kit-sessions/`
   are gitignored machine-wide.
 
 ## How this maps to the original extension

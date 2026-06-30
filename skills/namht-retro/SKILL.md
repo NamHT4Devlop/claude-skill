@@ -15,7 +15,7 @@ A periodic look-back grounded in real history.
 - Window: default last 7 days (or what the user names). `git log --since=<window> --stat`,
   `git shortlog -sn --since`, `git diff --stat <since>..HEAD` for churn by area.
 - Optional signals: `spec-kit-sessions/` reports (fixes/reviews/qa) from the window; open TODO/FIXME
-  added; CodeGraph "no covering tests" on changed areas (test-debt trend).
+  added; test coverage gaps on changed areas (test-debt trend).
 
 ## Produce (dual-audience; chat + save `spec-kit-sessions/retro/<date>.md`)
 ```

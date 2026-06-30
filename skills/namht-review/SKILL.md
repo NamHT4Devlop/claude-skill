@@ -15,10 +15,8 @@ A native port of Auto Spec Kit's `/review`. Produce an **actionable** review: ev
 must show the exact bad code and the complete fixed code — never "add X here".
 
 ## Inputs
-- **Prefer CodeGraph when indexed.** If the repo has a `.codegraph/` index, fetch the target +
-  its blast radius with the `codegraph_explore` MCP tool (verbatim source + callers/callees +
-  "no covering tests" flags) instead of a Grep/Read loop — that's exactly what surfaces impacted
-  consumers and test gaps for Phase 2. Pass `projectPath` if needed; fall back to Read/Grep otherwise.
+- **Find impacted consumers with Grep/Read.** Read the target, then **grep for its callers/callees**
+  to surface impacted consumers and test gaps for Phase 2 (flag any changed symbol with no covering test).
 - **Target** — resolve in this order (detect the default branch with
   `git symbolic-ref --short refs/remotes/origin/HEAD` → strip `origin/`; fall back to `main`, then `master`):
   1. **A PR** — the arg is `#123`, a bare number `123`, a GitHub PR URL, or "pr 123"/"review PR 123".

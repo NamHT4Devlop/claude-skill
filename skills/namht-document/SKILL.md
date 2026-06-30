@@ -29,9 +29,7 @@ The topic to document (a feature, entity/model, or module).
 1. Load relevant `knowledge-base/` docs plus, by default, the business/domain/architecture
    docs and any matching `knowledge-base/modules/<module>.md`.
 2. Discover and read the **relevant source files** for field-level grounding — you must name
-   real classes, functions, and fields. If the repo has a `.codegraph/` index, use the
-   `codegraph_explore` MCP tool (verbatim source + call paths in one call, `projectPath` if
-   needed) instead of a Grep/Glob/Read loop; fall back to Grep/Read when there's no index.
+   real classes, functions, and fields. Use Grep/Glob/Read to find them and follow the call paths.
 
 ## Output structure (Markdown; use TABLES for every mapping)
 ```

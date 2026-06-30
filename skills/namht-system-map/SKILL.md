@@ -13,7 +13,7 @@ description: >-
 
 # namht-system-map — cross-service / end-to-end map for a microservices workspace
 
-Per-service `/namht-scan` + CodeGraph understand each service **internally**. This skill adds the
+Per-service `/namht-scan` (KB) understands each service **internally**. This skill adds the
 **second layer**: how the services connect (HTTP/gRPC/queues/events) and the **end-to-end business
 flows** that span them. It works for a **multi-repo workspace** — a parent folder containing N
 service repos in possibly different languages.
@@ -25,11 +25,10 @@ service repos in possibly different languages.
   `*.csproj`, `Cargo.toml`) and/or a `knowledge-base/`. List them with detected language + role.
 - **Precondition (strongly recommended):** each service should already have a Knowledge Base
   (`cd <svc> && /namht-scan`). If some don't, list them and offer to scan them first — the system
-  map is far more accurate from per-service KBs. You can still proceed using CodeGraph + source for
+  map is far more accurate from per-service KBs. You can still proceed by reading source for
   un-scanned services, at lower fidelity (say so).
-- **CodeGraph across services:** if a service has `.codegraph/`, use `codegraph_explore` with
-  `projectPath: <svc>` to confirm the real HTTP-client calls / endpoint handlers / queue
-  producers-consumers when the KB is thin. You can query many services in one session.
+- **Confirm edges by reading code:** when a service's KB is thin, read its HTTP-client calls /
+  endpoint handlers / queue producers-consumers directly to confirm the real cross-service edges.
 
 ## What to build
 For each service, read its KB: `11-api-docs.md` (endpoints it **exposes**), `14-integrations.md`
@@ -80,6 +79,6 @@ node "$HOME/.claude/skills/namht-system-map/references/render-html.cjs" \
 - **Keep it fresh:** after a service changes its API/integrations, `/namht-rescan` that service,
   then re-run `/namht-system-map` (or just re-derive the affected flow).
 - Polyglot is fine — the map works off **contracts/events** (language-agnostic), not code imports;
-  each service's own KB/CodeGraph handled its language.
+  each service's own KB handled its language.
 - This is a *map*, not a deploy/runtime tool — it documents the system from code+KB; confirm
-  uncertain edges with the team or by reading the actual client/handler via CodeGraph.
+  uncertain edges with the team or by reading the actual client/handler.

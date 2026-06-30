@@ -18,12 +18,9 @@ You (Claude Code) are the engine; use your own tools instead of an external mode
 sub-agents, `Edit/Write` to apply code, and `Bash` to run tests.
 
 ## Ground rules (apply to every step)
-0. **Prefer CodeGraph when indexed.** If the repo has a `.codegraph/` index, use the
-   `codegraph_explore` MCP tool (one call → relevant symbols' verbatim source + call paths +
-   blast radius / "no covering tests" warnings) before Grep/Glob/Read loops — faster, and it
-   catches reverse dependencies the bundled regex graph can miss. Use it for the Step 1 impact
-   analysis (and `codegraph impact/callers` for blast radius). Pass `projectPath` if the session
-   has no default index. Fall back to Read/Grep + the bundled graph when there's no `.codegraph/`.
+0. **Investigate with Read/Grep/Glob + the KB.** Map the relevant code with Grep/Glob/Read and the
+   `knowledge-base/`. For the Step 1 impact/blast-radius, **grep for the callers** of the symbols you
+   will change (and, across services, consult the Event/Contract Catalog — see Step 1).
 1. **Ground everything in the Knowledge Base.** Load `knowledge-base/` from the repo
    (especially `04-business-domain`, `05-domain-model`, `10-core-flows`,
    `13-business-rules`, `12-conventions`, `16-architecture-patterns`, `review-skills.md`).
@@ -50,7 +47,7 @@ This is what keeps the tool from "breaking the project" or making rambling edits
   you're touching for another reason. Match the surrounding style exactly.
 - **Preserve behavior.** Never delete or rewrite existing logic unless the task requires it and
   the plan says so. If you must change a shared function, check its blast radius first
-  (CodeGraph `impact`/`callers`) and update every caller intentionally.
+  (grep for its callers) and update every caller intentionally.
 - **No structure churn.** Don't move files, change the folder layout, swap libraries, or alter
   build/config/CI unless explicitly requested. Follow the existing architecture (rule 2).
 - **Plan-approval gate.** For anything non-trivial, show the plan and get an explicit "go"

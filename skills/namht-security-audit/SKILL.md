@@ -4,7 +4,7 @@ description: >-
   Run a whole-repo security audit: sweep the codebase for vulnerabilities by
   category (input validation, injection, broken authn/authz & IDOR, secrets &
   crypto, sensitive-data exposure, dependency risk, and AI/LLM-specific issues),
-  grounded in the project's review-skills checklist + auth model (KB) + CodeGraph
+  grounded in the project's review-skills checklist + auth model (KB) + the code
   (entry points = attack surface, blast radius). Use when the user says
   "/security-audit", "security review of the repo", "find vulnerabilities",
   "OWASP audit", "is this secure", or before a release/pentest. Read-only.
@@ -19,11 +19,11 @@ fixes. Read-only — it does NOT change code (hand fixes to `/namht-fix-bug` or 
 ## Inputs & grounding
 - **Checklist:** `knowledge-base/review-skills.md` §2 SECURITY + §8 AI/LLM (fallback bundled
   `references/review-skills-universal.md`). Plus project rules (Section 14) if present.
-- **Attack surface (CodeGraph + KB):** find every external entry point — HTTP/gRPC routes,
+- **Attack surface (KB + code):** find every external entry point — HTTP/gRPC routes,
   message consumers, scheduled jobs, CLI, file/upload handlers, auth flows — via KB
-  `03-entry-points.md` / `09-auth-security.md` / `11-api-docs.md` and `codegraph_explore` on the
+  `03-entry-points.md` / `09-auth-security.md` / `11-api-docs.md` and by reading the
   controllers/handlers. These are where untrusted input enters.
-- If no KB/`.codegraph/`, fall back to Grep/Glob (note reduced coverage).
+- If no KB, fall back to Grep/Glob (note reduced coverage).
 
 ## Audit categories (cover each; cite file·function·line)
 1. **Input validation** — every entry point validates untrusted input at the boundary? whitelist > blacklist?
@@ -48,8 +48,8 @@ bypass). Output a small table — `| Component/flow | STRIDE category | Threat |
 — and fold any gaps into Findings.
 
 ## Method
-1. Enumerate the attack surface (entry points) from KB + CodeGraph.
-2. For each category, inspect the relevant code (CodeGraph `explore`/`callers` to follow untrusted
+1. Enumerate the attack surface (entry points) from the KB + reading the code.
+2. For each category, inspect the relevant code (**grep callers** to follow untrusted
    data from entry → sink). Prefer fanning out the **`namht-security-reviewer`** sub-agent on the
    high-risk areas.
 3. Rate each finding: severity `[CRITICAL]/[MAJOR]/[MINOR]`, exploitability, and business impact.

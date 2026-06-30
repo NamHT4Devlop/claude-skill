@@ -72,7 +72,7 @@
       <tr><td><b>Claude Code</b></td><td>An AI coding assistant that runs in the terminal/IDE — the thing you type commands into.</td></tr>
       <tr><td><b>Skill / Command</b></td><td>A pre-packaged “skill”. Type <code>/command-name</code> to run it (e.g. <code>/namht-build</code>).</td></tr>
       <tr><td><b>Knowledge Base (KB)</b></td><td>The <code>knowledge-base/</code> folder in each repo — the AI reads it to understand the project's business.</td></tr>
-      <tr><td><b>MCP</b></td><td>How external tools (e.g. CodeGraph) connect to Claude so it can query them.</td></tr>
+      <tr><td><b>MCP</b></td><td>How external tools connect to Claude so it can query them.</td></tr>
       <tr><td><b>Hook</b></td><td>A guard enforced at the system level (e.g. blocking <code>git push</code> to a team repo) — the AI can't disable it on a whim.</td></tr>
     </table>
   </div>
@@ -84,13 +84,12 @@
       <li><a href="#get">1. Get the toolkit</a></li>
       <li><a href="#install">2. Install for yourself</a></li>
       <li><a href="#safe">3. Enable the safety guards (important)</a></li>
-      <li><a href="#codegraph">4. CodeGraph (recommended)</a></li>
-      <li><a href="#first">5. First use on a repo</a></li>
-      <li><a href="#daily">6. Command table &amp; daily flow</a></li>
-      <li><a href="#verify">7. Verify it works</a></li>
-      <li><a href="#maintain">8. Update / Uninstall</a></li>
-      <li><a href="#trouble">9. Common issues</a></li>
-      <li><a href="#faq">10. FAQ &amp; safety</a></li>
+      <li><a href="#first">4. First use on a repo</a></li>
+      <li><a href="#daily">5. Command table &amp; daily flow</a></li>
+      <li><a href="#verify">6. Verify it works</a></li>
+      <li><a href="#maintain">7. Update / Uninstall</a></li>
+      <li><a href="#trouble">8. Common issues</a></li>
+      <li><a href="#faq">9. FAQ &amp; safety</a></li>
     </ol>
   </nav>
 
@@ -129,9 +128,9 @@ git clone https://github.com/NamHT4Devlop/nam-claude-skill.git ~/nam-claude-skil
 
   <div class="step"><div class="num">A</div><div class="body">
     <h3>Global gitignore — keep artifacts out of commits</h3>
-    <p>Every <code>knowledge-base/</code>, <code>spec-kit-sessions/</code>, <code>.codegraph/</code> is ignored by git machine-wide (no repo is modified):</p>
+    <p>Every <code>knowledge-base/</code> and <code>spec-kit-sessions/</code> is ignored by git machine-wide (no repo is modified):</p>
     <div class="cb"><button class="copy">Copy</button><pre><code>touch ~/.gitignore_global
-printf '%s\n' 'spec-kit-sessions/' 'knowledge-base/' '.codegraph/' 'CLAUDE.local.md' '.spec-kit/' >> ~/.gitignore_global
+printf '%s\n' 'spec-kit-sessions/' 'knowledge-base/' 'CLAUDE.local.md' '.spec-kit/' >> ~/.gitignore_global
 git config --global core.excludesfile ~/.gitignore_global</code></pre></div>
   </div></div>
 
@@ -167,24 +166,10 @@ git config --global core.excludesfile ~/.gitignore_global</code></pre></div>
   <div class="box warn"><div class="ti">🔁 Reload</div> After editing <code>settings.json</code>, open <span class="kbd">/hooks</span> once or restart Claude Code so the guard takes effect.</div>
 
   <!-- 4 -->
-  <h2 id="codegraph">4. CodeGraph (recommended — helps the AI understand code fast, fewer tokens)</h2>
-  <p>CodeGraph builds a local “code map” the AI queries over MCP instead of reading blindly. 100% local.</p>
-  <div class="cb"><button class="copy">Copy</button><pre><code><span class="cmt"># install the CLI via npm</span>
-npm i -g @colbymchenry/codegraph
-<span class="cmt"># wire it into Claude Code (global level) + turn off telemetry</span>
-codegraph install -t claude -l global -y
-codegraph telemetry off</code></pre></div>
-  <div class="box warn"><div class="ti">🏢 More enterprise-friendly</div>
-    If your company tightens supply-chain controls: install via npm with a pinned version
-    (<code>npm i -g @colbymchenry/codegraph@&lt;version&gt;</code>) or through an internal mirror.</div>
-
-  <!-- 5 -->
-  <h2 id="first">5. First use on a repo</h2>
+  <h2 id="first">4. First use on a repo</h2>
   <div class="cb"><button class="copy">Copy</button><pre><code><span class="cmt"># 1) cd into THE project you want to work on</span>
 cd /path/to/your-project
-<span class="cmt"># 2) (if using CodeGraph) build the index once — it auto-updates afterwards</span>
-codegraph init
-<span class="cmt"># 3) open Claude Code</span>
+<span class="cmt"># open Claude Code</span>
 claude</code></pre></div>
   <p>Inside Claude Code, the first time on a repo create the Knowledge Base, then use:</p>
   <div class="cb"><button class="copy">Copy</button><pre><code>/namht-scan                 <span class="cmt"># scan the repo → generate knowledge-base/ (run once)</span>
@@ -194,7 +179,7 @@ claude</code></pre></div>
   <p class="muted">Already have a <code>knowledge-base/</code> from another machine? Just copy it into the repo to reuse it — no need to scan.</p>
 
   <!-- 6 -->
-  <h2 id="daily">6. Command table &amp; daily flow</h2>
+  <h2 id="daily">5. Command table &amp; daily flow</h2>
   <table>
     <thead><tr><th>Command</th><th>What it does</th></tr></thead>
     <tbody>
@@ -207,7 +192,7 @@ claude</code></pre></div>
       <tr><td><code>/namht-plan</code></td><td>PO/BA: Epic → user stories → sprint plan.</td></tr>
       <tr><td><code>/namht-qa</code></td><td>QA: user story → test cases covering old (regression) + new flows.</td></tr>
       <tr><td><code>/namht-pr</code></td><td>Draft a PR description / review a GitHub PR (two-phase + blast radius).</td></tr>
-      <tr><td><code>/namht-security-audit</code></td><td>Whole-repo security audit (OWASP + STRIDE + secrets + authz), grounded in CodeGraph/KB.</td></tr>
+      <tr><td><code>/namht-security-audit</code></td><td>Whole-repo security audit (OWASP + STRIDE + secrets + authz), grounded in the KB.</td></tr>
       <tr><td><code>/namht-discover</code></td><td>Interrogate a requirement before planning → a sharp brief.</td></tr>
       <tr><td><code>/namht-plan-review</code></td><td>Critique a plan through multiple lenses before building.</td></tr>
       <tr><td><code>/namht-qa-integration</code></td><td>Run E2E QA against the real app via a browser (pass/fail + screenshots).</td></tr>
@@ -224,25 +209,22 @@ claude</code></pre></div>
   <p><b>Recommended flow:</b> <code>scan</code> (once) → <code>ask/map/document</code> (understand) → <code>plan</code> (break down) → <code>build</code>/<code>fix-bug</code> (do) → <code>rescan</code> (keep the KB fresh).</p>
 
   <!-- 7 -->
-  <h2 id="verify">7. Verify it works</h2>
+  <h2 id="verify">6. Verify it works</h2>
   <ul class="chk">
     <li>In Claude Code, type <span class="kbd">/</span> → you see the <code>/namht-*</code> commands.</li>
     <li>Run <code>/namht-help</code> → it lists commands + reports whether the repo has a KB.</li>
     <li>git guard: <code>printf '{"tool_input":{"command":"git push https://github.com/some-org/x"}}' | ~/.claude/hooks/namht-git-guard.sh</code> → outputs JSON <code>deny</code>.</li>
-    <li>CodeGraph: type <span class="kbd">/</span> or ask a question about the code → Claude uses it automatically (after <code>codegraph init</code> + reload).</li>
   </ul>
 
   <!-- 8 -->
-  <h2 id="maintain">8. Update / Uninstall</h2>
+  <h2 id="maintain">7. Update / Uninstall</h2>
   <div class="cb"><button class="copy">Copy</button><pre><code><span class="cmt"># update the toolkit</span>
 cd ~/nam-claude-skill && git pull        <span class="cmt"># symlinked, so it applies immediately</span>
 <span class="cmt"># uninstall (only removes symlinks in ~/.claude, touches no repo)</span>
-~/nam-claude-skill/scripts/personal-install.sh uninstall
-<span class="cmt"># remove CodeGraph from Claude Code</span>
-codegraph uninstall</code></pre></div>
+~/nam-claude-skill/scripts/personal-install.sh uninstall</code></pre></div>
 
   <!-- 9 -->
-  <h2 id="trouble">9. Common issues</h2>
+  <h2 id="trouble">8. Common issues</h2>
   <table>
     <thead><tr><th>Symptom</th><th>Fix</th></tr></thead>
     <tbody>
@@ -256,12 +238,12 @@ codegraph uninstall</code></pre></div>
   </table>
 
   <!-- 10 -->
-  <h2 id="faq">10. FAQ &amp; enterprise safety</h2>
+  <h2 id="faq">9. FAQ &amp; enterprise safety</h2>
   <h3>Is it safe to copy onto a company machine?</h3>
   <p>The toolkit code is <b>purely local</b> (reads/writes files), makes <b>no</b> network/exec/eval calls, and contains no secrets.
   Audit details + how to verify: see <code>&lt;TOOL&gt;/SECURITY.md</code>.</p>
   <h3>Is any code data sent anywhere?</h3>
-  <p>The KB/CodeGraph stay local. When the AI reads code to answer, that snippet enters the LLM context — <b>just like Claude reading a file normally</b>, and already permitted by your organization (Team/Enterprise plans don't train on your data).</p>
+  <p>The KB stays local. When the AI reads code to answer, that snippet enters the LLM context — <b>just like Claude reading a file normally</b>, and already permitted by your organization (Team/Enterprise plans don't train on your data).</p>
   <h3>How do I make sure team repos aren't touched?</h3>
   <p>Global gitignore (step 3A) + the git guard (3B) + setting <code>ALLOW_OWNER_RE='__NONE__'</code> to forbid the AI from pushing anywhere. Even stronger: enable <b>branch protection</b> on the team GitHub repo.</p>
   <h3>Does it remember me between sessions?</h3>

@@ -13,7 +13,7 @@ description: >-
 
 A focused hotfix pipeline, distinct from `/namht-build` (which builds features). Production = high
 stakes, so the bias is: **understand deeply, change minimally, prove it with a test, don't break
-anything else.** Ground in CodeGraph (structure/blast radius) + `knowledge-base/` (business rules).
+anything else.** Ground in the code (structure/blast radius) + `knowledge-base/` (business rules).
 
 ## Ground rules
 - **Root cause, not band-aid.** Fix *why* it breaks, not just the visible symptom. State the root
@@ -22,8 +22,8 @@ anything else.** Ground in CodeGraph (structure/blast radius) + `knowledge-base/
   "Architecture Invariants — DO NOT BREAK" and conventions; no drive-by refactors (see the change
   discipline in `namht-build`). For risky fixes, prefer a guard/feature-flag and note a rollback.
 - **Prove it with a test.** A regression test that FAILS before the fix and PASSES after.
-- **CodeGraph-first.** If `.codegraph/` exists, use `codegraph_explore` on the stack-trace symbols
-  to pull the exact code path + callers/blast radius in one call; fall back to Grep/Read.
+- **Read the code path first.** From the stack trace, Read the failing files and **grep for callers**
+  to pull the exact code path + blast radius before changing anything.
 - **Never deploy/push.** Produce the fix + test locally; the human deploys. (The git-guard hook
   blocks remote pushes anyway.)
 
@@ -37,7 +37,7 @@ before digging. Note severity/urgency.
 
 ### 2. Locate the code path
 From the stack trace / symptom, find the exact failing code:
-- `codegraph_explore "<top stack-trace symbols / failing function>"` → verbatim source + call paths.
+- Read the top stack-trace files and **grep the failing function** → its source + callers.
 - Map the request/flow end-to-end (entry → service → data) using the KB `10-core-flows` / `modules/`.
 Identify the precise function(s) and the line(s) implicated.
 
@@ -55,7 +55,7 @@ Check the KB: did the bug violate a documented business rule, or expose an **und
 
 ### 5. Blast radius
 Before fixing, find what else is affected:
-- `codegraph` callers/impact of the function you'll change → every consumer to re-verify.
+- **Grep the callers/impact** of the function you'll change → every consumer to re-verify.
 - Does the **same defect pattern** exist elsewhere? (search siblings.) Note them (fix now if
   trivial + in scope, else list as follow-ups).
 - Which business flows/rules must the fix preserve?
