@@ -96,7 +96,7 @@
     <code>render-html.cjs</code>, <code>review-skills-universal.md</code>, <code>kb-steps.md</code>) chỉ là
     <b>bản sao</b> sinh ra từ <code>resources/</code> bằng <code>scripts/sync-bundles.sh</code>. Nên bạn chỉ
     copy <b>4 file gốc trong <code>resources/</code> một lần</b>, rồi chạy <code>sync-bundles.sh</code> để nó tự
-    nhân ra mọi skill. Bạn chỉ phải dán tay <b>~59 file</b> thay vì ~88.</p>
+    nhân ra mọi skill. Bạn chỉ phải dán tay <b>~61 file</b> thay vì ~90.</p>
   </div>
 
   <nav class="toc">
@@ -117,8 +117,8 @@
   <div class="cb"><button class="copy">Copy</button><pre><code>ROOT=~/nam-claude-skill          <span class="cmt"># ⬅ đổi thành BẤT KỲ đường dẫn nào bạn muốn</span>
 mkdir -p "$ROOT"/{commands,agents,hooks,scripts,resources}
 
-<span class="cmt"># 20 skill → mỗi skill 1 file SKILL.md</span>
-for s in namht-ask namht-build namht-design-review namht-discover \
+<span class="cmt"># 21 skill → mỗi skill 1 file SKILL.md</span>
+for s in namht-ask namht-build namht-codegraph namht-design-review namht-discover \
          namht-document namht-fix-bug namht-map namht-pdf namht-plan namht-plan-review \
          namht-pr namht-qa namht-qa-integration namht-rescan namht-retro namht-review \
          namht-scan namht-security-audit namht-skillify namht-system-map; do
@@ -155,7 +155,7 @@ echo "✅ Tạo khung xong. Danh sách file cần dán nội dung:"; find "$ROOT
   <div class="cb"><button class="copy">Copy</button><pre><code>https://raw.githubusercontent.com/NamHT4Devlop/nam-claude-skill/main/&lt;đường-dẫn&gt;</code></pre></div>
   <p class="muted">Ví dụ: <code>.../main/skills/namht-build/SKILL.md</code>, <code>.../main/commands/build.md</code>,
   <code>.../main/hooks/git-guard.sh</code>.</p>
-  <p><b>Phải dán (59 file):</b> 20 × <code>skills/*/SKILL.md</code> · 21 × <code>commands/*.md</code> ·
+  <p><b>Phải dán (61 file):</b> 21 × <code>skills/*/SKILL.md</code> · 22 × <code>commands/*.md</code> ·
   7 × <code>agents/*.md</code> · 4 × <code>resources/*</code> · <code>hooks/git-guard.sh</code> ·
   <code>scripts/personal-install.sh</code> · <code>scripts/sync-bundles.sh</code> · 4 file riêng của map/pdf.</p>
   <table>
@@ -163,7 +163,7 @@ echo "✅ Tạo khung xong. Danh sách file cần dán nội dung:"; find "$ROOT
     <tbody>
       <tr><td><code>skills/namht-map/references/graph-builder.js</code></td><td>File lớn (compiled) — chỉ cho <code>/namht-map</code>. Không cần map thì bỏ luôn 3 file của map.</td></tr>
       <tr><td><code>vendor/*.min.js</code></td><td>Render diagram offline. Bỏ được nếu máy có mạng (diagram tự dùng CDN). Air-gapped + cần diagram mới phải copy 2 file minified (rất to).</td></tr>
-      <tr><td><code>README / SECURITY / LICENSE / docs / tests / .github</code></td><td>Không cần để chạy bản cài cá nhân.</td></tr>
+      <tr><td><code>README / SECURITY / LICENSE / docs / tests / .github / .claude-plugin / hooks.json</code></td><td>Không cần để chạy bản cài cá nhân.</td></tr>
     </tbody>
   </table>
 
@@ -204,7 +204,7 @@ git config --global core.excludesfile ~/.gitignore_global</code></pre></div>
     đâu. Sau đó <b>restart Claude Code</b> để rào có hiệu lực.</div>
 
   <h3>6) Kiểm tra</h3>
-  <div class="cb"><button class="copy">Copy</button><pre><code>ls -la ~/.claude/skills | grep namht-     <span class="cmt"># thấy 20 skill</span>
+  <div class="cb"><button class="copy">Copy</button><pre><code>ls -la ~/.claude/skills | grep namht-     <span class="cmt"># thấy 21 skill</span>
 <span class="cmt"># rào git → phải in ra JSON "deny"</span>
 printf '{"tool_input":{"command":"git push https://github.com/some-org/x"}}' | ~/.claude/hooks/namht-git-guard.sh</code></pre></div>
   <p>Trong Claude Code gõ <span class="kbd">/</span> → thấy <code>/namht-*</code>; chạy <code>/namht-help</code>.</p>

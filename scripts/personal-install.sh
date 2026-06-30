@@ -3,15 +3,16 @@
 #
 # Symlinks this repo's skills/agents/commands into ~/.claude so they're available in every
 # project but live only in your home dir — never inside (or committed to) a project repo.
-# Skills/agents are named `namht-*`. Command files are unprefixed in the repo; this installer
-# symlinks them WITH a `namht-` prefix, so the personal form is /namht-build, /namht-ask, …
-# (won't shadow built-ins like /help). Symlinks mean `git pull` here instantly updates you.
+# Skills/agents are named `namht-*`. Command files are unprefixed in the repo (so the plugin
+# form is clean: /namht:build); this installer symlinks them WITH a `namht-` prefix, so the
+# personal form is /namht-build, /namht-ask, … (won't shadow built-ins like /help).
+# Symlinks mean `git pull` here instantly updates you.
 #
 # Usage:
 #   scripts/personal-install.sh            # install / refresh (idempotent)
 #   scripts/personal-install.sh uninstall  # remove only the symlinks pointing back here
 #
-# Pick ONE install method — symlink (this) OR plain copy, not both, to avoid duplicate commands.
+# Pick ONE install method — if you use this, do NOT also `/plugin install` the same plugin.
 
 set -euo pipefail
 

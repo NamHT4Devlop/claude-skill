@@ -23,6 +23,7 @@ Commands (all namespaced under `/namht-`):
 | `/namht-map [scope]` | Interactive HTML code graph (Cytoscape) for humans — zoom/click/filter, opens in browser. |
 | `/namht-system-map` | Multi-service workspace: cross-service dependency graph + end-to-end business flows (run at workspace root). |
 | `/namht-document <topic>` | Business↔code field-level technical document for a feature/entity/module. |
+| `/namht-codegraph [setup]` | Install/manage CodeGraph — the agent-queryable code graph (MCP), 100% local. |
 | `/namht-discover <idea>` | Discovery before planning — forcing questions, sharpen the problem brief. |
 | `/namht-plan-review <plan>` | Critique a plan (Product/Architecture/Risk-QA/DevEx) before building. |
 | `/namht-qa-integration <url>` | Run E2E QA against a RUNNING app via a real browser; pass/fail + screenshots. |
