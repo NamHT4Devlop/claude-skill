@@ -30,6 +30,7 @@ Commands (all namespaced under `/namht-`):
 | `/namht-pdf <file>` | Export a Markdown/HTML report to PDF (Mermaid drawn). |
 | `/namht-retro [window]` | Engineering retrospective from git history — shipped, pain, action items. |
 | `/namht-skillify <name+purpose>` | Scaffold a new namht-* skill + command (self-extend the kit). |
+| `/namht-splunk-report [apps+window]` | Query Splunk for per-app errors (default today) → one table → post to Slack. Read-only; creds from env. |
 
 Recommended flow: **scan** once → **ask/map/document** to understand → **plan** to break down
 work → **build** to implement → **rescan** to keep the KB fresh. The KB lives in
