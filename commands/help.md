@@ -27,6 +27,8 @@ Commands (all namespaced under `/namht-`):
 | `/namht-plan-review <plan>` | Critique a plan (Product/Architecture/Risk-QA/DevEx) before building. |
 | `/namht-qa-integration <url>` | Run E2E QA against a RUNNING app via a real browser; pass/fail + screenshots. |
 | `/namht-design-review <url\|path>` | UI/UX + accessibility review (browser screenshots / frontend code). |
+| `/namht-pdf <file>` | Export a Markdown/HTML report to PDF (Mermaid drawn). |
+| `/namht-retro [window]` | Engineering retrospective from git history — shipped, pain, action items. |
 | `/namht-skillify <name+purpose>` | Scaffold a new namht-* skill + command (self-extend the kit). |
 
 Recommended flow: **scan** once → **ask/map/document** to understand → **plan** to break down
