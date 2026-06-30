@@ -27,12 +27,18 @@ variable; **if a variable is NOT provided, OMIT that clause entirely** (do not g
   **custom** window accept a friendly value and translate it to Splunk:
   `4h`→`earliest=-4h@m`, `30m`→`-30m@m`, `7d`→`-7d@d`, `today`→`@d`, or an explicit
   `earliest=.../latest=...` range (epoch or `MM/DD/YYYY:HH:MM:SS`). Always print the range you used.
-- **Error criteria** — what counts as an "error" differs per app/schema, so **ask** (or accept) it.
-  Sensible **broad default** when the user has none:
+- **Error criteria** — the user gives a **free-form string**; you **interpret it into a valid SPL
+  search fragment**, then **show the produced SPL and get confirmation before running** (don't run a
+  mis-parsed query silently). Interpretation rules:
+  - Already SPL-ish (has `=`, `IN (...)`, `>=`/`<=`, `OR`/`AND`, parentheses, or `field="..."`) → use
+    as-is after a sanity check.
+  - A **phrase with spaces** (e.g. `connection reset by peer`) → wrap in quotes: `"connection reset by peer"`.
+  - A **list** (comma- or newline-separated) → OR them: `(termA OR termB OR "two words")`.
+  - A single bare word → use bare (`timeout`). **Escape** embedded quotes/backslashes so the SPL stays valid.
+  - Append to the base filter with AND (a space). If the string is ambiguous, show your interpretation and ask.
+  If the user gives **nothing**, use a **broad default**:
   `(error OR ERROR OR Exception OR exception OR Throwable OR FATAL OR CRITICAL OR SEVERE OR log_level=ERROR OR level=error OR status>=500)`.
-  Let the user **override** with their own predicate — a field/value (`log_level IN (ERROR,FATAL)`,
-  `cai_level=error`), an HTTP `status>=500`, a message pattern, etc. Offer to group by **message
-  signature** so many different error texts collapse into a few error types (table stays useful).
+  Offer to group by **message signature** so varied error texts collapse into a few error types.
 - **Slack destination** — **ASK the user**; they provide a **Slack incoming-webhook URL** (or a
   channel URL). Post to exactly what they give. Treat the URL as a **secret** (don't echo/commit it).
   Never assume a channel; confirm the message before sending.
@@ -65,7 +71,8 @@ variable; **if a variable is NOT provided, OMIT that clause entirely** (do not g
 1. **Ask for**: `index` (A), `cai_enviroment` (B), `cai_app` (C), the **time window** (default last
    1 day), the **error criteria** (default broad set), and the **Slack webhook URL**. Build the base
    filter `index={A} cai_enviroment={B} cai_app={C}`, **dropping any clause whose variable wasn't
-   provided**; then append the error criteria + the time window. Confirm the destination.
+   provided**. **Interpret the user's free-form error-criteria string into an SPL fragment**, append
+   it + the time window, then **show the full assembled SPL and confirm** before running. Confirm the destination.
 2. **Run the error search per app** (read-only) — loop once per `cai_app` value the user gave (or,
    if `C` was omitted, run one search with `… | stats count by cai_app, error_type`). Capture:
    total errors, the top N error types/messages with counts, and a breakdown by severity/level.
